@@ -8,7 +8,7 @@ Adli Bilişim Mühendisliği 3. sınıf dersleri için hazırladığım vize ça
 | [bilisim-suclari-inceleme-donanimlari](bilisim-suclari-inceleme-donanimlari) | Bilişim Suçu İnceleme Donanımları |
 | [isletim-sistemleri](isletim-sistemleri) | İşletim Sistemleri |
 | [e-delil](e-delil) | Elektronik Delil |
-| [e-delil-lol](e-delil-lol) | Elektronik Delil (Rift teması) |
+| [e-delil-lol](e-delil-lol) | Elektronik Delil (LoL teması) |
 
 Kurulum gerekmez: ilgili klasördeki `index.html` dosyasını tarayıcıda açmak yeterli.
 
