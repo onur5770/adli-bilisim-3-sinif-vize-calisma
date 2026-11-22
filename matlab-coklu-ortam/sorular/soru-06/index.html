@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Soru 6 – LBP ile HOG Farkları</title>
+<script src="../../ortak/tema.js?v=20261115115621"></script>
+<link rel="stylesheet" href="../../ortak/soru.css?v=20261115115621">
+<style>
+.adimlar{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;padding:0;list-style:none}
+.adimlar li{background:var(--kod);border:1px solid var(--cizgi);border-radius:99px;padding:3px 12px;font-weight:600;font-size:15px}
+.adimlar li+li::before{content:"→ ";color:var(--soluk);font-weight:400}
+.mgrid{display:inline-grid;gap:3px;vertical-align:top}
+.mgrid input,.mgrid span{width:46px;height:38px;text-align:center;font:15px ui-monospace,Menlo,Consolas,monospace;border:1px solid var(--cizgi);border-radius:7px;background:var(--yuzey);color:var(--yazi);padding:0;display:grid;place-items:center}
+.mgrid span.bos{color:var(--soluk)}
+.mgrid .sec{outline:3px solid #e0701d;outline-offset:-2px;background:var(--uyari-z)}
+.mgrid .simdi{background:var(--dugme);color:#fff;border-color:var(--dugme);font-weight:700}
+.mgrid.kutular span{width:auto;min-width:30px;padding:0 2px;font-size:13.5px}
+.yan{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start}
+.yan>div{min-width:0}
+.et{font-size:13.5px;color:var(--soluk);margin:0 0 4px;font-weight:600}
+.hesap{font:15px/1.7 ui-monospace,Menlo,Consolas,monospace;background:var(--yuzey);border:1px solid var(--cizgi);border-radius:10px;padding:10px 14px;margin:10px 0;overflow-x:auto;white-space:pre}
+.dugmeler{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+.onay{display:inline-flex;align-items:center;gap:6px;font-weight:600}
+.onay input{width:20px;height:20px}
+ol.cevap li{margin:8px 0}
+</style>
+</head>
+<body>
+<div class="sar">
+<nav class="gezin" aria-label="Site"><a href="../../index.html">← Ana sayfa</a></nav>
+
+<header class="kahraman">
+  <h1>LBP ile HOG Farkları</h1>
+  <p>"LBP ile HOG arasındaki farkları yazınız." Sözel soru: iki yöntemin kısa tanımı, fark tablosu, ortak noktalar ve kağıda yazılacak 6 maddelik cevap.</p>
+</header>
+
+<nav class="ic" aria-label="Sayfa içi bağlantılar">
+  <a href="#ozet">1 Özet</a><a href="#lbp">2 LBP</a><a href="#hog">3 HOG</a><a href="#gradyan">4 Gradyan ve yön</a><a href="#fark">5 Farklar</a><a href="#isik">6 Işığa dayanıklılık</a><a href="#ortak">7 Ortak noktalar</a><a href="#alistirma">8 Alıştırma</a><a href="#cevap">9 Sınav cevabı</a>
+</nav>
+
+<section id="ozet">
+  <h2><span class="no">1</span>Soru ne istiyor?</h2>
+  <p class="alt">Kod yok, hesap yok: iki yöntemi karşılaştıran kısa bir yazı.</p>
+  <div class="kutu sinav"><b class="bas">Sınav sorusu</b>LBP ile HOG arasındaki farkları yazınız.</div>
+  <p>İyi bir cevap üç parçadan oluşur:</p>
+  <ol>
+    <li><strong>İki tanım:</strong> LBP ne yapar, HOG ne yapar (birer cümle).</li>
+    <li><strong>Farklar:</strong> neyi yakalar, nasıl hesaplanır, ışığa dayanıklılık, hız, özellik boyutu, kullanım alanı.</li>
+    <li><strong>Ortak nokta:</strong> ikisi de histogram tabanlı klasik öznitelik çıkarma yöntemidir.</li>
+  </ol>
+  <div class="kutu ipucu"><b class="bas">Tek cümlelik özet</b><strong>LBP dokuya</strong> bakar (komşu merkezden büyük mü?), <strong>HOG şekle</strong> bakar (kenar hangi yöne gidiyor?).</div>
+</section>
+
+<section id="lbp">
+  <h2><span class="no">2</span>LBP (Local Binary Pattern)</h2>
+  <p class="alt">Yerel ikili örüntü. Anahtar kelime: karşılaştırma.</p>
+  <ol class="adimlar">
+    <li>3×3 komşuluk</li><li>8 komşuyu merkezle karşılaştır</li><li>8 bit</li><li>0–255 arası kod</li><li>Histogram</li>
+  </ol>
+  <p>LBP, görüntüdeki her pikseli 3×3 komşuluğundaki 8 komşusuyla karşılaştırır. Komşunun değeri merkez pikselden büyük ya da ona eşitse 1, küçükse 0 yazılır. Böylece 8 bitlik bir ikili sayı elde edilir ve bu sayı 0 ile 255 arasında bir değere çevrilir. Bu değerlerin histogramı görüntünün <strong>doku</strong> özelliğini verir.</p>
+  <p class="alt">Kodun kendisi ve elle hesabı için: <a href="../soru-05/index.html">Soru 5 – LBP kodu</a>.</p>
+</section>
+
+<section id="hog">
+  <h2><span class="no">3</span>HOG (Histogram of Oriented Gradients)</h2>
+  <p class="alt">Yönlü gradyanların histogramı. Anahtar kelime: gradyan yönü.</p>
+  <ol class="adimlar">
+    <li>Gradyan (büyüklük + yön)</li><li>Hücrelere böl</li><li>Hücrede yön histogramı</li><li>Blok normalizasyonu</li><li>Birleştir</li>
+  </ol>
+  <p>HOG, her pikselde gradyanın büyüklüğünü ve yönünü hesaplar. Görüntü küçük hücrelere bölünür (örneğin 8×8 piksel) ve her hücrede gradyan yönlerinin histogramı çıkarılır (genelde 9 yön aralığı). Bu histogramlar birleştirilip bloklar halinde normalize edilir ve nesnenin <strong>şekli</strong> ile kenar yapısı elde edilir.</p>
+  <div class="kaydir"><table class="t"><tbody>
+    <tr><th>Terim</th><th>Anlamı</th></tr>
+    <tr><td>Gradyan</td><td>Parlaklığın ne kadar ve hangi yöne doğru değiştiği. Kenarlarda büyük, düz bölgede sıfırdır.</td></tr>
+    <tr><td>Hücre</td><td>Görüntünün küçük bir karesi (örneğin 8×8 piksel). Her hücreye bir histogram düşer.</td></tr>
+    <tr><td>Yön histogramı</td><td>Hücredeki gradyanların hangi yönlerde toplandığı. Genelde 9 kutu: 0–180° arası, 20'şer derece.</td></tr>
+    <tr><td>Blok normalizasyonu</td><td>Komşu hücreler (örneğin 2×2 hücre) birlikte ölçeklenir; ışık ve kontrast farkı dengelenir.</td></tr>
+  </tbody></table></div>
+</section>
+
+<section id="gradyan">
+  <h2><span class="no">4</span>Aynı blok, iki bakış</h2>
+  <p class="alt">LBP komşuları merkezle kıyaslar; HOG karşılıklı komşuların farkını alır.</p>
+  <p>HOG'da merkez pikselin gradyanı iki farktan çıkar: <strong>Gx</strong> = sağ − sol, <strong>Gy</strong> = alt − üst. Büyüklük sqrt(Gx² + Gy²), yön ise bu iki farkın açısıdır. Piksel, büyüklüğü kadar oyu yönünün düştüğü kutuya verir.</p>
+  <div class="arac" id="aracA">
+    <h3>Uygulama: bir blokta LBP kodu ve gradyan</h3>
+    <p class="alt">Sayıları değiştir ya da hazır bir blok seç. Turuncu çerçeveli kutu merkezdir.</p>
+    <div class="dugmeler">
+      <button type="button" class="d ikinci" data-ornek="dikey">Dikey kenar</button>
+      <button type="button" class="d ikinci" data-ornek="yatay">Yatay kenar</button>
+      <button type="button" class="d ikinci" data-ornek="capraz">Çapraz kenar</button>
+      <button type="button" class="d ikinci" data-ornek="duz">Düz bölge</button>
+      <button type="button" class="d ikinci" data-ornek="doku">Karışık doku</button>
+    </div>
+    <div class="yan"><div><p class="et">blok</p><div class="mgrid" id="aBlok" style="grid-template-columns:repeat(3,46px)"></div></div></div>
+    <p class="et">LBP: komşu merkezden büyük mü?</p>
+    <div class="hesap" id="aLbp" aria-live="polite"></div>
+    <p class="et">HOG: parlaklık hangi yöne, ne kadar değişiyor?</p>
+    <div class="hesap" id="aHog" aria-live="polite"></div>
+    <p class="et">yön histogramına katkı (9 kutu: 0–20°, 20–40°, …, 160–180°)</p>
+    <div class="mgrid kutular" id="aKutu" style="grid-template-columns:repeat(9,minmax(30px,1fr));display:grid;max-width:420px"></div>
+    <p class="alt">Gerçek HOG'da oy komşu iki kutuya paylaştırılır ve bir hücredeki bütün pikseller toplanır; burada tek pikselin katkısı sade haliyle gösteriliyor.</p>
+  </div>
+  <ul>
+    <li><strong>Düz bölge:</strong> LBP yine bir kod üretir (255), HOG'da gradyan 0 olduğu için katkı yoktur.</li>
+    <li><strong>Kenar:</strong> HOG kenarın yönünü açı olarak verir; LBP sadece hangi komşuların büyük olduğunu söyler.</li>
+  </ul>
+</section>
+
+<section id="fark">
+  <h2><span class="no">5</span>Farklar tablosu</h2>
+  <p class="alt">Altı satır. Soldaki sütunu ezberlersen sağ taraf kendiliğinden gelir.</p>
+  <div class="kaydir"><table class="t"><tbody>
+    <tr><th>Özellik</th><th>LBP</th><th>HOG</th></tr>
+    <tr><td><strong>Neyi yakalar</strong></td><td>Doku (yüzey deseni)</td><td>Şekil ve kenar yapısı</td></tr>
+    <tr><td><strong>Nasıl hesaplanır</strong></td><td>Merkez piksel komşularla karşılaştırılır, 8 bitlik kod üretilir</td><td>Gradyan büyüklüğü ve yönü hesaplanır, hücrelerde yön histogramı çıkarılır</td></tr>
+    <tr><td><strong>Işığa dayanıklılık</strong></td><td>Çok dayanıklı (yalnızca büyük/küçük ilişkisine bakar)</td><td>Orta düzeyde (dayanıklılığı blok normalizasyonundan gelir)</td></tr>
+    <tr><td><strong>Hız</strong></td><td>Çok hızlı, basit işlemler</td><td>Daha yavaş, gradyan ve histogram hesabı gerekir</td></tr>
+    <tr><td><strong>Özellik boyutu</strong></td><td>Küçük (bölge başına 256 değer)</td><td>Büyük (binlerce boyutlu vektör)</td></tr>
+    <tr><td><strong>Kullanım alanı</strong></td><td>Yüz tanıma, doku sınıflandırma</td><td>Yaya tespiti, nesne tespiti</td></tr>
+  </tbody></table></div>
+  <div class="kutu ipucu"><b class="bas">Altı başlığı hatırlamak için</b>Ne, nasıl, ışık, hız, boyut, nerede. İlk ikisi yöntemin kendisi, ortadaki üçü özellikleri, sonuncusu kullanım alanı.</div>
+</section>
+
+<section id="isik">
+  <h2><span class="no">6</span>LBP ışığa neden daha dayanıklı?</h2>
+  <p class="alt">Resim aydınlanınca sayılar değişir ama büyük/küçük sırası değişmez.</p>
+  <div class="arac" id="aracB">
+    <h3>Uygulama: aynı bloğu aydınlat</h3>
+    <p class="alt">Işık değişimini taklit et, hangi değerin değiştiğine bak.</p>
+    <div class="dugmeler">
+      <label class="onay"><input type="checkbox" id="bEk"> Parlaklık: + 40</label>
+      <label class="onay"><input type="checkbox" id="bCarp"> Kontrast: × 2</label>
+    </div>
+    <div class="yan"><div><p class="et">blok (merkez mavi)</p><div class="mgrid" id="bBlok" style="grid-template-columns:repeat(3,46px)"></div></div></div>
+    <div class="hesap" id="bSonuc" aria-live="polite"></div>
+  </div>
+  <ul>
+    <li><strong>LBP kodu iki durumda da aynı kalır:</strong> bütün piksellere aynı sayı eklense ya da hepsi aynı sayıyla çarpılsa da komşunun merkezden büyük olup olmadığı değişmez.</li>
+    <li><strong>HOG'da yön aynı kalır, büyüklük kontrastla değişir.</strong> Histograma büyüklük kadar oy verildiği için sonuç etkilenir; bunu dengeleyen adım <strong>blok normalizasyonudur</strong>.</li>
+  </ul>
+</section>
+
+<section id="ortak">
+  <h2><span class="no">7</span>Ortak noktalar</h2>
+  <p class="alt">Soru fark istiyor ama son cümleye bir ortak nokta eklemek cevabı tamamlar.</p>
+  <ul>
+    <li>İkisi de <strong>elle tasarlanmış (klasik) öznitelik çıkarma</strong> yöntemidir.</li>
+    <li>İkisi de sonucu <strong>histogram</strong> olarak verir.</li>
+    <li>İkisi de <strong>yerel bölgelerden</strong> bilgi toplar ve genellikle SVM gibi sınıflandırıcılarla birlikte kullanılır.</li>
+  </ul>
+</section>
+
+<section id="alistirma">
+  <h2><span class="no">8</span>Alıştırma</h2>
+  <p class="alt">Cümle hangisini anlatıyor?</p>
+  <div class="arac" id="aracQ">
+    <h3>Alıştırma: LBP mi, HOG mu?</h3>
+    <div class="ilerle" aria-hidden="true"><i id="qBar"></i></div>
+    <p id="qSkor" class="alt">Doğru: 0 / 0</p>
+    <p id="qSoru" style="font-weight:600;font-size:17px"></p>
+    <div class="dugmeler" id="qSec">
+      <button type="button" class="d" data-c="L">LBP</button>
+      <button type="button" class="d" data-c="H">HOG</button>
+      <button type="button" class="d" data-c="I">İkisi de</button>
+      <button type="button" class="d ikinci" id="qYeni">Sonraki cümle</button>
+    </div>
+    <p class="sonuc" id="qSonuc" aria-live="polite"></p>
+  </div>
+</section>
+
+<section id="cevap">
+  <h2><span class="no">9</span>Sınav cevabı (kağıda yazılacak hali)</h2>
+  <p class="alt">Altı madde. İlk ikisi tanım, sonraki dördü fark.</p>
+  <div class="kutu dogru">
+  <ol class="cevap">
+    <li>LBP, her pikseli 3×3 komşuluğundaki 8 komşusuyla karşılaştırarak 8 bitlik bir ikili kod (0–255) üretir ve bu kodların histogramıyla dokuyu tanımlar.</li>
+    <li>HOG, piksellerin gradyan büyüklüğünü ve yönünü hesaplar, görüntüyü hücrelere ayırır ve her hücrede yön histogramı çıkararak şekli tanımlar.</li>
+    <li>LBP doku bilgisini, HOG ise kenar ve şekil bilgisini yakalar.</li>
+    <li>LBP yalnızca büyük/küçük karşılaştırması yaptığı için ışık değişimine daha dayanıklıdır. HOG'un ışık dayanıklılığı blok normalizasyonuna bağlıdır.</li>
+    <li>LBP daha hızlıdır ve daha küçük boyutlu özellik üretir. HOG ise daha yavaştır ve yüksek boyutlu bir özellik vektörü üretir.</li>
+    <li>LBP genellikle yüz tanıma ve doku sınıflandırmada, HOG ise yaya ve nesne tespitinde kullanılır. İkisi de histogram tabanlı klasik öznitelik çıkarma yöntemleridir.</li>
+  </ol>
+  </div>
+  <h3>Vakit azsa: anahtar kelimeler</h3>
+  <div class="kaydir"><table class="t"><tbody>
+    <tr><th></th><th>LBP</th><th>HOG</th></tr>
+    <tr><td>Tanım</td><td>3×3, 8 komşu, karşılaştırma, 8 bit, 0–255</td><td>gradyan, büyüklük ve yön, hücre, 9 yön</td></tr>
+    <tr><td>Yakaladığı</td><td>doku</td><td>şekil, kenar</td></tr>
+    <tr><td>Işık</td><td>çok dayanıklı</td><td>orta, normalizasyonla</td></tr>
+    <tr><td>Hız / boyut</td><td>hızlı, küçük (256)</td><td>yavaş, büyük (binlerce)</td></tr>
+    <tr><td>Kullanım</td><td>yüz tanıma, doku</td><td>yaya, nesne tespiti</td></tr>
+  </tbody></table></div>
+  <h3>Puan kaybettiren şeyler</h3>
+  <div class="kaydir"><table class="t"><tbody>
+    <tr><th>Hata</th><th>Doğrusu</th></tr>
+    <tr><td>Sadece LBP'yi ve HOG'u ayrı ayrı anlatmak</td><td>Soru fark istiyor: her maddede ikisini yan yana yaz ("LBP …, HOG ise …")</td></tr>
+    <tr><td>Doku ile şekli ters yazmak</td><td>LBP = doku, HOG = şekil ve kenar</td></tr>
+    <tr><td>"HOG ışığa dayanıksızdır" demek</td><td>Orta düzeyde dayanıklıdır; dayanıklılığı blok normalizasyonundan gelir</td></tr>
+    <tr><td>LBP'yi gradyanla anlatmak</td><td>LBP'de gradyan yok, sadece büyük/küçük karşılaştırması var</td></tr>
+    <tr><td>HOG'u "256'lık histogram" diye yazmak</td><td>256 LBP'nindir; HOG'da hücre başına genelde 9 yön kutusu vardır</td></tr>
+    <tr><td>Kullanım alanlarını karıştırmak</td><td>LBP: yüz tanıma, doku. HOG: yaya ve nesne tespiti</td></tr>
+  </tbody></table></div>
+</section>
+
+<footer>Soru 6 · kaynak: kullanıcının kendi ders sohbeti</footer>
+</div>
+
+<script src="../../ortak/soru.js?v=20261115115621"></script>
+<script src="soru.js?v=20261115115621"></script>
+</body>
+</html>

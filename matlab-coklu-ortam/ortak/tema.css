@@ -1,0 +1,8 @@
+/* Renklerin TEK kaynağı. Açık tema :root'ta, koyu tema [data-theme="dark"] altında.
+   data-theme özniteliğini ortak/tema.js koyar (kayıtlı seçim, yoksa sistem teması). */
+:root{color-scheme:light;--zemin:#f3f6f9;--yuzey:#fff;--yazi:#15171a;--soluk:#59606a;--cizgi:#dde2e8;--mavi:#1d5fe0;--dugme:#1d5fe0;--turkuaz:#0e8f9a;--kod:#f1f4f8;--olumlu:#13703f;--olumlu-z:#e3f6ea;--hata:#b4232a;--hata-z:#fdeceb;--uyari-z:#fff6dc;--uyari:#7a4a05;--kirmizi:#d93025;--yesil:#188038;--mavi-k:#1a56db;
+ --k-k:#0b3fd0;--k-y:#1d7a33;--k-s:#9219c2;--k-n:#8f4a00;--k-f:#006a75;
+ --r-z:#fde4e1;--r-y:#a5170e;--g-z:#dff3e4;--g-y:#0d6a2e;--b-z:#e0e9fd;--b-y:#1745ad}
+:root[data-theme="dark"]{color-scheme:dark;--zemin:#0b0b0c;--yuzey:#161718;--yazi:#ececec;--soluk:#a3a7ad;--cizgi:#2b2d31;--mavi:#6aa4ff;--dugme:#2f6fe6;--turkuaz:#4cc9d3;--kod:#1e2024;--olumlu:#7fdcab;--olumlu-z:#15281d;--hata:#f3a0aa;--hata-z:#2e1a1e;--uyari-z:#2b2412;--uyari:#e9c46a;--kirmizi:#ff6b5f;--yesil:#5cd687;--mavi-k:#6aa4ff;
+ --k-k:#82aaff;--k-y:#74c283;--k-s:#d596f7;--k-n:#e0a567;--k-f:#5cc8c8;
+ --r-z:#3a1b18;--r-y:#ff9b91;--g-z:#14301d;--g-y:#8fe3aa;--b-z:#17264a;--b-y:#9bbcff}

@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Soru 1 – RGB Görüntü Analizi</title>
+<script src="../../ortak/tema.js?v=20261115115621"></script>
+<link rel="stylesheet" href="../../ortak/soru.css?v=20261115115621">
+</head>
+<body>
+<div class="sar">
+<nav class="gezin" aria-label="Site"><a href="../../index.html">← Ana sayfa</a></nav>
+
+<header class="kahraman">
+  <span class="etiket">Soru 1</span>
+  <h1>RGB Görüntü Analizi</h1>
+  <p>"RGB image analysis" yapan kodu yazınız ve açıklayınız. Kodun her satırı, neden orada olduğu ve elle hesap, hepsi burada.</p>
+  <div class="serit" aria-hidden="true"><i></i><i></i><i></i></div>
+</header>
+
+<nav class="ic" aria-label="Sayfa içi bağlantılar">
+  <a href="#ozet">1 Özet</a><a href="#matris">2 Görüntü = matris</a><a href="#katman">3 Üç katman</a><a href="#kod">4 Kod satır satır</a><a href="#tip">5 uint8 / double</a><a href="#subplot">6 subplot</a><a href="#hesap">7 Elle hesap</a><a href="#cevap">8 Sınav cevabı</a><a href="#ek">9 Ek: gri + histogram</a>
+</nav>
+
+<section id="ozet">
+  <h2><span class="no">1</span>Soru ne istiyor?</h2>
+  <p class="alt">Renkli bir resmi okuyup kırmızı, yeşil ve mavi bileşenlerini ayrı ayrı göstermek.</p>
+  <p>Kodun dört aşaması var. Sınavda boş kağıda önce bu dört satırı yaz, sonra kodu doldur:</p>
+  <table class="t"><tbody>
+    <tr><th>Aşama</th><th>Ne yapılır</th><th>Kodda</th></tr>
+    <tr><td>1</td><td>Ortamı temizle</td><td><code>clc,clear all,close all</code></td></tr>
+    <tr><td>2</td><td>Resmi oku, boyutlarını al</td><td><code>imread</code>, <code>size</code></td></tr>
+    <tr><td>3</td><td>Üç boş resim oluştur, her birine tek katman kopyala</td><td><code>zeros</code>, <code>(:,:,k)</code></td></tr>
+    <tr><td>4</td><td>Üçünü aynı pencerede, doğru tiple göster</td><td><code>subplot</code>, <code>imshow(uint8(..))</code></td></tr>
+  </tbody></table>
+  <div class="kutu sinav"><b class="bas">Sınavda puan nereden gelir?</b>Soru "yazınız <u>ve açıklayınız</u>" diyor. Kod doğru olsa bile açıklamasız kağıt puan kaybeder. Her satırın yanına kısa bir cümle yaz.</div>
+</section>
+
+<section id="matris">
+  <h2><span class="no">2</span>Görüntü = sayı matrisi</h2>
+  <p class="alt">Piksel, 0–255 ve uint8.</p>
+  <p>Bilgisayar için resim, sayılardan oluşan bir tablodur. Tablodaki her kutu bir <strong>pikseldir</strong>, içindeki sayı o noktanın parlaklığıdır: <strong>0 = siyah</strong>, <strong>255 = beyaz</strong>, arası gri tonları.</p>
+  <p><strong>Neden 255?</strong> Her piksel 8 bitle saklanır, 2<sup>8</sup> = 256 farklı değer yazılabilir (0'dan 255'e). MATLAB'da bu tipin adı <code>uint8</code> (unsigned integer 8 bit). C'deki karşılığı <code>unsigned char</code>.</p>
+<pre class="kod">
+A = [ 0 128 255
+      50 200 10 ]
+A(1,2)    % 128  (1. satır, 2. sütun)
+</pre>
+  <div class="kaydir"><table class="t"><tbody>
+    <tr><th></th><th>C</th><th>MATLAB</th></tr>
+    <tr><td>Eleman okuma</td><td><code>A[i][j]</code></td><td><code>A(i,j)</code></td></tr>
+    <tr><td>İndeks başlangıcı</td><td>0</td><td><strong>1</strong></td></tr>
+    <tr><td>Sol üst piksel</td><td><code>A[0][0]</code></td><td><code>A(1,1)</code></td></tr>
+  </tbody></table></div>
+  <div class="kutu hata"><b class="bas">Sık hata</b>C alışkanlığıyla <code>A(0,0)</code> yazmak. MATLAB'da 0. indeks yoktur, hata verir.</div>
+  <div class="kutu ipucu"><b class="bas">uint8'e 300 yazılır mı?</b>Hayır. 8 bitle en fazla 2<sup>8</sup> = 256 değer yazılır, en büyük sayı 255'tir. (MATLAB hata vermez, 255'e kırpar; buna doygunluk denir.)</div>
+</section>
+
+<section id="katman">
+  <h2><span class="no">3</span>Renkli resim = 3 katmanlı matris</h2>
+  <p class="alt">Boyutu satır × sütun × 3.</p>
+  <p>Siyah-beyazda piksel başına tek sayı yeter. Renklide her piksel için <strong>3 sayı</strong> gerekir: <span class="rozet r">R kırmızı</span><span class="rozet g">G yeşil</span><span class="rozet b">B mavi</span>. Ekrandaki her renk bu üç ışığın karışımıdır. Resim, üst üste konmuş üç matristir. Sıra hep R-G-B.</p>
+  <p>Tek sayıya ulaşmak için üçüncü bir indeks eklenir: <code>resim(satır, sütun, katman)</code>.</p>
+  <div class="kaydir"><table class="t"><tbody>
+    <tr><th></th><th>C</th><th>MATLAB</th></tr>
+    <tr><td>Tanım</td><td><code>unsigned char resim[2][2][3];</code></td><td>boyutu 2×2×3 olan matris</td></tr>
+    <tr><td>(1,1) pikselinin kırmızısı</td><td><code>resim[0][0][0]</code></td><td><code>resim(1,1,1)</code></td></tr>
+    <tr><td>(1,2) pikselinin yeşili</td><td><code>resim[0][1][1]</code></td><td><code>resim(1,2,2)</code></td></tr>
+  </tbody></table></div>
+
+  <h3>İki nokta (:) = "hepsi"</h3>
+  <p>Bir indeksin yerine <code>:</code> yazarsan o boyuttaki hepsini al demek olur.</p>
+  <div class="kaydir"><table class="t"><tbody>
+    <tr><th>Yazım</th><th>Sözle oku</th><th>A = [10 20 30; 40 50 60] için</th></tr>
+    <tr><td><code>A(2,3)</code></td><td>2. satır, 3. sütun</td><td>60</td></tr>
+    <tr><td><code>A(1,:)</code></td><td>1. satır, tüm sütunlar</td><td>[10 20 30]</td></tr>
+    <tr><td><code>A(:,2)</code></td><td>tüm satırlar, 2. sütun</td><td>[20; 50] (alt alta)</td></tr>
+    <tr><td><code>resim(:,:,1)</code></td><td>tüm satırlar, tüm sütunlar, <strong>1. katman</strong></td><td>R katmanının tamamı</td></tr>
+  </tbody></table></div>
+  <p><code>K=resim(:,:,1);</code> tek satırı, C'deki iki iç içe döngünün yaptığını yapar:</p>
+<pre class="kod">
+for i=1:w
+  for j=1:h
+    K(i,j)=resim(i,j,1);
+  end
+end
+</pre>
+
+  <div class="arac" id="aracA">
+    <h3>Uygulama: 2×2×3 resmi kendin düzenle</h3>
+    <p class="alt">Piksellerin R, G, B değerlerini değiştir. Kodun ürettiği üç resmi ve matrisleri gör.</p>
+    <p><strong>Resim</strong> (sayıları değiştirebilirsin, 0–255):</p>
+    <div class="izgara g4" id="aGiris"></div>
+    <p style="margin-top:12px"><label><input type="checkbox" id="aMod" checked> <code>uint8(...)</code> ile göster (kapatırsan <code>double</code>, yani <code>uint8</code> yok)</label></p>
+    <p><strong>Orijinal ve ürettiği üç resim</strong></p>
+    <div class="izgara g4" id="aCikis"></div>
+    <details><summary>Matrisleri göster (R, G, B resimlerinin katmanları)</summary><div class="kaydir" id="aMat"></div></details>
+    <p><button type="button" class="d ikinci" id="aSifirla">Sohbetteki örneğe dön</button></p>
+  </div>
+</section>
+
+<section id="kod">
+  <h2><span class="no">4</span>Hocanın kodu, satır satır</h2>
+  <p class="alt">Her satır neden orada, C'deki karşılığı ne.</p>
+<pre class="kod" data-kopya>
+clc,clear all,close all
+resim=imread("football.jpg");
+[w,h,l]=size(resim);
+R=zeros(w,h,l);
+G=zeros(w,h,l);
+B=zeros(w,h,l);
+R(:,:,1)=resim(:,:,1);
+G(:,:,2)=resim(:,:,2);
+B(:,:,3)=resim(:,:,3);
+subplot(3,1,1),imshow(uint8(R))
+subplot(3,1,2),imshow(uint8(G))
+subplot(3,1,3),imshow(uint8(B))
+</pre>
+
+  <div class="satir">
+    <pre class="kod">clc,clear all,close all</pre>
+    <p class="ne"><strong>Temizlik.</strong> Üç komut virgülle aynı satırda. Önceki çalışmadan kalan şeyler yeni kodu karıştırmasın.</p>
+    <p class="c"><code>clc</code> komut penceresindeki yazıları, <code>clear all</code> bellekteki tüm değişkenleri, <code>close all</code> açık şekil pencerelerini temizler. Örnek sorun: eski bir <code>R</code> bellekte kalırsa yeni kod onun üzerine yazar.</p>
+  </div>
+  <div class="satir">
+    <pre class="kod">resim=imread("football.jpg");</pre>
+    <p class="ne"><strong>Resmi oku.</strong> <code>imread</code> (image read) dosyayı açıp pikselleri matris olarak verir. Renkli resim için sonuç 3 katmanlı bir <code>uint8</code> matrisidir.</p>
+    <p class="c">Sondaki <code>;</code> C'deki gibi zorunlu değil: sonucu ekrana yazdırmayı engeller. Koymazsan on binlerce sayı ekrana dökülür.</p>
+  </div>
+  <div class="satir">
+    <pre class="kod">[w,h,l]=size(resim);</pre>
+    <p class="ne"><strong>Boyutları öğren.</strong> <code>size</code> 3 boyutlu matriste 3 sayı döner: <strong>satır, sütun, katman</strong>. Bu resim için w=256, h=320, l=3.</p>
+    <p class="c">C'de fonksiyon tek değer döndürür, MATLAB'da birden fazla döndürebilir. Belirleyici olan isim değil sıradır: ilk gelen hep satırdır (w "genişlik" gibi dursa da satır sayısıdır).</p>
+  </div>
+  <div class="satir">
+    <pre class="kod">R=zeros(w,h,l);
+G=zeros(w,h,l);
+B=zeros(w,h,l);</pre>
+    <p class="ne"><strong>Üç boş resim.</strong> <code>zeros(w,h,l)</code> her yeri 0 olan, orijinalle aynı boyutta matris üretir. Üç katman da 0 olduğu için simsiyah bir renkli resimdir. Boyutları bu yüzden önceden aldık.</p>
+    <p class="c">C'de diziyi tanımlayıp döngüyle tüm elemanlarına 0 atamak gerekirdi. <strong>Önemli:</strong> <code>zeros</code> her zaman <code>double</code> üretir.</p>
+  </div>
+  <div class="satir">
+    <pre class="kod">R(:,:,1)=resim(:,:,1);
+G(:,:,2)=resim(:,:,2);
+B(:,:,3)=resim(:,:,3);</pre>
+    <p class="ne"><strong>Tek katmanı kopyala.</strong> Eşittirin iki yanını ayrı oku. Sağ: orijinalin kırmızı katmanı. Sol: boş resmin 1. katmanı. Yani "orijinalin kırmızısını, boş resmin kırmızı katmanına yaz". Diğer iki katmana dokunulmaz, 0 kalır.</p>
+    <p class="c">Sonuç: R resminde yeşil ve mavi ışık kapalı, sadece kırmızı yanar, o yüzden kırmızı tonlarında görünür. <span class="rozet r">R</span>=1. katman, <span class="rozet g">G</span>=2. katman, <span class="rozet b">B</span>=3. katman. Katman numarası, kopyalanan ve doldurulan yerde <strong>aynıdır</strong>.</p>
+  </div>
+  <div class="satir">
+    <pre class="kod">subplot(3,1,1),imshow(uint8(R))</pre>
+    <p class="ne"><strong>Göster.</strong> <code>subplot(3,1,1)</code> pencereyi 3 satır × 1 sütuna böler, 1. kutuyu seçer. Virgülden sonra <code>imshow</code> o kutuya çizer. <code>uint8(R)</code> tip dönüşümü: ayrıntısı bir sonraki bölümde.</p>
+    <p class="c">C'de tip dönüşümü <code>(unsigned char)x</code>, MATLAB'da <code>uint8(x)</code>.</p>
+  </div>
+</section>
+
+<section id="tip">
+  <h2><span class="no">5</span>Neden <code>imshow(uint8(R))</code>?</h2>
+  <p class="alt">uint8 ve double farkı.</p>
+  <table class="t"><tbody>
+    <tr><th></th><th>uint8</th><th>double</th></tr>
+    <tr><td>Ne tutar</td><td>0–255 arası tam sayı</td><td>ondalıklı, büyük ya da negatif sayılar</td></tr>
+    <tr><td>Koddaki yeri</td><td><code>resim</code> (<code>imread</code> sonucu)</td><td><code>R, G, B</code> (<code>zeros</code> sonucu)</td></tr>
+    <tr><td><code>imshow</code> aralığı</td><td>0 siyah, 255 en parlak</td><td>0 siyah, <strong>1</strong> ve üstü en parlak</td></tr>
+  </tbody></table>
+  <p><code>R(:,:,1)=resim(:,:,1)</code> ile içine uint8 sayılar kopyalansa bile <code>R</code>'nin tipi <strong>double kalır</strong>. Değerler aynıdır, tip farklıdır. <code>imshow</code> double matriste 1 ve üstünün hepsini "tam parlak" sayar, tonlar kaybolur. <code>uint8(R)</code> ile tipi çevirince 0–255 ölçeği kullanılır.</p>
+  <div class="kutu dogru"><b class="bas">Sınavda yazılacak cümle</b>"zeros double matris üretir; imshow double'da 0-1 aralığı beklediği için matrisi uint8'e çevirerek gösteriyoruz."</div>
+
+  <div class="arac" id="aracB">
+    <h3>Uygulama: football resmini katmanlarına ayır</h3>
+    <p class="alt">Gerçek 256×320×3 resim. Resmin üstüne tıkla, o pikselin değerlerini gör.</p>
+    <p><label><input type="checkbox" id="bMod" checked> <code>uint8(...)</code> ile göster</label> <span class="alt" style="margin-left:8px">Kapat: double gibi, 0'dan büyük her değer tam parlak olur.</span></p>
+    <div class="izgara g4">
+      <div class="hucre"><b>Orijinal (resim)</b><canvas class="res" id="bO" width="320" height="256"></canvas></div>
+      <div class="hucre"><span class="rozet r">R</span><b>R resmi</b><canvas class="res" id="bR" width="320" height="256"></canvas></div>
+      <div class="hucre"><span class="rozet g">G</span><b>G resmi</b><canvas class="res" id="bG" width="320" height="256"></canvas></div>
+      <div class="hucre"><span class="rozet b">B</span><b>B resmi</b><canvas class="res" id="bB" width="320" height="256"></canvas></div>
+    </div>
+    <p class="sonuc" id="bBilgi" aria-live="polite">Orijinal resme tıkla.</p>
+    <h3>Katman toplama: ışıkları aç / kapat</h3>
+    <p><label><input type="checkbox" class="bk" data-k="0" checked> <span class="rozet r">R</span></label> &nbsp; <label><input type="checkbox" class="bk" data-k="1" checked> <span class="rozet g">G</span></label> &nbsp; <label><input type="checkbox" class="bk" data-k="2" checked> <span class="rozet b">B</span></label></p>
+    <canvas class="res" id="bT" width="320" height="256" style="max-width:420px"></canvas>
+    <p class="alt">Üçü açıkken orijinal, tek biri açıkken o bileşen, ikisi açıkken karışım (örn. R+G = sarı).</p>
+  </div>
+</section>
+
+<section id="subplot">
+  <h2><span class="no">6</span>subplot</h2>
+  <p class="alt"><code>subplot(satır, sütun, sıra)</code></p>
+  <p>Art arda üç <code>imshow</code> yazarsan her biri öncekinin üstüne çizer, sadece sonuncusu kalır. <code>subplot</code> pencereyi kutulara böler. Kutular <strong>soldan sağa, sonra aşağı</strong> numaralanır.</p>
+<pre class="kod">
+subplot(3,1,1)   % 3 satır, 1 sütun, 1. kutu (alt alta)
+subplot(1,3,2)   % 1 satır, 3 sütun, 2. kutu (yan yana)
+subplot(2,2,3)   % 2x2, 3. kutu = sol alt
+</pre>
+  <div class="kaydir"><table class="t"><tbody>
+    <tr><th>subplot(3,1,k)</th><th>subplot(1,3,k)</th><th>subplot(2,2,k)</th></tr>
+    <tr><td><div class="sp" style="grid-template-columns:repeat(1,1fr)"><div>1</div><div>2</div><div>3</div></div></td><td><div class="sp" style="grid-template-columns:repeat(3,1fr)"><div>1</div><div>2</div><div>3</div></div></td><td><div class="sp" style="grid-template-columns:repeat(2,1fr)"><div>1</div><div>2</div><div>3</div><div>4</div></div></td></tr>
+  </tbody></table></div>
+  <div class="kutu ipucu"><b class="bas">Açıklama cümlesi</b><code>subplot(3,1,2),imshow(uint8(G))</code>: pencere alt alta 3 kutuya bölünür, 2. kutu seçilir ve oraya G resmi (sadece yeşil katmanı dolu olan 3 katmanlı resim) çizilir.</div>
+</section>
+
+<section id="hesap">
+  <h2><span class="no">7</span>Kağıt üzerinde elle hesap</h2>
+  <p class="alt">Küçük bir resim veriliyor, kod çalışınca R, G, B ne olur?</p>
+  <p><strong>Yöntem:</strong> (1) <code>zeros</code> ile üç katman da 0. (2) Sadece bir katman orijinalden kopyalanır, diğer ikisi 0 kalır.</p>
+  <h3>Çözülmüş örnek</h3>
+  <p>Resim (2×2×3):</p>
+<pre class="kod">
+Katman 1 (R)    Katman 2 (G)    Katman 3 (B)
+[ 200  10 ]     [  50 120 ]     [   0  60 ]
+[   0  90 ]     [ 255  30 ]     [  80 240 ]
+</pre>
+  <p><code>R</code> matrisinin üç katmanı (sadece 1. katman dolu):</p>
+<pre class="kod">
+Katman 1        Katman 2        Katman 3
+[ 200  10 ]     [ 0 0 ]         [ 0 0 ]
+[   0  90 ]     [ 0 0 ]         [ 0 0 ]
+</pre>
+  <p><code>G</code>: katman 2 = [50 120; 255 30], diğerleri sıfır. <code>B</code>: katman 3 = [0 60; 80 240], diğerleri sıfır.</p>
+  <p>Orijinalde (2,1) pikselinin üçlüsü (0, 255, 80). <strong>B resminde</strong> bu piksel (0, 0, 80) olur: sadece mavi ışık yanıyor, <strong>koyu mavi</strong> görünür (80/255).</p>
+  <div class="kutu dikkat"><b class="bas">Üçlüyü tam yaz</b>"80" yazma, <strong>(0, 0, 80)</strong> yaz. Diğer iki katmanın 0 olduğunu bildiğin anlaşılsın. Matrisleri tek satıra dizme, satır satır yaz.</div>
+  <div class="kutu dikkat"><b class="bas">Beyaz değil, tek ışık</b>(100, 0, 0) pikseli "beyaz" ya da "gri" değil, <strong>kırmızıdır</strong> (koyu tonu). Beyaz ancak üç ışık birden yanarsa olur: (255, 255, 255). Orijinalde beyaz olan bir pikselin G resminde yeşil görünmesi bu yüzdendir.</div>
+
+  <div class="arac" id="aracQ">
+    <h3>Alıştırma: rastgele sorular</h3>
+    <p class="alt">Her seferinde yeni bir resim. Cevabı sayılarla yaz, boşlukla ayır (örn. <code>0 255 0</code>).</p>
+    <div class="ilerle" aria-hidden="true"><i id="qBar"></i></div>
+    <p id="qSkor" class="alt">Doğru: 0 / 0</p>
+    <div class="kaydir" id="qResim"></div>
+    <p id="qSoru" style="font-weight:600"></p>
+    <p><input type="text" id="qCevap" style="width:200px" autocomplete="off" aria-label="Cevap"> <button type="button" class="d" id="qKontrol">Kontrol et</button> <button type="button" class="d ikinci" id="qYeni">Yeni soru</button></p>
+    <p class="sonuc" id="qSonuc" aria-live="polite"></p>
+  </div>
+</section>
+
+<section id="cevap">
+  <h2><span class="no">8</span>Sınav cevabı (kağıda yazılacak hali)</h2>
+  <p class="alt">Kod + her satırın açıklaması.</p>
+<pre class="kod" data-kopya>
+clc,clear all,close all            % ekranı, değişkenleri, pencereleri temizle
+resim=imread("football.jpg");      % resmi oku, 3 katmanlı uint8 matris olarak al
+[w,h,l]=size(resim);               % satır, sütun, katman sayısını al
+R=zeros(w,h,l);                    % aynı boyutta boş (siyah) resim (double)
+G=zeros(w,h,l);
+B=zeros(w,h,l);
+R(:,:,1)=resim(:,:,1);             % sadece kırmızı katmanı kopyala
+G(:,:,2)=resim(:,:,2);             % sadece yeşil katmanı kopyala
+B(:,:,3)=resim(:,:,3);             % sadece mavi katmanı kopyala
+subplot(3,1,1),imshow(uint8(R))    % 1. kutuya kırmızı bileşeni çiz; zeros double olduğu için uint8'e çevir
+subplot(3,1,2),imshow(uint8(G))    % 2. kutuya yeşil bileşen
+subplot(3,1,3),imshow(uint8(B))    % 3. kutuya mavi bileşen
+</pre>
+  <div class="kutu sinav"><b class="bas">Kısa genel açıklama (2-3 cümle)</b>Renkli resim, her biri R, G ve B bileşenini tutan 3 katmanlı bir matristir. Kod resmi okur, her bileşen için sıfırlardan oluşan bir resim oluşturup sadece ilgili katmanı kopyalar ve üç bileşeni <code>subplot</code> ile alt alta gösterir. <code>zeros</code> double üretir, bu yüzden <code>imshow</code> öncesinde <code>uint8</code>'e çevrilir.</div>
+
+  <h3>Puan kaybettiren şeyler</h3>
+  <div class="kaydir"><table class="t"><tbody>
+    <tr><th>Hata</th><th>Doğrusu</th></tr>
+    <tr><td>Açıklama yazmamak</td><td>Her satırın yanına kısa cümle</td></tr>
+    <tr><td><code>unit8(R)</code></td><td><code>uint8(R)</code> (u + int + 8)</td></tr>
+    <tr><td><code>A(0,0)</code></td><td><code>A(1,1)</code>, indeks 1'den başlar</td></tr>
+    <tr><td><code>clear all</code> / <code>close all</code> eksik</td><td>Çalışır ama hocanın kodunda üçü de var</td></tr>
+    <tr><td><code>r</code> yerine <code>R</code> yazmak (ya da tersi)</td><td>MATLAB büyük-küçük harf ayırır, tutarlı ol</td></tr>
+    <tr><td><code>imshow(R)</code> (uint8'siz)</td><td><code>imshow(uint8(R))</code></td></tr>
+    <tr><td>Katman numarasını karıştırmak</td><td>R→1, G→2, B→3, iki yanda aynı</td></tr>
+  </tbody></table></div>
+  <details>
+    <summary>Benzer soru: 2×2 düzen (orijinal, kırmızı, yeşil, mavi)</summary>
+    <p>Aynı kod, sadece <code>subplot</code> sayıları ve orijinalin gösterimi değişir:</p>
+<pre class="kod">
+resim=imread("manzara.png");
+[w,h,l]=size(resim);
+R=zeros(w,h,l); G=zeros(w,h,l); B=zeros(w,h,l);
+R(:,:,1)=resim(:,:,1);
+G(:,:,2)=resim(:,:,2);
+B(:,:,3)=resim(:,:,3);
+subplot(2,2,1),imshow(resim)         % orijinal zaten uint8, çevirmeye gerek yok
+subplot(2,2,2),imshow(uint8(R))
+subplot(2,2,3),imshow(uint8(G))
+subplot(2,2,4),imshow(uint8(B))
+</pre>
+    <p>Orijinal <code>imread</code>'den geldiği için zaten <code>uint8</code>'dir, <code>uint8(...)</code> gerekmez (yazsan da zararı olmaz).</p>
+  </details>
+</section>
+
+<section id="ek">
+  <h2><span class="no">9</span>Ek: gri seviye ve histogram</h2>
+  <p class="alt">Vakit kalırsa. Bu bölüm sohbette işlenmedi; hocanın formülü farklı olabilir (örn. üç katmanın ortalaması).</p>
+  <p>Renkliyi griye çevirmek, her piksel için üç sayıyı tek sayıya indirmektir. Yaygın ağırlıklı formül: <code>0.299*R + 0.587*G + 0.114*B</code>. Histogram, 0–255 arasındaki her değerden kaç piksel olduğunu sayar.</p>
+<pre class="kod" data-kopya>
+resim=imread("football.jpg");
+[w,h,l]=size(resim);
+gri=zeros(w,h);
+histo=zeros(1,256);
+for i=1:w
+  for j=1:h
+    gri(i,j)=0.299*double(resim(i,j,1))+0.587*double(resim(i,j,2))+0.114*double(resim(i,j,3));
+    deger=round(gri(i,j));
+    histo(deger+1)=histo(deger+1)+1;   % +1: değer 0 olabilir, indeks 1'den başlar
+  end
+end
+</pre>
+  <div class="kutu ipucu"><b class="bas"><code>histo(deger+1)</code> neden +1?</b>Parlaklık 0 olabilir ama MATLAB'da <code>histo(0)</code> yoktur. Değer 0 → 1. kutu, değer 255 → 256. kutu. O yüzden <code>histo</code> 256 elemanlı ve indeks <code>deger+1</code>. <code>double(...)</code> ise uint8 aritmetiğinde taşma ve yuvarlama sorunu çıkmasın diye.</div>
+  <div class="arac">
+    <h3>football resminin histogramı</h3>
+    <canvas class="res" id="hC" width="512" height="200" style="background:var(--yuzey)"></canvas>
+    <p class="alt" id="hBilgi"></p>
+  </div>
+</section>
+
+<footer>Soru 1 · kaynak: kullanıcının kendi ders sohbeti · football örnek resmi: Petey21, CC0 (Wikimedia Commons)</footer>
+</div>
+
+<script src="football.js?v=20261115115621"></script>
+<script src="../../ortak/soru.js?v=20261115115621"></script>
+<script src="soru.js?v=20261115115621"></script>
+</body>
+</html>

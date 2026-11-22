@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E-Delil Vize Çalışma</title>
+<meta name="theme-color" content="#f5f2ea" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1c1e22" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%228%22 fill=%22%233d6b8f%22/%3E%3Ctext x=%2216%22 y=%2222%22 font-size=%2216%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22sans-serif%22%3EeD%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="readbar"><div id="readbar"></div></div>
+<header class="topbar">
+  <button id="menuBtn" class="icon-btn" aria-label="İçindekiler">☰</button>
+  <span class="topbar-title">E-Delil Vize</span>
+  <span class="topbar-sec" id="curSec"></span>
+  <button id="themeBtn2" class="icon-btn" aria-label="Tema">◐</button>
+</header>
+<div class="overlay" id="overlay"></div>
+<div class="layout">
+<nav class="side" id="side">
+  <div class="brand"><span class="logo">eD</span><div><h1>E-Delil Vize</h1>
+  <div class="sub">Elektronik Delil ve Bilgisayar Suçları</div></div></div>
+  <a href="#plan">0 · Sınav tarzı ve plan</a>
+  <a href="#regex">1 · Regex ve grep</a>
+  <a class="lvl2" href="#regex-temel">Temel karakterler</a>
+  <a class="lvl2" href="#grep">grep seçenekleri</a>
+  <a class="lvl2" href="#regex-kaliplar">Hazır kalıplar (IP, mail…)</a>
+  <a class="lvl2" href="#regex-dosya">docx / pcap / plist içinde arama</a>
+  <a class="lvl2" href="#regex-test">Regex deneme aracı</a>
+  <a href="#web">2 · Web geçmişi (Chrome History)</a>
+  <a class="lvl2" href="#web-temel">SQLite ve History dosyası</a>
+  <a class="lvl2" href="#web-tablolar">urls / visits / downloads</a>
+  <a class="lvl2" href="#webkit">WebKit ve zaman dönüşümü</a>
+  <a class="lvl2" href="#sql">SQL sorgusunu okumak</a>
+  <a class="lvl2" href="#transition">Transition hesaplama</a>
+  <a class="lvl2" href="#senaryo">Senaryo: uyuşturucu satışı</a>
+  <a href="#smtp">3 · SMTP, SSL/TLS, Base64</a>
+  <a class="lvl2" href="#smtp-asama">SMTP aşamaları</a>
+  <a class="lvl2" href="#ssl">SSL/TLS</a>
+  <a class="lvl2" href="#base64">Conversion (Base64)</a>
+  <a class="lvl2" href="#smtp-lab">Lab: smtp.pcap</a>
+  <a href="#ag">4 · Ağ konuları (kısa)</a>
+  <a class="lvl2" href="#syn">SYN Flood</a>
+  <a class="lvl2" href="#arp">ARP Poisoning</a>
+  <a class="lvl2" href="#dhcp">DHCP Starvation</a>
+  <a class="lvl2" href="#nitroba">Taciz e-postası (Nitroba)</a>
+  <a href="#tanim">5 · Tanım kartları</a>
+  <a href="#sorular">6 · Örnek sorular (çözümlü)</a>
+  <a href="#test">7 · Kendini test et</a>
+  <div class="tools">
+    <button id="themeBtn" title="Açık / koyu tema">◐ Tema</button>
+    <button id="fontDown" title="Yazıyı küçült">A−</button>
+    <button id="fontUp" title="Yazıyı büyüt">A+</button>
+  </div>
+</nav>
+
+<main>
+
+<!-- ================= 0 PLAN ================= -->
+<section id="plan">
+  <h2>0 · Sınav tarzı ve çalışma planı</h2>
+  <p class="lead">Önce hocanın nasıl soru sorduğunu anla, sonra konulara geç. Her şey sıfırdan anlatılıyor; sırayla oku.</p>
+
+  <div class="card">
+    <h3 style="margin-top:0">Hocanın soru tarzı (örnek sınava göre)</h3>
+    <p>Örnek sınav: <b>60 dakika, 4 soru</b>, sorular 20–30 puan. Soru tipleri şunlar:</p>
+    <table>
+      <tr><th>Tip</th><th>Nasıl sorulmuş</th><th>Senden beklenen</th></tr>
+      <tr><td><span class="pill hot">Çok olası</span> SQL sorgusu açıklama (30P)</td><td>Chrome History'de bir SQL sorgusu ve ekran çıktısı veriliyor, "sorguyu açıklayınız" deniyor.</td><td>Sorgunun <b>her parçasını</b> tek tek açıklamak: hangi tablo, hangi sütun, zaman neden 1000000'a bölünüyor, <code>||</code> ne, <code>order by</code> ne…</td></tr>
+      <tr><td><span class="pill hot">Çok olası</span> Transition hesaplama (20P)</td><td>Visits tablosundan bir satır veriliyor (ör. <code>Tran:805306375</code>), "matematiksel olarak hesaplayıp yorumlayınız".</td><td>Decimal → hex, <code>0xFF</code> ile AND, tablodan anlam, üst bitlerin (qualifier) anlamı.</td></tr>
+      <tr><td><span class="pill hot">Çok olası</span> Senaryo + Linux komutu yazma (20P)</td><td>"Şüpheli şunu iddia ediyor… şu çıktıyı elde edecek Linux komutunu yazınız".</td><td>Çoğu zaman <b>grep</b> komutu (+ regex). Çıktıdaki kelimeyi arayıp bir alt satırı da göstermek gibi.</td></tr>
+      <tr><td><span class="pill mid">Olası</span> Tanımlar (30P, 5 şık)</td><td>"Aşağıdaki tanımlamaları yapınız: … nedir?"</td><td>Kısa, net 3–5 cümlelik tanım. Örnek sınavda <b>WebKit</b> ve <b>SYN Flood</b> sorulmuş.</td></tr>
+    </table>
+    <div class="box warn"><b class="t">Bu yıl farklı olan</b>Sorumlu konular listesinde <b>iPhone konusu yok</b>. Örnek sınavdaki iOS soruları (XNU, Cocoa Touch, Springboard, plist) yerine aynı tarzda <b>regex/grep, web history ve SMTP</b> soruları bekle. Ama "plist'ten grep ile tarih çekme" sorusu aslında bir <b>grep</b> sorusudur; o kalıbı öğren.</div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Sorumlu olduğun konular (hocanın listesi)</h3>
+    <table>
+      <tr><th>Slayt</th><th>Konu</th><th>Bu sitede</th></tr>
+      <tr><td>1. slayt</td><td>Regex (düzenli ifade) ile arama: IP arama, mail arama vs. · <b>grep'e çalış</b> · iPhone yok</td><td><a href="#regex">Bölüm 1</a></td></tr>
+      <tr><td>2. slayt</td><td>Lab uygulamaları · History web geçmişi · <b>URL ve visit tablosu ilişkisi</b>, hangi veriler çekiliyor · <b>WebKit nedir</b> · Visit transition formatıyla tablo elde etme, tablo dönüşümleri · Analyze table · <b>Senaryolara hakimiyet</b></td><td><a href="#web">Bölüm 2</a></td></tr>
+      <tr><td>4. slayt</td><td><b>SMTP</b>: hangi aşamada ne kullanılıyor, ne yapıyor · <b>SSL/TLS</b> · <b>Conversion</b> (Base64 dönüşümü)</td><td><a href="#smtp">Bölüm 3</a></td></tr>
+      <tr><td>Diğer haftalar</td><td>SYN Flood, ARP Poisoning, DHCP Starvation, Taciz e-postası (Wireshark)</td><td><a href="#ag">Bölüm 4</a> (kısa)</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">1–2 günlük plan</h3>
+    <table>
+      <tr><th>Sıra</th><th>Ne yap</th><th>Süre</th></tr>
+      <tr><td>1</td><td><a href="#web">Web geçmişi</a>: tablolar → zaman → SQL → transition. En çok puan buradan gelir.</td><td>~3 saat</td></tr>
+      <tr><td>2</td><td><a href="#transition">Transition hesaplayıcı</a> ile 5–6 sayıyı <b>elle</b> hesapla, sonra araçla kontrol et.</td><td>~45 dk</td></tr>
+      <tr><td>3</td><td><a href="#regex">Regex ve grep</a>: karakter tablosunu ezberle, IP/mail/telefon/MAC kalıplarını kendin yaz.</td><td>~2 saat</td></tr>
+      <tr><td>4</td><td><a href="#smtp">SMTP / SSL / Base64</a>: aşama tablosu + kodlar + Base64 çözme.</td><td>~1.5 saat</td></tr>
+      <tr><td>5</td><td><a href="#ag">Ağ konuları</a> ve <a href="#tanim">tanım kartları</a>.</td><td>~1 saat</td></tr>
+      <tr><td>6</td><td><a href="#sorular">Örnek sorular</a>: önce cevaba bakmadan kâğıda yaz, sonra karşılaştır. <a href="#test">Test</a> ile bitir.</td><td>~1.5 saat</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ================= 1 REGEX ================= -->
+<section id="regex">
+  <h2>1 · Regex (düzenli ifade) ve grep</h2>
+  <p class="lead">Adli bilişimde elimizde dev metin/log dosyaları olur. İçinden IP, e-posta, telefon, MAC adresi gibi delilleri <b>kalıp (pattern)</b> ile bulmak için regex kullanırız.</p>
+
+  <div class="box tip"><b class="t">Regex nedir? (tanım sorusu gelebilir)</b>Düzenli ifade (Regular Expression), bir arama veya eşleşme <b>kalıbını</b> tanımlayan özel bir karakter dizisidir. Metinlerden bilgi ayıklamak için kullanılır: kaynak kodlar, log dosyaları, Word/Excel/PowerPoint belgeleri (önce sıkıştırılmış yapıları açılmalı), ikili (binary) veriler. Genellikle <b>grep</b> gibi komut satırı araçlarıyla kullanılır.</div>
+
+  <h4>Hangi deliller kalıpla aranır?</h4>
+  <table>
+    <tr><th>Grup</th><th>Örnekler</th></tr>
+    <tr><td>Kişisel bilgi</td><td>isim, telefon, e-posta, doğum tarihi, posta kodu, kimlik no</td></tr>
+    <tr><td>Hesap doğrulama</td><td>kullanıcı adı, şifre</td></tr>
+    <tr><td>Kaynak kod</td><td>HTML, Java</td></tr>
+    <tr><td>Ağ</td><td>ziyaret edilen URL, IP adresi, Hex, MAC adresi, zaman damgası</td></tr>
+    <tr><td>Dosya</td><td>dosya adları, dosya özellikleri</td></tr>
+  </table>
+
+  <h3 id="regex-temel">1.1 Temel karakterler (ezberle)</h3>
+  <table>
+    <tr><th>Yazım</th><th>Anlamı</th><th>Örnek</th></tr>
+    <tr><td><code>abc</code></td><td>Literal karakter: aynen bu harfler</td><td><code>frank</code> → "frank"</td></tr>
+    <tr><td><code>.</code></td><td>Herhangi <b>tek</b> karakter</td><td><code>a.c</code> → abc, a1c</td></tr>
+    <tr><td><code>\.</code></td><td>Gerçek nokta (kaçış). IP ve mailde şart!</td><td><code>gmail\.com</code></td></tr>
+    <tr><td><code>[abc]</code></td><td>Köşeli parantez içindekilerden <b>biri</b></td><td><code>[Ff]rank</code></td></tr>
+    <tr><td><code>[A-Z]</code> <code>[a-z]</code> <code>[0-9]</code></td><td>Aralık: büyük harf / küçük harf / rakam</td><td><code>[0-9a-fA-F]</code> = hex rakamı</td></tr>
+    <tr><td><code>[^abc]</code></td><td>Bunlar <b>hariç</b> herhangi bir karakter</td><td><code>&lt;[^&gt;]*&gt;</code> = HTML etiketi</td></tr>
+    <tr><td><code>a|b</code> , <code>(F|f)</code></td><td>VEYA. Parantez grup yapar</td><td><code>(F|f)rank</code></td></tr>
+    <tr><td><code>*</code></td><td>Önceki öğe <b>0 veya daha fazla</b></td><td><code>ab*</code> → a, ab, abbb</td></tr>
+    <tr><td><code>+</code></td><td>Önceki öğe <b>1 veya daha fazla</b></td><td><code>\s+</code> = bir ya da çok boşluk</td></tr>
+    <tr><td><code>?</code></td><td>Önceki öğe <b>0 ya da 1</b> kez (opsiyonel) = <code>{0,1}</code></td><td><code>https?</code> → http, https</td></tr>
+    <tr><td><code>{n}</code></td><td>Tam n kez</td><td><code>[0-9]{10}</code> = 10 rakam</td></tr>
+    <tr><td><code>{n,m}</code></td><td>En az n, en fazla m kez</td><td><code>[a-z]{1,10}</code></td></tr>
+    <tr><td><code>\b</code></td><td>Kelime sınırı (word boundary)</td><td><code>\b[0-9]{10}\b</code></td></tr>
+    <tr><td><code>\s</code></td><td>Boşluk karakteri (whitespace)</td><td></td></tr>
+    <tr><td><code>\w</code></td><td>Kelime karakteri = <code>[a-zA-Z0-9_]</code></td><td><code>\w+</code></td></tr>
+    <tr><td><code>^</code> / <code>$</code></td><td>Satır başı / satır sonu (köşeli parantez <b>dışında</b>)</td><td><code>^From</code></td></tr>
+    <tr><td><code>xxx(?=foo)</code></td><td>Lookahead: ardından foo gelen xxx (foo eşleşmeye dahil değil)</td><td><code>\w+(?=ing)</code> → fish(ing)</td></tr>
+    <tr><td><code>(?&lt;=foo)xxx</code></td><td>Lookbehind: önünde foo olan xxx</td><td><code>(?&lt;=pre)\w+</code> → (pre)tend</td></tr>
+  </table>
+
+  <div class="box tip"><b class="t">\b (kelime sınırı) nasıl çalışır?</b>Kelime karakteri <code>[a-zA-Z0-9_]</code> ile kelime-olmayan karakter (boşluk, virgül, !) arasındaki <b>görünmez konumdur</b>. Bir kelimenin ilk karakterinden <b>önce</b> ve son karakterinden <b>sonra</b> bulunur. "I am 50 years old" içinde her kelimenin iki yanında bir \b vardır.<br><br>
+  Neden önemli? <code>[0-9]{10}</code> kalıbı <code>1234567890123</code> içinde de ilk 10 rakamı yakalar (yanlış!). <code>\b[0-9]{10}\b</code> ise yakalamaz, çünkü 10. rakamdan sonra kelime bitmiyor.</div>
+
+  <h3 id="grep">1.2 grep komutu ve seçenekleri</h3>
+  <p><b>grep</b> = dosyada/metinde kalıp arayan Linux komutu. Bulduğu <b>satırın tamamını</b> yazar (aksi söylenmedikçe).</p>
+  <pre><code>grep [SEÇENEKLER] "KALIP" dosya
+komut | grep [SEÇENEKLER] "KALIP"     <span class="cm"># | (pipe): soldaki komutun çıktısını grep'e verir</span></code></pre>
+  <table>
+    <tr><th>Seçenek</th><th>Anlamı</th></tr>
+    <tr><td><code>-E</code></td><td>Extended regex (<code>+ ? | {} ()</code> doğrudan çalışsın). <b>Hep kullan.</b></td></tr>
+    <tr><td><code>-o</code></td><td>Only matching: satırın tamamı değil, <b>sadece eşleşen kısım</b></td></tr>
+    <tr><td><code>-i</code></td><td>Büyük/küçük harf duyarsız</td></tr>
+    <tr><td><code>-n</code></td><td>Satır numarasını göster</td></tr>
+    <tr><td><code>-c</code></td><td>Eşleşen <b>satır sayısını</b> ver</td></tr>
+    <tr><td><code>-v</code></td><td>Eşleşmeyen satırları göster (tersi)</td></tr>
+    <tr><td><code>-w</code></td><td>Sadece tam kelime eşleşsin</td></tr>
+    <tr><td><code>-r</code></td><td>Klasörde alt klasörlerle birlikte ara</td></tr>
+    <tr><td><code>-A n</code> / <code>-B n</code> / <code>-C n</code></td><td>Eşleşmeden sonraki (After) / önceki (Before) / iki yandaki n satırı da göster</td></tr>
+    <tr><td><code>-P</code></td><td>Perl uyumlu regex. <b>Lookahead/lookbehind ve koşullu ifade için gerekli</b></td></tr>
+    <tr><td><code>--color</code></td><td>Eşleşeni renkli göster</td></tr>
+  </table>
+  <pre><code>echo "This is Frank Xu" | grep -Ei "frank"          <span class="cm"># -i sayesinde Frank bulunur</span>
+echo "This is Frank Xu" | grep -E "(F|f)rank"        <span class="cm"># F veya f</span>
+echo "I am Frank Xu" | grep -Eo "\b[A-Z][a-z]{1,10}\s+[A-Z][a-z]{1,10}\b"   <span class="cm"># çıktı: Frank Xu</span>
+echo "pretend fishing working" | grep -Po "(?&lt;=pre)\w+"   <span class="cm"># çıktı: tend</span>
+echo "fishing working enjoying" | grep -Po "\w+(?=ing)"  <span class="cm"># çıktı: fish work enjoy</span>
+grep -Ec "public" Hello.java                        <span class="cm"># kaç satırda geçiyor</span>
+grep -En "String" Hello.java                        <span class="cm"># satır numarasıyla</span>
+grep -Eo "kelime" dosya | wc -l                     <span class="cm"># kaç KEZ geçiyor (her eşleşme ayrı satır)</span>
+grep -Eo "KALIP" dosya | sort | uniq -c             <span class="cm"># tekrarsız liste + kaç kez</span></code></pre>
+
+  <div class="box ok"><b class="t">İsim kalıbını parça parça okuma (sınavda böyle açıkla)</b>
+  <code>\b[A-Z][a-z]{1,10}\s+[A-Z][a-z]{1,10}\b</code><br>
+  <code>\b</code> kelime başı · <code>[A-Z]</code> bir büyük harf (adın ilk harfi) · <code>[a-z]{1,10}</code> 1–10 küçük harf · <code>\s+</code> bir veya daha fazla boşluk · <code>[A-Z][a-z]{1,10}</code> soyadı · <code>\b</code> kelime sonu.</div>
+
+  <h3 id="regex-kaliplar">1.3 Hazır kalıplar (kendin yazabilmelisin)</h3>
+
+  <h4>Telefon numarası (adım adım zorlaşıyor)</h4>
+  <table>
+    <tr><th>Hedef</th><th>Kalıp</th></tr>
+    <tr><td>Herhangi 10 rakam: <code>1234567890</code></td><td><code>\b[0-9]{10}\b</code></td></tr>
+    <tr><td><code>123.456.7890</code></td><td><code>\b[0-9]{3}\.[0-9]{3}\.[0-9]{4}\b</code></td></tr>
+    <tr><td>İkisi birden (nokta opsiyonel)</td><td><code>\b[0-9]{3}\.?[0-9]{3}\.?[0-9]{4}\b</code> &nbsp;(<code>?</code> = <code>{0,1}</code>)</td></tr>
+    <tr><td>Dört format: nokta, tire, boşluk ya da hiçbiri</td><td><code>\b[0-9]{3}[. -]?[0-9]{3}[. -]?[0-9]{4}\b</code></td></tr>
+    <tr><td>Beşincisi: <code>(123)456-7890</code> (koşullu, <code>-P</code> ister)</td><td><code>(\()?\b[0-9]{3}(?(1)\)|[. -]?)[0-9]{3}[. -]?[0-9]{4}\b</code><br><span class="cm">Mantık: (?(1) then | else) → 1. grup "(" yakalandıysa ")" bekle, yakalanmadıysa [. -]? bekle.</span></td></tr>
+  </table>
+
+  <h4>E-posta adresi</h4>
+  <p><code>john.doe@gmail.com</code> = <b>local part</b> @ <b>domain</b> . <b>uzantı</b></p>
+  <pre><code>grep -Eo "[a-zA-Z0-9.-]{2,15}@[a-zA-Z0-9]{1,15}\.[a-zA-Z0-9]{3,4}" dosya
+<span class="cm">#          local part (harf, rakam, . -, 2-15)   @  domain (1-15)  \.  uzantı (3-4)
+# Daha genel hali (sınavda bu da kabul):
+grep -Eo "\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b" dosya</span></code></pre>
+  <div class="box warn"><b class="t">Dikkat</b>Noktayı <code>\.</code> diye yaz. Sadece <code>.</code> yazarsan "herhangi bir karakter" olur. Hocanın slaytında uzantı 3–4 karakter (com, org, gov, edu) olarak alınmış; <code>.co.in</code> gibi uzantıları bu kalıp tam yakalamaz, bunu yorum olarak yazabilirsin.</div>
+
+  <h4>IPv4 adresi</h4>
+  <pre><code>grep -Eo "([0-9]{1,3}\.){3}[0-9]{1,3}" dosya
+<span class="cm"># ([0-9]{1,3}\.){3} → "1-3 rakam + nokta" grubu 3 kez tekrar ; sonra son oktet [0-9]{1,3}</span></code></pre>
+  <div class="box warn"><b class="t">Sınav yorumu: bu kalıbın eksiği</b>Her oktet 0–255 arası olmalı ama bu kalıp <code>443.125.121.1</code> gibi <b>geçersiz</b> IP'yi de yakalar (443 &gt; 255). Daha sıkı kalıp:
+  <pre><code>\b((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\b
+<span class="cm"># 25[0-5] → 250-255 | 2[0-4][0-9] → 200-249 | 1[0-9]{2} → 100-199 | [1-9]?[0-9] → 0-99</span></code></pre></div>
+
+  <h4>Diğerleri</h4>
+  <table>
+    <tr><th>Hedef</th><th>Kalıp</th></tr>
+    <tr><td>MAC adresi <code>01:23:45:67:89:AB</code> veya <code>01-23-45-67-89-AB</code> (IEEE 802: 2 hex rakamlı 6 grup, - veya : ile)</td><td><code>([0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}</code></td></tr>
+    <tr><td>Hex sayı <code>0x1F</code></td><td><code>\b0[xX][0-9a-fA-F]+\b</code></td></tr>
+    <tr><td>HTML renk kodu <code>#FFAA00</code></td><td><code>#[0-9a-fA-F]{6}\b</code> (kısa hali <code>#[0-9a-fA-F]{3}</code>)</td></tr>
+    <tr><td>Web sitesi: <code>http://www.ubalt.edu</code>, <code>https://…</code>, <code>www.ubalt.edu</code>, <code>ubalt.edu</code></td><td><code>(https?://)?(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}</code></td></tr>
+    <tr><td>HTTP istekleri (log içinde)</td><td><code>grep -Eo "(GET|POST) [^ ]+ HTTP/1\.[01]"</code></td></tr>
+    <tr><td>Şifre kuralı: 3–18 karakter; harf, rakam, <code>-</code> veya <code>@</code></td><td><code>^[a-zA-Z0-9@-]{3,18}$</code></td></tr>
+  </table>
+
+  <h3 id="regex-dosya">1.4 Farklı dosyaların içinde arama</h3>
+
+  <h4>a) Word (.docx) içinden e-posta bulmak</h4>
+  <p>.docx aslında <b>sıkıştırılmış (zip) bir dosyadır</b>. İçindeki metin <code>word/document.xml</code> dosyasındadır. Doğrudan grep yaparsan bir şey bulamazsın ya da XML etiketleriyle dolu çıktı alırsın.</p>
+  <pre><code>unzip customers.docx -d customers                 <span class="cm"># 1) zip'i klasöre aç</span>
+grep "ubalt.edu" customers/word/document.xml      <span class="cm"># 2) bulur ama çıktı XML etiketleriyle dolu</span>
+sed 's/&lt;[^&gt;]*&gt;/ /g' customers/word/document.xml \
+  | grep -Eo "[a-zA-Z0-9.-]+@[a-zA-Z0-9]+\.[a-z]{2,4}"   <span class="cm"># 3) etiketleri sil, sonra mailleri çek</span></code></pre>
+  <div class="box tip"><b class="t">sed nedir?</b><b>Stream Editor</b>. Metni satır satır okuyup arama, <b>değiştirme</b> ve silme yapar. Yazım: <code>sed 's/ARANAN/YENİ/g'</code> (s = substitute, g = satırdaki hepsi).<br>
+  <code>echo "123-456-7890" | sed 's/1/4/g'</code> → 423-456-7890<br>
+  <code>echo "123-456-7890" | sed 's/-//g'</code> → 1234567890 (tireleri sil)<br>
+  <code>echo "123-456-7890" | sed 's/-/./g'</code> → 123.456.7890<br>
+  <code>echo "&lt;h1&gt;Başlık&lt;/h1&gt;" | sed 's/&lt;[^&gt;]*&gt;//g'</code> → Başlık. <code>[^&gt;]*</code> = "&gt; olmayan karakterler", böylece her etiket ayrı ayrı silinir.</div>
+
+  <h4>b) pcap (ağ trafiği) içinden MAC adresi bulmak</h4>
+  <p>pcap ikili (binary) dosyadır; önce <b>tshark</b> ile metne çevrilir, sonra grep.</p>
+  <pre><code>tshark -r arp.pcap                                  <span class="cm"># -r: okunacak dosya</span>
+tshark -r arp.pcap -T fields -e eth.src -e eth.dst  <span class="cm"># -T fields + -e: sadece istenen alanlar</span>
+tshark -r arp.pcap -T fields -e eth.src | grep -Eo "([0-9a-f]{2}:){5}[0-9a-f]{2}" | sort -u</code></pre>
+
+  <h4>c) iOS plist içinden tarih bulmak (örnek sınavdaki soru tipi)</h4>
+  <p>Soru: "com.burbn.threads.plist dosyasından şu çıktıyı veren Linux komutunu yazınız:"</p>
+  <pre><code>&lt;key&gt;ds-app-install-date&lt;/key&gt;
+&lt;date&gt;2020-04-13T19:30:04Z&lt;/date&gt;</code></pre>
+  <pre><code>grep -A1 "ds-app-install-date" com.burbn.threads.plist
+<span class="cm"># "ds-app-install-date" geçen satırı bul, -A1 ile ALTINDAKİ 1 satırı (tarih) da göster</span></code></pre>
+  <div class="box ok"><b class="t">Bu soru tipinin mantığı</b>Çıktıda <b>2 satır</b> var ve ikincisi aranan kelimeyi içermiyor → <code>-A 1</code> gerekli. Çıktıya bakıp "hangi kelime aranmış, kaç satır gösterilmiş" diye düşün. Yorum: uygulamanın kurulum tarihi 13.04.2020 19:30:04 UTC (Z = UTC). Şüphelinin "yüklü değildi" iddiası çürür.</div>
+
+  <h3 id="regex-test">1.5 Regex deneme aracı</h3>
+  <div class="card">
+    <p style="margin-top:0">Kalıbı yaz, metindeki eşleşmeler işaretlensin. (Tarayıcı JavaScript regex'i kullanır; <code>grep -E</code> ile neredeyse aynıdır, lookahead/lookbehind de çalışır.)</p>
+    <label>Kalıp (regex)</label>
+    <input type="text" id="rxPat" value="([0-9]{1,3}\.){3}[0-9]{1,3}">
+    <div class="flow">
+      <button data-rx="\b[A-Z][a-z]{1,10}\s+[A-Z][a-z]{1,10}\b">İsim</button>
+      <button data-rx="\b[0-9]{3}[. -]?[0-9]{3}[. -]?[0-9]{4}\b">Telefon</button>
+      <button data-rx="[a-zA-Z0-9.-]{2,15}@[a-zA-Z0-9]{1,15}\.[a-zA-Z0-9]{3,4}">E-posta</button>
+      <button data-rx="([0-9]{1,3}\.){3}[0-9]{1,3}">IP (basit)</button>
+      <button data-rx="\b((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\b">IP (0-255)</button>
+      <button data-rx="([0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}">MAC</button>
+      <button data-rx="(https?://)?(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}">URL</button>
+    </div>
+    <label><input type="checkbox" id="rxI"> -i (büyük/küçük harf duyarsız)</label>
+    <label>Metin</label>
+    <textarea id="rxText">Frank Xu called 123-456-7890 and 1234567890123 from 192.168.0.1.
+Mail: john.doe@gmail.com, johnDoe001@mozilla.org, bad ip 443.125.121.1
+Router MAC 01:23:45:67:89:AB, gateway 255.255.255.0, site https://www.ubalt.edu
+Phone (123)456-7890 or 123.456.7890 or 123 456 7890. Alice Smith visited ubalt.edu</textarea>
+    <div class="out" id="rxOut"></div>
+    <div id="rxList" class="out"></div>
+  </div>
+</section>
+
+<!-- ================= 2 WEB HISTORY ================= -->
+<section id="web">
+  <h2>2 · Web geçmişi (Chrome History) incelemesi</h2>
+  <p class="lead">Sınavın en ağır kısmı. Senaryo: şüpheli, craigslist üzerinden uyuşturucu satıyor. Elimizde sadece Chrome'un <b>History</b> dosyası var. Bu dosyadan delil çıkarıp olayların <b>zaman çizelgesini</b> kuracağız.</p>
+
+  <h3 id="web-temel">2.1 History dosyası nedir, nerededir?</h3>
+  <p>Chrome geçmişi, <b>SQLite veritabanı</b> olarak <code>History</code> adlı (uzantısız) bir dosyada tutulur. SQLite = tek dosyadan oluşan küçük bir SQL veritabanı.</p>
+  <table>
+    <tr><th>İşletim sistemi</th><th>Konum</th></tr>
+    <tr><td>Windows (Vista/7/8/10)</td><td><code>C:\Users\&lt;kullanıcı&gt;\AppData\Local\Google\Chrome\User Data\Default\History</code></td></tr>
+    <tr><td>Linux</td><td><code>/home/&lt;kullanıcı&gt;/.config/google-chrome/Default/History</code></td></tr>
+    <tr><td>macOS</td><td><code>/Users/&lt;kullanıcı&gt;/Library/Application Support/Google/Chrome/Default/History</code></td></tr>
+  </table>
+  <pre><code>file History                 <span class="cm"># dosya tipini öğren → "SQLite 3.x database"</span>
+sqlite3 History              <span class="cm"># veritabanını aç (ya da: sqlitebrowser History → grafik arayüz)</span>
+sqlite&gt; .tables              <span class="cm"># tabloları listele (downloads, urls, visits, ...)</span>
+sqlite&gt; .schema visits       <span class="cm"># tablonun sütunları</span>
+sqlite&gt; .headers on          <span class="cm"># çıktıda sütun adlarını göster</span>
+sqlite&gt; select * from urls limit 5;</code></pre>
+
+  <h3 id="web-tablolar">2.2 Üç önemli tablo ve ilişkileri</h3>
+  <table>
+    <tr><th>Tablo</th><th>Ne tutar?</th></tr>
+    <tr><td><b>urls</b></td><td>Ziyaret edilen her <b>farklı</b> URL bir kez: adres, sayfa başlığı, kaç kez ziyaret edildiği, en son ne zaman ziyaret edildiği</td></tr>
+    <tr><td><b>visits</b></td><td>Her <b>tek tek ziyaret</b>: ne zaman, sayfada ne kadar kalındı, nereden gelindi, nasıl gelindi (transition)</td></tr>
+    <tr><td><b>downloads</b></td><td>İndirilen dosyalar: dosya türü, kaydedildiği konum, boyut, hash… (+ <code>downloads_url_chains</code>)</td></tr>
+  </table>
+  <div class="box tip"><b class="t">Benzetme</b><b>urls</b> = telefon rehberi (her kişi bir kez). <b>visits</b> = arama kaydı listesi (aynı kişiyi 5 kez aradıysan 5 satır). Arama kaydında kişinin adı yerine rehberdeki <b>sıra numarası</b> yazar.</div>
+
+  <h4>urls tablosu</h4>
+  <table>
+    <tr><th>Sütun</th><th>Tip</th><th>Açıklama</th></tr>
+    <tr><td>id</td><td>INTEGER</td><td>Primary key, her kayda benzersiz numara</td></tr>
+    <tr><td>url</td><td>LONGVARCHAR</td><td>Erişilen URL</td></tr>
+    <tr><td>title</td><td>LONGVARCHAR</td><td>Sayfanın başlığı</td></tr>
+    <tr><td>visit_count</td><td>INTEGER</td><td>Toplam ziyaret sayısı</td></tr>
+    <tr><td>typed_count</td><td>INTEGER</td><td>Adres çubuğuna <b>yazılarak</b> gelinen sayı</td></tr>
+    <tr><td>last_visit_time</td><td>INTEGER</td><td>Son ziyaret zamanı (WebKit zamanı, mikrosaniye)</td></tr>
+    <tr><td>hidden</td><td>INTEGER</td><td>0: otomatik tamamlama önerilerinde gösterilir · 1: gösterilmez</td></tr>
+  </table>
+
+  <h4>visits tablosu</h4>
+  <table>
+    <tr><th>Sütun</th><th>Tip</th><th>Açıklama</th></tr>
+    <tr><td>id</td><td>INTEGER</td><td>Ziyaretin benzersiz numarası</td></tr>
+    <tr><td>url</td><td>INTEGER</td><td><b>urls tablosundaki id'ye karşılık gelir</b> (yabancı anahtar). URL'nin kendisi değil, numarası!</td></tr>
+    <tr><td>visit_time</td><td>INTEGER</td><td>Ziyaret zamanı (WebKit, mikrosaniye)</td></tr>
+    <tr><td>from_visit</td><td>INTEGER</td><td>Bu sayfaya <b>hangi ziyaretten</b> gelindi (visits.id). 0 = önceki yok</td></tr>
+    <tr><td>transition</td><td>INTEGER</td><td>Sayfaya <b>nasıl</b> gelindi: link tıklama, yazma, form gönderme… (kodlu sayı)</td></tr>
+    <tr><td>visit_duration</td><td>INTEGER</td><td>Sayfada kalma süresi (mikrosaniye)</td></tr>
+  </table>
+
+  <div class="card">
+    <h4 style="margin-top:0">İlişki (sınavda "URL ve visit tablosu arası ilişki" diye sorulur)</h4>
+    <div class="flow">
+      <span class="st"><b>visits.url</b></span><span class="ar">→ eşittir →</span><span class="st"><b>urls.id</b></span>
+      <span class="ar">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+      <span class="st"><b>visits.from_visit</b></span><span class="ar">→ eşittir →</span><span class="st"><b>visits.id</b> (önceki ziyaret)</span>
+    </div>
+    <p>Bir URL'ye birden çok ziyaret olabilir: urls → visits ilişkisi <b>bire-çok</b>. URL adresini, sayfa başlığını ve erişim zamanını birlikte görmek için iki tablo <b>JOIN</b> ile birleştirilir:</p>
+    <pre><code>select v.id, u.url, u.title,
+       datetime(v.visit_time/1000000 + strftime('%s','1601-01-01'), 'unixepoch','localtime') as zaman,
+       v.from_visit, v.transition &amp; 0xFF as tip, v.visit_duration/1000000.0 as sure_sn
+from visits v join urls u on v.url = u.id
+order by v.visit_time;</code></pre>
+    <p><b>Örnek:</b> google.com'dayken bir linke tıklayıp cnn.com'a gittin. urls'de cnn.com bir kayıt (ör. id=2). visits'te yeni satır: <code>url=2</code>, <code>from_visit</code> = google ziyaretinin id'si, <code>transition</code> = 0 (Link).</p>
+  </div>
+
+  <h4>downloads tablosu (önemli sütunlar)</h4>
+  <table>
+    <tr><th>Sütun</th><th>Anlamı</th></tr>
+    <tr><td>id, guid</td><td>Benzersiz numara, küresel benzersiz tanımlayıcı</td></tr>
+    <tr><td>current_path / target_path</td><td>Geçici konum / dosyanın kaydedildiği son konum</td></tr>
+    <tr><td>start_time / end_time</td><td>İndirme başlangıç / bitiş zamanı</td></tr>
+    <tr><td>received_bytes / total_bytes</td><td>Alınan bayt / dosya boyutu</td></tr>
+    <tr><td>state, danger_type, interrupt_reason</td><td>Durum, tehlike türü (virüs vb.), kesilme nedeni</td></tr>
+    <tr><td>hash</td><td>SHA-256 özeti (dosyanın aynılığını kanıtlar)</td></tr>
+    <tr><td>opened, last_access_time</td><td>Açıldı mı, son erişim zamanı</td></tr>
+    <tr><td>site_url, tab_url, tab_referrer_url</td><td>İndirildiği site, sekme URL'si, oraya nasıl gelindiği</td></tr>
+    <tr><td>http_method, by_ext_id/name</td><td>GET/POST, indirmeyi başlatan eklenti</td></tr>
+    <tr><td>etag, last_modified, mime_type</td><td>Sunucu sürüm etiketi, sunucuda son değişiklik, dosya türü (image/png…)</td></tr>
+  </table>
+
+  <h3 id="webkit">2.3 WebKit nedir ve zaman dönüşümü</h3>
+  <div class="box tip"><b class="t">WebKit nedir? (örnek sınavda soruldu, listede de var)</b>
+  WebKit, web tarayıcılarının <b>HTML, CSS, JavaScript</b> ve görsel öğeleri işleyip ekranda düzenli bir web sayfası olarak göstermesini sağlayan <b>açık kaynaklı tarayıcı motorudur</b> (tarayıcının "kalbi"). Safari'nin motorudur; Chrome ve Opera'nın motoru Blink de WebKit'ten türemiştir.<br>
+  <b>Görevleri:</b> HTML'i işler (yapı, içerik) · CSS'i uygular (renk, font, yerleşim) · JavaScript'i yürütür (etkileşim) · farklı platformlarda çalışır.<br>
+  <b>Avantajları:</b> hızlı, düşük kaynak kullanımı, açık kaynak, mobil uyumlu, web standartlarına uygun, kolay güncellenir.<br>
+  <b>Benzetme:</b> HTML evin planı, CSS iç mimarın dekorasyonu, JavaScript elektrik/otomasyon sistemi; WebKit bunları alıp evi inşa eden ekip.<br>
+  <b>Adli bilişimdeki önemi:</b> Chrome/Safari geçmişindeki zamanlar <b>WebKit zaman damgası</b> biçimindedir.</div>
+
+  <table>
+    <tr><th></th><th>Başlangıç noktası (epoch)</th><th>Birimi</th></tr>
+    <tr><td><b>WebKit / Chrome zamanı</b></td><td>1 Ocak <b>1601</b> 00:00 UTC (Windows NT FILETIME ile aynı)</td><td><b>mikrosaniye</b> (saniyenin milyonda biri), 64 bit</td></tr>
+    <tr><td><b>Unix / Epoch zamanı</b></td><td>1 Ocak <b>1970</b> 00:00 UTC</td><td>saniye</td></tr>
+  </table>
+  <div class="box ok"><b class="t">Ezberle: dönüşüm formülü</b>
+  İki başlangıç arasındaki fark = <b>369 yıl = 11 644 473 600 saniye</b>.<br>
+  <code>Unix (sn) = WebKit / 1 000 000 − 11 644 473 600</code><br>
+  SQL'de: <code>strftime('%s','1601-01-01')</code> = 1601'in Unix karşılığı = <b>−11644473600</b>. Yani <code>visit_time/1000000 + strftime('%s','1601-01-01')</code> aynı çıkarmayı yapar.</div>
+
+  <div class="card">
+    <h4 style="margin-top:0">WebKit zaman dönüştürücü</h4>
+    <div class="grid2">
+      <div><label>WebKit zamanı (mikrosaniye)</label><input type="text" id="wkIn" value="13294850058000000"></div>
+      <div><label>veya tarih (UTC) → WebKit</label><input type="text" id="dtIn" value="2022-04-19 13:54:18"></div>
+    </div>
+    <div class="out" id="wkOut"></div>
+  </div>
+
+  <h3 id="sql">2.4 SQL sorgusunu parça parça okumak</h3>
+  <p>Örnek sınavın 1. sorusu (30 puan) tam olarak buydu. Aynı sorgu ya da urls versiyonu gelebilir:</p>
+  <pre><code>select id, "url_ref_ID: " || url,
+       datetime(visit_time/1000000+strftime('%s','1601-01-01'), 'unixepoch', 'localtime'),
+       "From_visit: " || from_visit, 'Tran:' || transition,
+       "Duration: " || (visit_duration/1000)
+from visits order by visit_time;</code></pre>
+  <table>
+    <tr><th>Parça</th><th>Ne yapar?</th></tr>
+    <tr><td><code>select … from visits</code></td><td>visits tablosundan seçilen sütunları getirir.</td></tr>
+    <tr><td><code>id</code></td><td>Ziyaretin numarası (çıktıda 1,2,3…).</td></tr>
+    <tr><td><code>"url_ref_ID: " || url</code></td><td><code>||</code> = metin birleştirme (concatenation). Okunabilirlik için başına etiket ekler. <code>url</code> sütunu adres değil, <b>urls tablosundaki id'ye referans</b>tır; etiketin "ref_ID" olması bu yüzden.</td></tr>
+    <tr><td><code>visit_time/1000000</code></td><td>Mikrosaniyeyi <b>saniyeye</b> çevirir.</td></tr>
+    <tr><td><code>+ strftime('%s','1601-01-01')</code></td><td><code>strftime</code> tarihi biçimlendirir; <code>'%s'</code> = Unix saniyesi. 1601-01-01'in Unix karşılığı −11644473600'dür. Toplayınca 1601 tabanlı saniye → 1970 tabanlı Unix saniyesi olur.</td></tr>
+    <tr><td><code>datetime(…, 'unixepoch', 'localtime')</code></td><td>Unix saniyesini okunabilir tarihe (YYYY-MM-DD HH:MM:SS) çevirir. <code>'unixepoch'</code>: girdi Unix zamanıdır. <code>'localtime'</code>: yerel saat dilimine göre göster.</td></tr>
+    <tr><td><code>"From_visit: " || from_visit</code></td><td>Bu sayfaya hangi ziyaretten (visits.id) gelindiği. 0 = önceki ziyaret yok (zincirin başı).</td></tr>
+    <tr><td><code>'Tran:' || transition</code></td><td>Geçiş kodu: sayfaya nasıl gelindi. Ham sayı, <a href="#transition">çözülmesi gerekir</a>.</td></tr>
+    <tr><td><code>"Duration: " || (visit_duration/1000)</code></td><td>Mikrosaniye ÷ 1000 = <b>milisaniye</b>. Ör. 727 → 0.727 saniye; 17456 → yaklaşık 17 saniye.</td></tr>
+    <tr><td><code>order by visit_time</code></td><td>Sonuçları ziyaret zamanına göre <b>artan</b> (eskiden yeniye) sıralar → zaman çizelgesi.</td></tr>
+  </table>
+  <div class="box ok"><b class="t">Çıktıyı da yorumla (ekstra puan)</b>
+  <pre><code>1|url_ref_ID: 1|2022-04-19 09:54:18|From_visit: 0|Tran:805306373|Duration: 0
+2|url_ref_ID: 1|2022-04-19 09:54:19|From_visit: 0|Tran:805306368|Duration: 727
+3|url_ref_ID: 2|2022-04-19 09:54:19|From_visit: 2|Tran:268435456|Duration: 0
+4|url_ref_ID: 3|2022-04-19 09:54:19|From_visit: 3|Tran:-2147483648|Duration: 0
+5|url_ref_ID: 4|2022-04-19 09:54:19|From_visit: 4|Tran:-1610612736|Duration: 2465
+6|url_ref_ID: 5|2022-04-19 09:54:22|From_visit: 5|Tran:268435456|Duration: 0
+7|url_ref_ID: 6|2022-04-19 09:54:22|From_visit: 6|Tran:-1610612736|Duration: 17456</code></pre>
+  • Ziyaret 1: 805306373 &amp; 0xFF = <b>5 (Omnibar Generated)</b>; kullanıcı adres çubuğuna "craiglist" yazdı, öneriden URL üretildi. Süre 0 → sadece yönlendirme.<br>
+  • Ziyaret 2: aynı url (1), tip 0 Link, 0.727 sn kalmış (Google arama sonucu sayfası).<br>
+  • Ziyaret 3: from_visit 2 → 2. ziyaretten <b>linke tıklayarak</b> gelindi (268435456 = 0x10000000 → Link + Chain Start).<br>
+  • Ziyaret 4–5: −2147483648 = 0x80000000 → Link + <b>Server Redirect</b>; −1610612736 = 0xA0000000 → Link + Server Redirect + Chain End. craigslist.org → geo.craigslist.org → baltimore.craigslist.org'a sunucu yönlendirmesi, son sayfada 2.465 sn.<br>
+  • Duration 0 olan kayıtlar = <b>sadece yönlendirme</b>, sayfada gezinilmemiş.</div>
+
+  <h4>urls tablosu sorgusu (lab'da yapılan)</h4>
+  <pre><code>select id, title, datetime(last_visit_time/1000000+strftime('%s','1601-01-01'), 'unixepoch', 'localtime') from urls;</code></pre>
+  <p>Her URL'nin id'si, sayfa başlığı ve <b>son</b> ziyaret zamanı okunabilir biçimde gelir.</p>
+
+  <h3 id="transition">2.5 Transition (geçiş) kodunu hesaplamak</h3>
+  <p>Transition, kullanıcının sayfaya <b>nasıl</b> ulaştığını söyler (linke tıkladı, URL'yi yazdı, form gönderdi…). 32 bitlik bir sayıdır:</p>
+  <div class="flow">
+    <span class="st">Üst 24 bit = <b>qualifier</b> (ek bilgi bayrakları)</span><span class="ar">+</span><span class="st">Alt 8 bit = <b>çekirdek tip</b> (0–10)</span>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">Hesaplama adımları (hocanın yöntemi)</h4>
+    <ol>
+      <li><b>Decimal → Hexadecimal</b> çevir.</li>
+      <li>Sonucu <b>0xFF ile AND</b>'le (= son iki hex rakamını al). Bu çekirdek tiptir.</li>
+      <li>Değeri <b>transition tablosundan</b> bak ve yorumla.</li>
+      <li>(Ekstra) Kalan üst kısım (<code>sayı &amp; 0xFFFFFF00</code>) → qualifier tablosundan yorumla.</li>
+    </ol>
+    <pre><code>printf '%X\n' 805306375          <span class="cm"># → 30000007  (hex)</span>
+echo $((805306375 &amp; 0xFF))       <span class="cm"># → 7        ($(( )) bash'te aritmetik işlem yapar)</span>
+echo $((0x30000007 &amp; 0xFF))      <span class="cm"># → 7</span></code></pre>
+  </div>
+
+  <h4>Elle hesap (hesap makinesi yoksa): sürekli 16'ya böl</h4>
+  <div class="card">
+    <p style="margin-top:0"><b>805306375</b> → hex:</p>
+    <pre><code>805306375 / 16 = 50331648  kalan 7
+ 50331648 / 16 =  3145728  kalan 0
+  3145728 / 16 =   196608  kalan 0
+   196608 / 16 =    12288  kalan 0
+    12288 / 16 =      768  kalan 0
+      768 / 16 =       48  kalan 0
+       48 / 16 =        3  kalan 0
+        3 / 16 =        0  kalan 3
+Kalanları aşağıdan yukarı oku → 0x30000007</code></pre>
+    <p>AND işlemi: <code>0x30000007 &amp; 0x000000FF = 0x00000007</code> → <b>7 = Form Submit</b>.</p>
+    <p>Kalan: <code>0x30000000 = 0x10000000 + 0x20000000</code> → <b>Chain Start + Chain End</b> (tek adımlık, kendi başına bir gezinti zinciri).</p>
+    <div class="box tip"><b class="t">Kestirme</b>0xFF ile AND = sayının <b>256'ya bölümünden kalan</b> (pozitif sayılar için). 805306375 mod 256 = 7. Çünkü 0x30000000 = 805306368 tam 256'nın katıdır. Hızlı kontrol için çok işe yarar.</div>
+  </div>
+
+  <h4>Çekirdek tip tablosu (0xFF ile AND sonucu)</h4>
+  <table>
+    <tr><th>Değer</th><th>Tip</th><th>Anlamı</th></tr>
+    <tr><td>0</td><td>Link</td><td>Başka bir sayfadaki <b>bağlantıya tıklayarak</b> geldi</td></tr>
+    <tr><td>1</td><td>Typed</td><td>URL'yi <b>adres çubuğuna yazarak</b> geldi</td></tr>
+    <tr><td>2</td><td>Auto Bookmark</td><td>Arayüzdeki bir öneri/yer imi aracılığıyla geldi</td></tr>
+    <tr><td>3</td><td>Auto Subframe</td><td>Alt çerçeve (ör. reklam iframe'i); kullanıcı farkında bile olmayabilir</td></tr>
+    <tr><td>4</td><td>Manual Subframe</td><td>Kullanıcının açıkça istediği alt çerçeve gezinmesi; geri/ileri listesine girer</td></tr>
+    <tr><td>5</td><td>Omnibar Generated</td><td>Adres/arama çubuğuna arama kelimesi yazdı, öneriden seçildi (Google araması)</td></tr>
+    <tr><td>6</td><td>Top Level / Start page</td><td>Komut satırında verildi ya da başlangıç sayfası</td></tr>
+    <tr><td>7</td><td>Form Submit</td><td>Bir <b>formu doldurup gönderdi</b> (giriş, ilan formu…)</td></tr>
+    <tr><td>8</td><td>Reload / Restore</td><td>Yenile butonu ya da adres çubuğunda Enter ile yeniden yükledi</td></tr>
+    <tr><td>9</td><td>Keyword</td><td>URL bir anahtar kelimeden üretildi</td></tr>
+    <tr><td>10</td><td>Keyword Generated</td><td>Anahtar kelime için üretilen ziyaret</td></tr>
+  </table>
+
+  <h4>Qualifier (üst bitler) tablosu</h4>
+  <p>Aynı tip 0 (Link) olan dört kaydın sayıları çok farklı olabilir. Fark, tıklamanın nasıl/nerede olduğunu anlatan <b>bit bayraklarından</b> gelir: yeni sekmede mi açıldı, zincirin ilki mi, sunucu yönlendirmesi mi…</p>
+  <table>
+    <tr><th>Hex</th><th>Anlamı</th></tr>
+    <tr><td>0x01000000</td><td>Forward/Back (geri/ileri butonu)</td></tr>
+    <tr><td>0x02000000</td><td>From Address Bar (adres çubuğundan)</td></tr>
+    <tr><td>0x04000000</td><td>Home Page</td></tr>
+    <tr><td>0x08000000</td><td>From API</td></tr>
+    <tr><td><b>0x10000000</b></td><td><b>Chain Start</b>: yönlendirme zincirinin ilk sayfası</td></tr>
+    <tr><td><b>0x20000000</b></td><td><b>Chain End</b>: zincirin son sayfası (kullanıcının gördüğü)</td></tr>
+    <tr><td>0x40000000</td><td>Client Redirect: sayfanın kendisi yönlendirdi (JS / meta refresh). Slaytlarda "Refresh" diye geçer.</td></tr>
+    <tr><td><b>0x80000000</b></td><td><b>Server Redirect</b>: sunucu yönlendirmesi (HTTP 301/302)</td></tr>
+  </table>
+
+  <div class="box warn"><b class="t">Negatif sayılar (örn. −2147483648, −1610612736)</b>SQLite sayıyı işaretli (signed) 32 bit gösterir; en üst bit (0x80000000) 1 ise sayı negatif görünür. Çözüm: <b>2³² = 4 294 967 296 ekle</b>, sonra hex'e çevir.<br>
+  −1610612736 + 4294967296 = 2684354560 = <b>0xA0000000</b> = 0x80000000 + 0x20000000 → Link (0) + Server Redirect + Chain End.<br>
+  −2147483648 + 4294967296 = 2147483648 = <b>0x80000000</b> → Link (0) + Server Redirect.<br>
+  Bash zaten doğru yapar: <code>echo $((-1610612736 &amp; 0xFF))</code> → 0.</div>
+
+  <h4>Sık çıkan sayılar (ezber tablosu)</h4>
+  <table>
+    <tr><th>Decimal</th><th>Hex</th><th>&amp; 0xFF</th><th>Yorum</th></tr>
+    <tr><td>805306368</td><td>0x30000000</td><td>0 Link</td><td>Chain Start + End: tek adımlık link tıklaması</td></tr>
+    <tr><td>805306369</td><td>0x30000001</td><td>1 Typed</td><td>Adresi yazarak geldi</td></tr>
+    <tr><td>805306373</td><td>0x30000005</td><td>5 Omnibar Generated</td><td>Arama çubuğuna yazdı (ör. "craiglist")</td></tr>
+    <tr><td>805306375</td><td>0x30000007</td><td>7 Form Submit</td><td>Form doldurup gönderdi</td></tr>
+    <tr><td>805306376</td><td>0x30000008</td><td>8 Reload</td><td>Sayfayı yeniledi</td></tr>
+    <tr><td>268435456</td><td>0x10000000</td><td>0 Link</td><td>Link + Chain Start (zincirin başı)</td></tr>
+    <tr><td>−2147483648</td><td>0x80000000</td><td>0 Link</td><td>Link + Server Redirect</td></tr>
+    <tr><td>−1610612736</td><td>0xA0000000</td><td>0 Link</td><td>Link + Server Redirect + Chain End</td></tr>
+  </table>
+
+  <div class="card">
+    <h4 style="margin-top:0">Transition hesaplayıcı (adım adım gösterir)</h4>
+    <label>Transition değeri (decimal, negatif olabilir)</label>
+    <input type="text" id="trIn" value="805306375">
+    <div class="flow">
+      <button data-tr="805306375">805306375</button>
+      <button data-tr="805306373">805306373</button>
+      <button data-tr="268435456">268435456</button>
+      <button data-tr="-2147483648">-2147483648</button>
+      <button data-tr="-1610612736">-1610612736</button>
+      <button data-tr="805306368">805306368</button>
+    </div>
+    <div class="out" id="trOut"></div>
+  </div>
+
+  <h3 id="senaryo">2.6 Senaryo: craigslist'te uyuşturucu satışı (senaryolara hakimiyet)</h3>
+  <p><b>Hipotez (7 aşama):</b> 1) Satıcı yasadışı ilan yayınladı → 2) Alıcı satıcıya mesaj attı → 3) Satıcı Bitcoin cüzdanıyla cevap verdi → 4) Alıcı ödeme gönderdi → 5) Satıcı ödemeyi doğruladı → 6) Satıcı ürünü gönderdi → 7) Alıcı teslim aldı.</p>
+  <p><b>Analiz stratejisi:</b> visits kayıtları <b>visit_duration'a göre segmentlere</b> ayrılır (Seg 1, 2, …). <b>visit_duration = 0 ise sadece yönlendirme</b> olmuştur, sayfada gezinilmemiştir. Her segmentte visits ve urls birleştirilir (JOIN) ve her alan yorumlanır. Doğrulamak için adımlar kendi bilgisayarında tekrarlanabilir ya da URL ziyaret edilebilir.</p>
+  <table>
+    <tr><th>Visit</th><th>Transition</th><th>Ne oldu?</th><th>Aşama</th></tr>
+    <tr><td>1–2</td><td>5 Omnibar, 0 Link</td><td>Adres çubuğuna "craiglist" yazdı → Google arama sonucu (0.727 sn)</td><td rowspan="9">1 · İlan</td></tr>
+    <tr><td>3–5</td><td>0x80000000, 0, 0</td><td>craigslist.org'a tıkladı → geo → baltimore.craigslist.org'a sunucu yönlendirmesi</td></tr>
+    <tr><td>6–7</td><td>0 Link + redirect</td><td>Hesap linki (accounts.craigslist.org/login) tıklandı</td></tr>
+    <tr><td>8</td><td>7 Form Submit</td><td>Giriş formunu doldurup gönderdi (23 sn)</td></tr>
+    <tr><td>11–13</td><td>0 Link</td><td>"create a posting" → post.craigslist.org/c/bal</td></tr>
+    <tr><td>14</td><td>7 Form Submit</td><td>İlan türünü seçti → <code>?s=cat</code> (kategori)</td></tr>
+    <tr><td>15</td><td>7 Form Submit</td><td>Kategori seçti → <code>?s=edit</code> (başlık, fiyat, açıklama)</td></tr>
+    <tr><td><b>16</b></td><td><b>7 Form Submit</b> (805306375)</td><td>Açıklama/başlık/fiyat/teslimat formunu gönderdi → <code>?s=geoverify</code> (konum seçimi). url_id=12, 4 sn</td></tr>
+    <tr><td>17–19</td><td>7 Form Submit</td><td>Konum → <code>?s=editimage</code> → <code>?s=preview</code> → yayınla (PUBLISH)</td></tr>
+    <tr><td>20–21</td><td>0 Link</td><td>/manage/7473121658 ile ilanı yönetti; ilanı görüntüledi ("baltimore-cheaper-than-rx-supplements")</td><td>1</td></tr>
+    <tr><td>22–43</td><td>5, 0 + redirect</td><td>"gmail" yazdı → giriş yönlendirmeleri → <b>unsub.fscs@gmail.com</b> gelen kutusu; "order" konulu maili açtı</td><td>2 · Mesaj</td></tr>
+    <tr><td>44–45</td><td>0 Link + Refresh</td><td>Aynı mesaja iki cevap yazdı (<code>?compose=</code>)</td><td>3 · Cüzdan</td></tr>
+    <tr><td>46–48</td><td>0 Link</td><td>"txid: 517b21…" konulu yeni mesajı açtı</td><td>4 · Ödeme</td></tr>
+    <tr><td>49–50</td><td>0 Link</td><td>Mail içindeki imgur linkini açtı (<code>google.com/url?q=…&amp;source=gmail</code>); BTC makbuzu. Ardından <b>proof_of_payment.png</b> indirildi (downloads id=1)</td><td rowspan="5">5 · Doğrulama</td></tr>
+    <tr><td>51–54</td><td>5, 0</td><td>"blockchain explorer" aradı → blockchain.com/explorer</td></tr>
+    <tr><td>55–58</td><td>0 Link</td><td>TXID'yi aradı → /btc/tx/517b… → kendi cüzdan adresi /btc/address/38Rcs…</td></tr>
+    <tr><td>59–66</td><td>5, 0</td><td>"kraken" aradı → Kraken borsasına giriş (cihaz onayı) → trade → funding</td></tr>
+    <tr><td>67–71</td><td>0 + redirect/refresh</td><td>Kraken'dan mempool.space/tx/517b… işlemine yönlendirme → History Ledger</td></tr>
+    <tr><td>72–74</td><td>0 Link + Refresh</td><td>Gmail'e dönüp "order" mesajına iki cevap daha; txid mesajına geri döndü</td><td>6–7 · Gönderim</td></tr>
+  </table>
+  <div class="box ok"><b class="t">İlgi çekici bulgular (Materials of Interest)</b>
+  Olası konum: <b>Baltimore</b> · TXID: <code>517b2156…afdc5</code> (para izini sürmeyi sağlar) · BTC cüzdanı: <code>38RcsURWCDmCbYocmsZCnGz1FtD7x477mt</code> · E-posta: <b>unsub.fscs@gmail.com</b> · İndirilen dosya: <b>proof_of_payment.png</b> (<code>C:\Users\FSCS_User\Desktop\</code>) → ödeme makbuzunu şüpheliye bağlar.</div>
+
+  <div class="box tip"><b class="t">URL yapılarından anlam çıkarma (senaryo sorularında işe yarar)</b>
+  <code>google.com/search?q=a+b</code> → Google arama sonucu · <code>/mail/u/0/</code> → 0 numaralı hesapta oturum açık · <code>#inbox/&lt;ID&gt;</code> → belirli bir mail açıldı · <code>?compose=&lt;ID&gt;</code> → cevap yazılıyor · <code>google.com/url?q=&lt;link&gt;&amp;source=gmail</code> → link Gmail'deki mesajdan açıldı · <code>blockchain.com/btc/tx/&lt;TXID&gt;</code> → işlem sayfası · <code>/btc/address/&lt;adres&gt;</code> → cüzdan sayfası.</div>
+
+  <h4>Lab soruları (Lab-4)</h4>
+  <details><summary>Visits tablosunda 60 numaralı ziyaret hangi URL'ye gitti, şüpheli ne yaptı?</summary><div class="ans">
+  <pre><code>select v.id, u.url, u.title, v.transition &amp; 0xFF
+from visits v join urls u on v.url = u.id where v.id = 60;</code></pre>
+  59–60 numaralı ziyaretlerde şüpheli adres çubuğuna <b>"kraken"</b> yazdı (59: 5 Omnibar Generated) ve 60'ta <b>Google arama sonuçları</b> sayfası açıldı (0 Link), 7 sn kaldı. Kraken bir kripto para borsası; şüpheli aldığı Bitcoin'i kontrol etmek / bozdurmak için borsaya yöneliyor.</div></details>
+  <details><summary>Visit 54'te gerçekleşen işlemi kendi tarayıcında göster</summary><div class="ans">53–54'te kullanıcı Google sonuçlarından <b>blockchain.com/explorer</b> linkine tıkladı (0 Link), 18 sn kaldı. Kendi tarayıcında Google'da "blockchain explorer" arayıp ilk sonuca tıklarsan aynı işlemi göstermiş olursun. Kendi History'nde yeni kayıt transition 0 (Link) olur.</div></details>
+</section>
+
+<!-- ================= 3 SMTP ================= -->
+<section id="smtp">
+  <h2>3 · SMTP, SSL/TLS ve Conversion (Base64)</h2>
+  <p class="lead">E-posta trafiğinin adli incelemesi. Elimizde Outlook ile gönderilmiş bir e-postanın ağ kaydı (<code>smtp.pcap</code>) var. Kim, kime, ne zaman, ne gönderdi, şifre neydi?</p>
+
+  <h3>3.1 Temel kavramlar</h3>
+  <table>
+    <tr><th>Protokol</th><th>Görevi</th><th>Port</th></tr>
+    <tr><td><b>SMTP</b> (Simple Mail Transfer Protocol)</td><td>E-posta <b>GÖNDERME</b>: istemci → sunucu, sunucu → alıcı sunucu. OSI <b>uygulama katmanı</b>. Komut–cevap ile çalışan, <b>düz metin</b> (şifresiz) protokol.</td><td>25 (varsayılan/şifresiz) · 587 (modern gönderim, STARTTLS) · 465 (SSL/TLS, SMTPS)</td></tr>
+    <tr><td><b>IMAP</b></td><td>E-postaları sunucudan <b>alma ve yönetme</b>; mailler sunucuda kalır, cihazlar senkron.</td><td>143 · 993 (güvenli)</td></tr>
+    <tr><td><b>POP3</b></td><td>E-postaları <b>indirme</b>; daha eski, basit. Genelde indirip sunucudan siler.</td><td>110 · 995 (güvenli)</td></tr>
+  </table>
+  <div class="flow"><span class="st">Gönderen istemci (Outlook)</span><span class="ar">— SMTP →</span><span class="st">Gönderen sunucu</span><span class="ar">— SMTP →</span><span class="st">Alıcı sunucu</span><span class="ar">— IMAP/POP3 →</span><span class="st">Alıcı istemci</span></div>
+
+  <h3 id="smtp-asama">3.2 SMTP: hangi aşamada ne kullanılıyor, ne yapıyor?</h3>
+  <p>Listede "hangi aşamada ne kullanılıyor, ne yapıyor" diye özellikle yazılmış. Bu tabloyu <b>ezberle</b>:</p>
+  <table>
+    <tr><th>#</th><th>Aşama</th><th>Kim → Kim</th><th>Komut / Kod</th><th>Ne yapar?</th></tr>
+    <tr><td>1</td><td>Bağlantı kurulumu</td><td>S → C</td><td><code>220</code> service ready</td><td>TCP bağlantısı kurulunca sunucu kendini tanıtır: "hazırım". (Lab'da: <code>220 xc90.websitewelcome.com ESMTP Exim 4.69</code> + toplu/istenmeyen mail uyarısı)</td></tr>
+    <tr><td>2</td><td>Selamlaşma (handshake)</td><td>C → S</td><td><code>HELO</code> / <code>EHLO</code></td><td>İstemci kendini tanıtır. <b>EHLO</b> = Extended (ESMTP); sunucunun desteklediği özellikleri öğrenir. Desteklenmezse HELO'ya döner.</td></tr>
+    <tr><td></td><td>Özellik listesi</td><td>S → C</td><td><code>250</code> + liste</td><td>Sunucu yeteneklerini sayar: <code>SIZE 52428800</code> (en büyük mesaj boyutu, oktet), <code>PIPELINING</code>, <code>AUTH PLAIN LOGIN</code>, <code>STARTTLS</code>, <code>HELP</code></td></tr>
+    <tr><td>3</td><td>(İsteğe bağlı) Şifreleme</td><td>C → S</td><td><code>STARTTLS</code></td><td>Düz bağlantıyı TLS ile şifreli bağlantıya yükseltir.</td></tr>
+    <tr><td>4</td><td>Kimlik doğrulama (SMTP AUTH)</td><td>C ↔ S</td><td><code>AUTH LOGIN</code> → <code>334</code> → kullanıcı → <code>334</code> → şifre → <code>235</code></td><td>Kullanıcı adı ve şifre <b>Base64</b> ile kodlanarak gönderilir. <code>334 VXNlcm5hbWU6</code> = "Username:", <code>334 UGFzc3dvcmQ6</code> = "Password:". <code>235</code> = Authentication succeeded.</td></tr>
+    <tr><td>5</td><td>Zarf: gönderen</td><td>C → S</td><td><code>MAIL FROM:</code> → <code>250 OK</code></td><td>Göndericinin adresi.</td></tr>
+    <tr><td>6</td><td>Zarf: alıcı</td><td>C → S</td><td><code>RCPT TO:</code> → <code>250 Accepted</code></td><td>Alıcı(lar). Birden fazla alıcı için birden fazla RCPT TO.</td></tr>
+    <tr><td>7</td><td>Veri aktarımı</td><td>C → S</td><td><code>DATA</code> → <code>354</code></td><td>"İçeriği gönder; tek başına '.' içeren satırla bitir". İstemci başlıkları (From, To, Subject, Date) ve gövdeyi gönderir, sonunda <code>.</code></td></tr>
+    <tr><td>8</td><td>Kuyruğa alma</td><td>S → C</td><td><code>250 OK id=…</code></td><td>Mail kabul edildi, kuyruğa alındı, takip numarası verildi.</td></tr>
+    <tr><td>9</td><td>Kapatma</td><td>C → S, S → C</td><td><code>QUIT</code> → <code>221</code></td><td>Bağlantı kapatılır ("closing connection / Bye").</td></tr>
+    <tr><td>10</td><td>Teslimat</td><td>Sunucu → alıcı sunucu</td><td>DNS (MX kaydı)</td><td>Gönderen sunucu alıcı alan adının DNS kaydından alıcı sunucuyu bulur ve maili iletir; alıcı sunucu posta kutusuna koyar.</td></tr>
+  </table>
+  <div class="box tip"><b class="t">SMTP cevap kodları</b><b>2xx</b> = başarılı (220 hazır, 221 kapanıyor, 235 doğrulandı, 250 tamam) · <b>3xx</b> = devam et, bilgi bekliyorum (334 AUTH sorusu, 354 veriyi gönder) · <b>4xx</b> = geçici hata · <b>5xx</b> = kalıcı hata. 2 ve 3 ile başlayanlar hata değil, sunucular arası alışverişteki durum/istem mesajlarıdır.</div>
+
+  <h3 id="ssl">3.3 SSL/TLS</h3>
+  <div class="box tip"><b class="t">Tanım</b><b>SSL</b> (Secure Sockets Layer) ve onun modern, güvenli halefi <b>TLS</b> (Transport Layer Security), ağ üzerinden iki uygulama (ör. tarayıcı ve web sunucusu) arasındaki iletişimin <b>gizliliğini ve bütünlüğünü</b> sağlayan şifreleme protokolleridir. SSL Netscape'in geliştirdiği orijinal protokoldür; SSL 3.0 güvenlik açığı nedeniyle kullanımdan kalkmıştır. Bugün kullanılan TLS'dir (TLS 1.2, 1.3). İnsanlar alışkanlıkla hâlâ "SSL" der.</div>
+  <table>
+    <tr><th>3 ana görev</th><th>Ne yapar?</th><th>Sonuç</th></tr>
+    <tr><td><b>1. Şifreleme</b> (Encryption)</td><td>Veriyi okunamaz şifreli metne çevirir; sadece doğru anahtara sahip alıcı çözer.</td><td>Araya giren 3. kişi içeriği anlayamaz.</td></tr>
+    <tr><td><b>2. Kimlik doğrulama</b> (Authentication)</td><td>Sunucu, güvenilir <b>Sertifika Yetkilisi (CA)</b>'nin verdiği <b>dijital sertifika</b>yı sunar; tarayıcı kontrol eder.</td><td>Sahte (phishing) siteye bilgi gönderilmez.</td></tr>
+    <tr><td><b>3. Veri bütünlüğü</b> (Integrity)</td><td>Veriye dijital imza / özet (hash, MAC) eklenir; alıcı kontrol eder.</td><td>Yolda değiştirilen veri fark edilir.</td></tr>
+  </table>
+  <p><b>En yaygın kullanım:</b> HTTPS (adres çubuğunda <code>https://</code> ve kilit simgesi). E-postada: <b>SMTPS</b> (SMTP over SSL/TLS, port 465: baştan şifreli) ve <b>STARTTLS</b> (port 25/587: düz başlar, komutla şifreliye yükselir).</p>
+  <div class="box warn"><b class="t">Adli bilişim açısından</b>SMTP varsayılan olarak <b>şifresiz</b>dir; bu yüzden pcap'te kullanıcı adı, şifre (Base64) ve mail içeriği okunabilir. Trafik TLS ile şifrelenmiş olsaydı Wireshark'ta içerik görünmezdi.</div>
+
+  <h3 id="base64">3.4 Conversion: Base64</h3>
+  <div class="box tip"><b class="t">Base64 nedir?</b>İkili (binary) veriyi (resim, ses, dosya) sadece <b>yazdırılabilir ASCII karakterlerine</b> (A–Z, a–z, 0–9, +, /, dolgu için =) dönüştüren bir <b>kodlama</b> şemasıdır. Amaç: veriyi e-posta, URL, JSON, XML gibi metin tabanlı ortamlarda bozulmadan taşımak.<br><b>Dikkat:</b> Base64 <b>şifreleme değildir</b>; anahtar gerektirmez, herkes geri çevirebilir. SMTP AUTH'ta şifrenin Base64 olması güvenlik sağlamaz.</div>
+
+  <h4>Elle nasıl çevrilir? (3 bayt → 4 karakter)</h4>
+  <ol>
+    <li>Metni ASCII → 8 bitlik ikiliye çevir.</li>
+    <li>Bitleri <b>6'şarlı</b> gruplara böl (3 bayt = 24 bit = 4 × 6 bit).</li>
+    <li>Her 6 bitlik değeri (0–63) tablodan karaktere çevir: 0–25 → A–Z, 26–51 → a–z, 52–61 → 0–9, 62 → +, 63 → /.</li>
+    <li>Son grupta eksik bayt varsa sona <code>=</code> (1 eksik) ya da <code>==</code> (2 eksik) eklenir.</li>
+  </ol>
+  <pre><code>"Man" → M=77=01001101  a=97=01100001  n=110=01101110
+24 bit: 010011 010110 000101 101110
+         19     22     5      46
+         T      W      F      u        → "TWFu"</code></pre>
+  <pre><code>echo -n "Username:" | base64           <span class="cm"># → VXNlcm5hbWU6   (-n: sona satır sonu ekleme)</span>
+echo "VXNlcm5hbWU6" | base64 -d        <span class="cm"># → Username:     (-d: decode)</span>
+echo "cHVuamFiQDEyMw==" | base64 --decode   <span class="cm"># → punjab@123</span></code></pre>
+
+  <div class="card">
+    <h4 style="margin-top:0">Base64 çevirici</h4>
+    <label>Metin ya da Base64</label>
+    <input type="text" id="b64In" value="Z3VycGFydGFwQHBhdHJpb3RzLmlu">
+    <div class="flow"><button id="b64Enc">Kodla (encode)</button><button id="b64Dec" class="primary">Çöz (decode)</button></div>
+    <div class="out" id="b64Out"></div>
+  </div>
+
+  <h3 id="smtp-lab">3.5 Lab: smtp.pcap incelemesi (gerçek değerler)</h3>
+  <p>Dosyayı Wireshark'ta aç, filtreye <code>smtp</code> yaz. Ya da tshark ile:</p>
+  <pre><code>tshark -r smtp.pcap -Y smtp
+tshark -r smtp.pcap -Y smtp -T fields -e ip.src -e ip.dst -e smtp.req.command -e smtp.req.parameter -e smtp.response.code</code></pre>
+  <table>
+    <tr><th>Frame</th><th>Yön</th><th>İçerik</th><th>Yorum</th></tr>
+    <tr><td>6</td><td>S→C</td><td><code>220 xc90.websitewelcome.com ESMTP Exim 4.69</code></td><td>Sunucu hazır, toplu mail uyarısı</td></tr>
+    <tr><td>7</td><td>C→S</td><td><code>EHLO GP</code></td><td>İstemci adı "GP"</td></tr>
+    <tr><td>9</td><td>S→C</td><td><code>250 … SIZE 52428800, PIPELINING, AUTH PLAIN LOGIN, STARTTLS, HELP</code></td><td>Desteklenen özellikler</td></tr>
+    <tr><td>10</td><td>C→S</td><td><code>AUTH LOGIN</code></td><td>Doğrulama başlar</td></tr>
+    <tr><td>11</td><td>S→C</td><td><code>334 VXNlcm5hbWU6</code></td><td>"Username:"</td></tr>
+    <tr><td>12</td><td>C→S</td><td><code>Z3VycGFydGFwQHBhdHJpb3RzLmlu</code></td><td><b>gurpartap@patriots.in</b></td></tr>
+    <tr><td>13</td><td>S→C</td><td><code>334 UGFzc3dvcmQ6</code></td><td>"Password:"</td></tr>
+    <tr><td>14</td><td>C→S</td><td><code>cHVuamFiQDEyMw==</code></td><td><b>punjab@123</b></td></tr>
+    <tr><td>15</td><td>S→C</td><td><code>235 Authentication succeeded</code></td><td>Giriş başarılı</td></tr>
+    <tr><td>16–19</td><td>C↔S</td><td><code>MAIL FROM: &lt;gurpartap@patriots.in&gt;</code> · <code>RCPT TO: &lt;raj_deol2002in@yahoo.co.in&gt;</code></td><td>Gönderen / alıcı</td></tr>
+    <tr><td>20–21</td><td>C↔S</td><td><code>DATA</code> → <code>354 Enter message, ending with "." on a line by itself</code></td><td>İçerik başlıyor</td></tr>
+    <tr><td>22–45</td><td>C→S</td><td>(14 parça; Wireshark 45. framede birleştirir)</td><td>Mail içeriği, çok parçalı (multipart); istemci <b>Office Outlook 12.0</b></td></tr>
+    <tr><td>52</td><td>S→C</td><td><code>250 OK id=1Mugho-0003Dg-Un</code></td><td>Kuyruğa alındı</td></tr>
+    <tr><td>54–56</td><td>C↔S</td><td><code>QUIT</code> → <code>221 closing connection</code></td><td>Bitti</td></tr>
+  </table>
+  <p>Ağ bilgileri: istemci <b>10.10.1.4:1470</b> → sunucu <b>74.53.140.153:25</b>. MAC: istemci 00:1f:33:d9:81:60, ağ geçidi 00:e0:1c:3c:17:c2. Tarih: 5 Ekim 2009. İçeriği okumanın alternatif yolu: paket → sağ tık → <b>Follow → TCP Stream</b>.</p>
+  <div class="box ok"><b class="t">Bir SMTP incelemesinde cevaplanacak sorular</b>Ne zaman oldu? (zaman damgaları) · Hangi e-posta istemcisi? (Outlook) · İçerik ne? (çok parçalı) · Nasıl? → gönderen/alıcı <b>portları</b>, <b>IP</b> adresleri, <b>MAC</b> adresleri.</div>
+</section>
+
+<!-- ================= 4 AĞ ================= -->
+<section id="ag">
+  <h2>4 · Ağ konuları (kısa ama tanım sorusu gelebilir)</h2>
+
+  <h3 id="syn">4.1 TCP üçlü el sıkışma ve SYN Flood</h3>
+  <div class="flow"><span class="st">İstemci → <b>SYN</b> (seq=m)</span><span class="ar">→</span><span class="st">Sunucu → <b>SYN+ACK</b> (seq=n, ack=m+1)</span><span class="ar">→</span><span class="st">İstemci → <b>ACK</b> (ack=n+1)</span><span class="ar">→</span><span class="st">ESTABLISHED</span></div>
+  <p>Durumlar: istemci CLOSED → SYN-SENT → ESTABLISHED; sunucu LISTEN → SYN-RECEIVED → ESTABLISHED. <b>Sequence #</b>: gönderilen ilk baytın numarası (rastgele ya da 0'dan başlar). <b>ACK #</b>: alıcının beklediği bir sonraki bayt numarası (SYN için +1).</p>
+  <div class="box tip"><b class="t">HTTP SYN Flood nedir? (örnek sınavda soruldu)</b>Saldırgan, hedef sunucuya (ör. web sunucusu port 80) çok sayıda <b>SYN</b> paketi gönderir ama el sıkışmayı <b>tamamlamaz</b> (son ACK'yı göndermez). Sunucu her yarım bağlantı için SYN+ACK gönderip kaynak ayırarak bekler. Yarım açık bağlantılar kuyruğu doldurur, sunucu <b>meşru kullanıcılara hizmet veremez</b>. Bu bir <b>DoS/DDoS</b> saldırısıdır. Kaynak IP sahte (spoofed) olabilir.<br><b>Wireshark'ta delil:</b> kaynaktan sürekli SYN geliyor, karşılığında el sıkışma tamamlanmıyor; kaynak portlar rastgele.</div>
+  <pre><code>hping3 -S --flood -V -p 80 192.168.78.11               <span class="cm"># -S: SYN bayrağı, --flood: olabildiğince hızlı, -p: hedef port</span>
+hping3 -S --flood -V -d 6000 -p 80 192.168.78.11       <span class="cm"># -d: veri boyutu 6000 bayt (MTU 1500 → paket parçalanır)</span>
+hping3 -S --flood -V -a 15.15.15.15 -p 80 192.168.78.11 <span class="cm"># -a: sahte kaynak IP</span></code></pre>
+  <p>Scapy ile: <code>IP(dst=hedef)/TCP(sport=RandShort(), dport=80, flags="S")/Raw(b"X"*boyut)</code> ve <code>send(p, count=n, verbose=0)</code>. Veri boyutu verilmezse 20 bayt TCP + 34 bayt başlık = 54 baytlık çerçeve. <b>MTU</b>: Ethernet'te 1500 bayt; IP+TCP başlıkları çıkınca ~1460–1480 bayt veri; daha büyük veri parçalanır (DF/MF bitleri).</p>
+
+  <h3 id="arp">4.2 ARP ve ARP Poisoning</h3>
+  <p><b>ARP</b> (Address Resolution Protocol): yerel ağda <b>IP adresini MAC adresine</b> eşler. Cihazlar diğerlerinin IP'sini bilir ama veri göndermek için MAC lazım. A cihazı "bu IP kimin?" diye <b>broadcast</b> (ff:ff:ff:ff:ff:ff) ARP request atar, sahibi ARP reply ile MAC'ini söyler. Eşlemeler <b>ARP tablosunda (ARP cache)</b> tutulur; her cihazın kendi tablosu vardır, dinamiktir, süresi dolar. <code>arp -a</code> / <code>ip neigh</code> ile görülür; ping de ARP kullanır.</p>
+  <div class="box tip"><b class="t">ARP Spoofing / Poisoning nedir?</b>Saldırgan LAN'a <b>sahte ARP cevapları</b> gönderir: kurbana "gateway'in IP'si bende, benim MAC'imi kullan", gateway'e "kurbanın IP'si bende" der. İki tarafın ARP tablosu <b>zehirlenir</b> ve trafik saldırgan üzerinden akar → <b>Man-in-the-Middle (MITM)</b>: dinleme, değiştirme, bilgi çalma, ağ kesintisi.<br><b>Spoofing</b> = başkasının kimliğini (IP) kullanmak; <b>poisoning</b> = bunun sonucu (zehirlenmiş tablo).<br><b>Önlem:</b> ARP spoofing tespit yazılımı, cihaz sayısını sınırlamak, VLAN, statik ARP.<br><b>Delil:</b> Kurbanın ARP tablosunda <b>gateway IP'si saldırganın MAC'iyle</b> görünür; Wireshark'ta aynı MAC'ten çok sayıda istenmemiş ARP reply ("duplicate use of IP" uyarısı).</div>
+
+  <h3 id="dhcp">4.3 DHCP Starvation</h3>
+  <p><b>DHCP</b>, cihazlara otomatik IP, ağ geçidi ve DNS verir (havuzdan). Lab'daki router ayarı: <code>ip dhcp pool</code>, <code>network 192.168.26.0 255.255.255.0</code>, <code>default-router</code>, <code>dns-server 8.8.8.8</code>, <code>ip dhcp excluded-address</code> (dağıtılmayacak adresler), <code>ip helper-address</code> (DHCP isteğini başka ağdaki sunucuya ilet).</p>
+  <div class="box tip"><b class="t">DHCP Starvation nedir?</b>Saldırgan, <b>sahte MAC adresleriyle</b> binlerce DHCP DISCOVER/REQUEST gönderip havuzdaki <b>tüm IP adreslerini tüketir</b>. Gerçek kullanıcılar IP alamaz (DoS). Çoğunlukla ardından saldırgan kendi <b>sahte (rogue) DHCP sunucusunu</b> kurup kendini gateway/DNS olarak dağıtır → MITM. Delil: router'da <code>show ip dhcp binding</code> tablosu birbirine benzemeyen, anlamsız MAC'lerle dolu.</div>
+
+  <h3 id="nitroba">4.4 Taciz e-postası incelemesi (Nitroba senaryosu)</h3>
+  <p>Kimya öğretmeni Lily Tuckrige taciz e-postaları alıyor. Mail başlığı yurt odası IP'sini (140.247.62.34) gösteriyor; odada 3 kişi ve şifresiz Wi-Fi router var → IP tek başına kişiyi göstermez. Ağa sniffer konuyor; ikinci mail <b>willselfdestruct.com</b> üzerinden gönderiliyor.</p>
+  <ol>
+    <li>Siteye kim girdi? Sayfa başlığında <code>"WillSelfDestruct"</code> ara → site IP 69.25.94.22, şüpheli <b>192.168.15.4</b>.</li>
+    <li>Taciz içeriğini POST etti mi? <code>http.request.method == "POST"</code> → içerik bulundu.</li>
+    <li>IP birden çok kişide olabilir → <b>MAC adresi</b> (benzersiz): <code>00:17:f2:e2:c0:ce</code> (Apple cihaz).</li>
+    <li>MAC'i kişiye bağlama: HTTP <b>durumsuzdur (stateless)</b>, sunucu kullanıcıyı <b>cookie</b> ile hatırlar. Cookie'lerde e-posta/kullanıcı adı aranır → sınıf listesindeki öğrenciyle eşleştirilir.</li>
+    <li>Zaman: Wireshark zaman formatını değiştir.</li>
+  </ol>
+  <p>Faydalı filtreler: <code>http.set_cookie</code> · <code>ip.dst == 192.168.15.4</code> · <code>http.user_agent == "…"</code> · <code>http.request.uri contains "?"</code> · <code>http.request.method == "POST"</code> · <code>eth.addr == 00:17:f2:e2:c0:ce</code></p>
+</section>
+
+<!-- ================= 5 TANIM ================= -->
+<section id="tanim">
+  <h2>5 · Tanım kartları</h2>
+  <p class="lead">Tıkla, aç, kendi cümlenle tekrar et. Sınavda 3–5 cümle yeter: <b>ne olduğu + ne işe yaradığı + adli bilişimdeki önemi</b>.</p>
+  <div id="cards"></div>
+</section>
+
+<!-- ================= 6 ÖRNEK SORULAR ================= -->
+<section id="sorular">
+  <h2>6 · Örnek sorular (hocanın tarzında, çözümlü)</h2>
+  <p class="lead">Önce kâğıda kendin yaz, sonra "Cevabı göster"e bas. Puanlar örnek sınavdaki ağırlıklara göre.</p>
+  <div id="qs"></div>
+</section>
+
+<!-- ================= 7 TEST ================= -->
+<section id="test">
+  <h2>7 · Kendini test et</h2>
+  <p class="lead">Hızlı çoktan seçmeli. Yanlış yaptığın konuya geri dön.</p>
+  <div class="card"><b>Skor: <span id="score">0</span> / <span id="total">0</span></b> <button id="resetQuiz" style="margin-left:10px">Sıfırla</button></div>
+  <div id="quiz"></div>
+</section>
+
+
+</main>
+<button id="toTop" aria-label="Başa dön">↑</button>
+</div>
+
+<script src="app.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

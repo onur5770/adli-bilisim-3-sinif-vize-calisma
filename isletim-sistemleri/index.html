@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="ABM-313 İşletim Sistemleri sınavı için konu özeti, olası sınav senaryosu ve quiz + örnek soruların şıklı listesi.">
+<meta name="theme-color" content="#f5f7f8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f161c" media="(prefers-color-scheme: dark)">
+<style>
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<title>İşletim Sistemleri Sınav Hazırlık</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: tek sütun çalışma defteri; üstte yapışkan filtre çubuğu, altta soru kartları */
+:root{
+  --bg:#f5f7f8; --surface:#ffffff; --fg:#14202b; --muted:#5b6b78; --line:#dde3e8;
+  --accent:#0f7c86; --accent-soft:#e1f2f3;
+  --hot:#c2410c; --hot-soft:#fdebe1;
+  --high:#a16207; --high-soft:#fbf1d6;
+  --mid:#3b5b8c; --mid-soft:#e5ecf6;
+  --guess:#6d4aa8; --guess-soft:#eee7f8;
+  --ok:#15803d; --ok-soft:#e2f4e8; --bad:#b91c1c; --bad-soft:#fbe4e4;
+  --f-body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f161c; --surface:#16212a; --fg:#e4ebf0; --muted:#93a4b2; --line:#26343f;
+  --accent:#4fc3cc; --accent-soft:#143338;
+  --hot:#fb8a5a; --hot-soft:#3a2218; --high:#e9b949; --high-soft:#352a12;
+  --mid:#8fb0e3; --mid-soft:#1c2a3e; --guess:#b79cf0; --guess-soft:#2a2140;
+  --ok:#4ade80; --ok-soft:#14301f; --bad:#f87171; --bad-soft:#3a1a1a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f161c; --surface:#16212a; --fg:#e4ebf0; --muted:#93a4b2; --line:#26343f;
+  --accent:#4fc3cc; --accent-soft:#143338;
+  --hot:#fb8a5a; --hot-soft:#3a2218; --high:#e9b949; --high-soft:#352a12;
+  --mid:#8fb0e3; --mid-soft:#1c2a3e; --guess:#b79cf0; --guess-soft:#2a2140;
+  --ok:#4ade80; --ok-soft:#14301f; --bad:#f87171; --bad-soft:#3a1a1a; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.55}
+.wrap{max-width:860px;margin:0 auto;padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{text-wrap:balance;line-height:1.2;margin:0}
+h1{font-size:clamp(26px,5vw,34px);font-weight:800;letter-spacing:-.02em}
+h2{font-size:22px;font-weight:800;letter-spacing:-.01em}
+h3{font-size:16px;font-weight:700}
+.mono{font-family:var(--f-mono)}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.lead{color:var(--muted);max-width:65ch;margin:10px 0 0}
+header.top{display:grid;gap:6px;margin-bottom:22px}
+nav.jump{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 6px}
+nav.jump a{font-family:var(--f-mono);font-size:13px;color:var(--accent);text-decoration:none;border:1px solid var(--line);background:var(--surface);padding:6px 12px;border-radius:999px}
+nav.jump a:hover,nav.jump a:focus-visible{border-color:var(--accent);outline:none}
+section{margin-top:40px;display:grid;gap:16px}
+.legend{display:grid;grid-template-columns:auto 1fr;gap:8px 12px;align-items:center;font-size:13px;color:var(--muted);max-width:560px}
+.legend .badge{justify-self:start}
+.badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:11.5px;font-weight:600;letter-spacing:.03em;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.b-ck{background:var(--hot-soft);color:var(--hot)}
+.b-y{background:var(--high-soft);color:var(--high)}
+.b-o{background:var(--mid-soft);color:var(--mid)}
+.b-t{background:var(--guess-soft);color:var(--guess)}
+.dot{width:7px;height:7px;border-radius:50%;background:currentColor}
+/* özet */
+.weeks{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:14px}
+.week{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;min-width:0}
+.week h3{display:flex;gap:10px;align-items:baseline}
+.week h3 .mono{font-size:12px;color:var(--accent);font-weight:600}
+.week ul{margin:10px 0 0;padding-left:18px;display:grid;gap:5px;font-size:14px}
+.week li::marker{color:var(--accent)}
+b.k{font-weight:700}
+/* senaryo */
+.scen{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:grid;gap:14px}
+.dist{display:grid;gap:8px}
+.drow{display:grid;grid-template-columns:150px 1fr 54px;gap:10px;align-items:center;font-size:14px}
+.bar{height:10px;border-radius:5px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:5px}
+.drow .mono{font-size:12px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.hotlist{margin:0;padding-left:20px;display:grid;gap:6px;font-size:14px}
+.note{font-size:13.5px;color:var(--muted);border-left:3px solid var(--line);padding-left:12px}
+@media (max-width:520px){.drow{grid-template-columns:110px 1fr 44px}}
+/* araç çubuğu */
+.bar-sticky{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px;border-bottom:1px solid var(--line);display:grid;gap:8px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chips .lbl{font-family:var(--f-mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-right:4px}
+.chip{font:inherit;font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--fg);padding:5px 11px;border-radius:999px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.toolrow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.switch{display:inline-flex;gap:8px;align-items:center;font-size:13.5px;font-weight:600;cursor:pointer}
+.switch input{width:16px;height:16px;accent-color:var(--accent)}
+.count{font-family:var(--f-mono);font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.score{font-family:var(--f-mono);font-size:12.5px;color:var(--accent)}
+.btn{font:inherit;font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--fg);padding:5px 11px;border-radius:8px;cursor:pointer}
+/* soru kartı */
+#list{display:grid;gap:12px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:grid;gap:10px;min-width:0}
+.q.ck{border-left:4px solid var(--hot)}
+.qhead{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center}
+.qnum{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
+.src{font-family:var(--f-mono);font-size:11px;color:var(--muted);border:1px solid var(--line);padding:2px 7px;border-radius:5px}
+.qt{font-weight:700;font-size:15.5px}
+.opts{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.opt{display:grid;grid-template-columns:26px 1fr;gap:8px;align-items:start;padding:7px 10px;border-radius:7px;border:1px solid transparent;font-size:14.5px}
+.opt .L{font-family:var(--f-mono);font-weight:600;color:var(--muted)}
+.show .opt.right,.opt.right.picked{background:var(--ok-soft);border-color:var(--ok)}
+.show .opt.right .L,.opt.right.picked .L{color:var(--ok)}
+.opt.wrong.picked{background:var(--bad-soft);border-color:var(--bad)}
+.opt{cursor:pointer}
+.opt:hover{border-color:var(--line)}
+.opt:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.answered .opt.right{background:var(--ok-soft);border-color:var(--ok)}
+.opt.viewed{box-shadow:inset 0 0 0 2px var(--accent)}
+.why{font-size:13.5px;color:var(--muted);border-top:1px dashed var(--line);padding-top:10px;display:grid;gap:6px}
+.why .exp{color:var(--fg);padding:8px 10px;border-radius:7px}
+.why .exp.good{background:var(--ok-soft)}
+.why .exp.good b{color:var(--ok)}
+.why .exp.bad{background:var(--bad-soft)}
+.why .exp.bad b{color:var(--bad)}
+.why .tip{font-size:12.5px}
+.exam .q:not(.answered) .why{display:none}
+.empty{color:var(--muted);text-align:center;padding:30px}
+.out{font-size:13.5px;color:var(--muted)}
+.out summary{cursor:pointer;font-weight:600;color:var(--fg)}
+.out ul{margin:8px 0 0;padding-left:18px}
+@media (prefers-reduced-motion:no-preference){.opt{transition:background .15s,border-color .15s}}
+/* mobil */
+@media (max-width:600px){
+  body{font-size:14.5px}
+  .wrap{padding-block:18px 48px}
+  section{margin-top:30px}
+  .week,.scen,.q{padding:14px}
+  .chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin-right:calc(-1 * max(16px,env(safe-area-inset-right,0px)));padding-right:16px}
+  .chips::-webkit-scrollbar{display:none}
+  .chip{flex:none;padding:6px 12px}
+  .bar-sticky{gap:6px;padding-block:8px}
+  .switch{font-size:13px}
+  .switch .hint{display:none}
+  .toolrow{flex-wrap:nowrap}
+  .opt{padding:9px 10px;grid-template-columns:24px 1fr}
+  .qt{font-size:15px}
+  .legend{gap:6px 10px}
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <span class="eyebrow">ABM-313 · Sınav · Hafta 1–4</span>
+  <h1>İşletim Sistemleri Sınav Hazırlık</h1>
+  <p class="lead">4 slayt (Giriş, İS Yapıları, Process, Thread), hocanın 4 quizindeki 40 soru ve hocanın verdiği örnek sorular tek listede. Slayt dışındaki örnek sorular (senkronizasyon, CPU scheduling, bellek, deadlock, dosya sistemi) listeye alınmadı.</p>
+  <nav class="jump"><a href="#ozet">Konu özeti</a><a href="#senaryo">Sınav senaryosu</a><a href="#sorular">Soru-cevap listesi</a></nav>
+  <div class="legend">
+    <span class="badge b-ck"><span class="dot"></span>ÇOK YÜKSEK</span><span>konu hem quizde hem örnek sorularda var</span>
+    <span class="badge b-y"><span class="dot"></span>YÜKSEK</span><span>hoca quizde sordu</span>
+    <span class="badge b-o"><span class="dot"></span>ORTA</span><span>sadece örnek sorularda var</span>
+    <span class="badge b-t"><span class="dot"></span>TAHMİN</span><span>slayttan, henüz sorulmamış</span>
+  </div>
+</header>
+
+<section id="ozet">
+  <div><span class="eyebrow">Bölüm 1</span><h2>Konu özeti</h2></div>
+  <div class="weeks">
+    <div class="week"><h3><span class="mono">HAFTA 1</span>İşletim sistemine giriş</h3><ul>
+      <li>İS: donanımı yöneten, kullanıcı ile donanım arasında <b class="k">aracı</b> program. Sürekli çalışan kısmı <b class="k">kernel</b>. Mobil İS'lerde ayrıca <b class="k">middleware</b> var.</li>
+      <li>Sistem 4 bileşen: donanım, İS, uygulama programları, kullanıcılar.</li>
+      <li><b class="k">Bootstrap</b> (firmware) ROM/EEPROM'da; kernel'i belleğe yükler. UNIX'te ilk process <b class="k">init</b>.</li>
+      <li>Olaylar <b class="k">interrupt</b> ile bildirilir: donanım sinyal ile, yazılım <b class="k">system call</b> ile. Yazılım kesmesi = <b class="k">trap/exception</b>. Interrupt adresleri <b class="k">interrupt vector</b> tablosunda.</li>
+      <li>Depolama hiyerarşisi: yukarı çıktıkça hız ve maliyet artar, kapasite azalır. Register/cache/RAM volatile, disk nonvolatile.</li>
+      <li><b class="k">DMA</b>: blok veri cihaz ile bellek arasında doğrudan aktarılır, CPU o sırada başka iş yapar.</li>
+      <li>Çok işlemcili sistemin 3 avantajı: throughput, ekonomik ölçek, güvenilirlik (graceful degradation). <b class="k">AMP</b>: her işlemciye bir iş, biri yönetir. <b class="k">SMP</b>: tüm işlemciler eş düzey, her işi yapabilir. <b class="k">UMA/NUMA</b>.</li>
+      <li>Clustered sistemler: LAN üzerinden, loosely coupled, high-availability. Asimetrik: hot-standby.</li>
+      <li><b class="k">Multiprogramming</b>: birden çok işi aynı anda bellekte tutar, CPU'yu boş bırakmaz. <b class="k">Multitasking</b> (time sharing): beklemesiz hızlı geçiş.</li>
+      <li><b class="k">Dual mode</b>: mode bit, user = 1, kernel = 0. Boot'ta kernel mode. <b class="k">Timer</b>: sonsuz döngüde kontrolü İS'e geri alır.</li>
+      <li>Process yönetimi görevleri: oluşturma/silme, askıya alma/devam ettirme, senkronizasyon, haberleşme. Program pasif, process aktif.</li>
+      <li>Protection: kaynağa erişimin denetlenmesi. Security: iç/dış saldırılara karşı koruma.</li>
+      <li>Kernel veri yapıları: stack LIFO, queue FIFO, BST O(n), dengeli BST O(log n), hash O(1), bitmap.</li>
+      <li>Bulut: SaaS (Word, Excel), PaaS (veritabanı), IaaS (sunucu, depolama). Açık kaynak: Linux. Mac OS X hibrit (Darwin).</li>
+    </ul></div>
+    <div class="week"><h3><span class="mono">HAFTA 2</span>İşletim sistemi yapıları</h3><ul>
+      <li>Kullanıcı arayüzleri: <b class="k">CLI</b> (shell), batch, <b class="k">GUI</b>. İlk GUI Xerox Alto (1973).</li>
+      <li><b class="k">System call</b>: servisler için arayüz. Programcı API kullanır (Windows API, POSIX, Java). Parametre geçirme 3 yolla: register, bellekte blok/tablo, stack.</li>
+      <li>6 sistem çağrı türü: process control, file management, device management, information maintenance, communications, protection.</li>
+      <li>Haberleşme modelleri: <b class="k">message passing</b> ve <b class="k">shared memory</b>.</li>
+      <li><b class="k">MS-DOS</b>: single-tasking, basit yapı, uygulamalar donanıma doğrudan erişebilir (risk). FreeBSD: multitasking.</li>
+      <li><b class="k">Policy</b> ne yapılacağını, <b class="k">mechanism</b> nasıl yapılacağını belirler (timer = mekanizma, süre kararı = kural).</li>
+      <li>Yapılar: <b class="k">basit</b> (MS-DOS), <b class="k">katmanlı</b> (alt katmanın hizmetini kullanır, debug kolay, performans düşebilir), <b class="k">mikrokernel</b> (Mach; çekirdekte sadece temel işlevler, mesajlaşma, daha güvenli), <b class="k">modül</b> (yüklenebilir kernel modülleri, en iyi yaklaşım), <b class="k">hibrit</b> (Windows, Mac OS X, Linux).</li>
+      <li>Android: Linux kernel + Dalvik VM. iOS: Cocoa Touch, Core OS.</li>
+      <li>Kernel hatası = <b class="k">crash</b>. Hata analizi: log + memory dump. Performance tuning.</li>
+      <li>Boot: bootstrap ROM'da kernel'i yükler; boot kısmı olan disk = boot disk/system disk.</li>
+    </ul></div>
+    <div class="week"><h3><span class="mono">HAFTA 3</span>Process yönetimi</h3><ul>
+      <li>Process bellek bölümleri: <b class="k">stack</b> (parametre, dönüş adresi, yerel değişken), <b class="k">data</b> (global), <b class="k">heap</b> (dinamik), text (kod).</li>
+      <li>Durumlar: <b class="k">New, Ready, Running, Waiting, Terminated</b>. Ready = CPU bekler, Waiting = olay/I/O bekler.</li>
+      <li><b class="k">PCB</b>: state, program counter, CPU register'ları, scheduling (öncelik), memory (base/limit), accounting (pid), I/O durumu.</li>
+      <li>Kuyruklar: <b class="k">job queue</b> (tüm işler), <b class="k">ready queue</b> (bellekte, CPU bekleyen), wait/device queue. Linked list ile tutulur.</li>
+      <li>Scheduler: <b class="k">long-term</b> (job, dakikalar), <b class="k">short-term</b> (CPU, &lt;100 ms), <b class="k">medium-term</b> (swapping). Windows/Unix'te long-term yok.</li>
+      <li><b class="k">I/O-bound</b> vs <b class="k">CPU-bound</b>. Hepsi I/O-bound ise ready queue boş, hepsi CPU-bound ise I/O kuyruğu boş.</li>
+      <li><b class="k">Context switch</b>: CPU'nun process değiştirmesi; bağlam PCB'de saklanır, sık yapılırsa overhead.</li>
+      <li>Process oluşturma: parent/child, <b class="k">pid</b>; UNIX'te fork(), exec(), wait(); sonlandırma exit(). Windows'ta CreateProcess(), TerminateProcess().</li>
+      <li><b class="k">Independent</b> (etkilenmez) vs <b class="k">cooperating</b> (veri paylaşır). İşbirliği nedenleri: information sharing, computation speedup, modularity, convenience.</li>
+      <li>IPC: <b class="k">shared memory</b> (daha hızlı; producer buffer'a yazar, consumer okur) ve <b class="k">message passing</b> (send/receive, dağıtık ortam).</li>
+      <li>Soket = IP + port. HTTP 80, FTP 21, 127.0.0.1 loopback. TCP güvenilir (Socket), UDP bağlantısız (DatagramSocket).</li>
+    </ul></div>
+    <div class="week"><h3><span class="mono">HAFTA 4</span>Thread'ler</h3><ul>
+      <li>Thread'in kendine ait: <b class="k">PC, register kümesi, stack</b>. Paylaşılan: <b class="k">kod, data, dosyalar</b>.</li>
+      <li>4 fayda: <b class="k">responsiveness, resource sharing, economy, scalability</b>. Solaris: thread oluşturma 30x, context switch 5x hızlı.</li>
+      <li><b class="k">Concurrency</b>: tek core'da dönüşümlü ilerleme. <b class="k">Parallelism</b>: gerçekten aynı anda çalışma.</li>
+      <li><b class="k">Amdahl</b>: hızlanma ≤ 1 / (S + (1−S)/N). S = 0,25 → N=2: 1,6x; N=4: 2,28x; N→∞: 1/S. Seri oran artınca maksimum hızlanma düşer.</li>
+      <li>5 zorluk: identifying tasks, balance, data splitting, data dependency, testing/debugging.</li>
+      <li><b class="k">Data parallelism</b> (verinin parçaları core'lara) vs <b class="k">task parallelism</b> (görevler core'lara).</li>
+      <li>Modeller: <b class="k">many-to-one</b> (tek kernel thread; biri bloklanırsa process bloklanır, paralel yok), <b class="k">one-to-one</b> (Linux, Windows; her user thread için kernel thread), <b class="k">many-to-many</b> (Solaris 9).</li>
+      <li>Kütüphaneler: Pthreads (user veya kernel), Windows (kernel), Java (user, JVM). Asenkron vs senkron (fork-join).</li>
+      <li><b class="k">Implicit threading</b>: thread'leri compiler oluşturur. Thread pool, OpenMP (#pragma omp parallel), GCD (^ blok).</li>
+      <li>Sinyal: senkron (0'a bölme, illegal bellek), asenkron (Ctrl+C). İptal: asenkron (aniden) ve deferred (kendi kendini).</li>
+      <li>Windows: ETHREAD, KTHREAD, TEB. Linux: clone() ile paylaşım bayraklı görev.</li>
+    </ul></div>
+  </div>
+</section>
+
+<section id="senaryo">
+  <div><span class="eyebrow">Bölüm 2</span><h2>Olası sınav senaryosu</h2></div>
+  <div class="scen">
+    <p style="margin:0">20 soruluk örnek set şıklı sorulardan oluşuyor ve sorular haftalara eşit dağılmış. Kapsam 4 slayt olduğuna göre senkronizasyon soruları (setin son 5 sorusu) yerine thread ve process sorularının artması bekleniyor. Tahmini dağılım:</p>
+    <div class="dist" id="dist"></div>
+    <h3>Kesin çalışılması gerekenler (hem quizde hem örnek sorularda)</h3>
+    <ol class="hotlist">
+      <li><b>Process durumları:</b> Ready ile Waiting farkı, "kilitli" diye bir durum yok.</li>
+      <li><b>Multiprogramming amacı:</b> CPU kullanımını artırmak / birden fazla işi bellekte tutmak.</li>
+      <li><b>Thread avantajları:</b> paralel/eşzamanlı çalışma, kaynak paylaşımı; thread'ler kod ve veriyi paylaşır, stack ve PC paylaşmaz.</li>
+      <li><b>Thread modelleri:</b> many-to-one'da tek kernel thread var; one-to-one'da her user thread'e bir kernel thread.</li>
+      <li><b>User-level ve kernel-level thread:</b> user-level bloklanınca tüm process bloklanır, kernel-level multicore'da paralel çalışır.</li>
+      <li><b>PCB ve Program Counter:</b> PCB'de kullanıcı adı yok; PC sonraki komutun adresini tutar.</li>
+      <li><b>İS mimarileri:</b> katmanlı (bitişik katmanlar, düzenli yapı), mikrokernel (sadece temel işlevler), modüler (sonradan bileşen ekleme).</li>
+      <li><b>MS-DOS:</b> single-tasking, thread desteği yok, donanıma doğrudan erişim riski.</li>
+      <li><b>SMP:</b> tüm işlemciler eş düzey ve her işi yapabilir.</li>
+      <li><b>Kernel, system call ve kernel mode:</b> sistem çağrısı yazılım kesmesidir; açılış kernel mode'da olur.</li>
+    </ol>
+    <p class="note">Dikkat: Hoca 1. quizde multiprogramming için "aynı anda birden fazla işi bellekte tutmak" şıkkını doğru saydı, 3. quizde ve örnek sorularda ise "CPU kullanımını artırmak" doğru. İkisi de slaytta geçiyor. Şıklarda ikisi birlikte varsa soru köküne bak: "amaç" deniyorsa CPU kullanımı, "nasıl çalışır / ne yapar" deniyorsa bellekte birden fazla iş.</p>
+  </div>
+</section>
+
+<section id="sorular">
+  <div><span class="eyebrow">Bölüm 3</span><h2>Soru-cevap listesi</h2></div>
+  <div class="scen">
+    <h3>Olasılık etiketleri nasıl belirlendi?</h3>
+    <ul class="hotlist" style="list-style:none;padding-left:0">
+      <li><span class="badge b-ck"><span class="dot"></span>ÇOK YÜKSEK</span> Konu hem hocanın quizinde hem de örnek sorularda geçiyor.</li>
+      <li><span class="badge b-y"><span class="dot"></span>YÜKSEK</span> Konu sadece quizde var: hoca derste sordu ama örnek sorularda yok.</li>
+      <li><span class="badge b-o"><span class="dot"></span>ORTA</span> Konu sadece örnek sorularda var, hoca quizde sormadı.</li>
+      <li><span class="badge b-t"><span class="dot"></span>TAHMİN</span> İkisinde de yok, doğrudan slayttan hazırlandı.</li>
+    </ul>
+    <p class="note">Eşleştirme birebir aynı soruya göre değil, konuya göre yapıldı. Örneğin "process durumları" 3. quizde 2 kez, örnek sorularda 5 kez geçtiği için bu konudaki tüm sorular ÇOK YÜKSEK aldı. Bazı eşleştirmeler yoruma dayanıyor. Etiketler hocanın ne soracağını değil, bir konunun kaç kaynakta tekrar ettiğini gösterir.</p>
+  </div>
+  <div class="bar-sticky">
+    <div class="chips" id="lvlChips"><span class="lbl">Olasılık</span></div>
+    <div class="chips" id="wkChips"><span class="lbl">Hafta</span></div>
+    <div class="toolrow">
+      <label class="switch" for="examMode"><input type="checkbox" id="examMode">Sınav modu<span class="hint"> (cevapları gizle, tıklayarak çöz)</span></label>
+      <span><span class="count" id="count"></span> <span class="score" id="score"></span> <button class="btn" id="reset" type="button" hidden>Sıfırla</button></span>
+    </div>
+  </div>
+  <div id="list"></div>
+  <details class="out">
+    <summary>Kapsam dışı bırakılan örnek sorular</summary>
+    <ul>
+      <li>Örnek-20 S16–S20: senkronizasyon, mutex, semaphore, kritik bölge (Hafta 5 konusu).</li>
+      <li>Örnek-14: mutex, sanal bellek, senkronizasyon, CPU scheduling (SJF, RR), deadlock, paging, page fault, critical section.</li>
+      <li>Örnek-50: deadlock, CPU scheduling algoritmaları, mutex/semafor, paging/segmentasyon, sanal bellek, inode ve dizin yapısı. S15 (bekleme kuyruğu) da çıkarıldı, çünkü verilen cevap slayta göre yanlış: CPU'yu bekleyen process'ler ready queue'dadır.</li>
+      <li>1. quizin 4. ve 5. soruları fotoğraflarda yok.</li>
+    </ul>
+  </details>
+</section>
+</div>
+
+<script>
+// [hafta, seviye, kaynaklar, soru, şıklar, doğruIndex, genel not, şık açıklamaları]
+const Q = [
+// ---------- HAFTA 1 ----------
+[1,"ck",["Quiz 1 · S9"],"Multiprogramming'in temel amacı aşağıdakilerden hangisidir?",["Aynı anda birden fazla işi bellekte tutmak","CPU'yu tamamen boş bırakmamak","Sadece tek program çalıştırmak","Tüm programları diskte tutmak"],0,
+ "Hoca bu quizde A'yı doğru saydı. Aynı konu 3. quizde ve örnek sorularda “CPU kullanımını artırmak” olarak soruldu. Şıklarda ikisi birlikte varsa soru köküne bak.",
+ ["Slayt: multiprogramming çalışabilen İS çok sayıda işi aynı anda hafızada tutar; bir iş beklerken diğerine geçer.","Kulağa doğru geliyor ama hoca bu quizde bunu doğru saymadı. Başka sınavlarda “CPU kullanımını artırmak” doğru kabul ediliyor.","Tam tersi. Tek program çalıştırmak MS-DOS gibi single-tasking sistemlerin özelliğidir.","İşler çalışmadan önce diskte (job pool) bekler ama multiprogramming'in amacı onları belleğe alıp çalıştırmaktır."]],
+[1,"ck",["Quiz 3 · S5"],"Çok programlı sistemlerin temel amaçlarından biri nedir?",["CPU kullanımını artırmak","Dosyaları çoğaltmak","Process sayısını azaltmak","RAM'i boşaltmak"],0,"",
+ ["Slayt (Hafta 3): çok programlı sistemlerin temel amacı CPU kullanımını maksimuma çıkaracak şekilde process'leri çalıştırmaktır.","Dosya çoğaltmanın multiprogramming ile ilgisi yok.","Tam tersi; amaç bellekte daha çok process tutup CPU'yu sürekli meşgul etmektir.","Tam tersi; bellek boşaltılmaz, birden fazla iş bellekte tutulur."]],
+[1,"ck",["Örnek-20 · S4"],"Multiprogramming aşağıdakilerden hangi amaç için kullanılır?",["CPU'nun bekleme süresini artırmak","CPU kullanımını artırmak","Bellek kullanımını azaltmak","İşlemciyi pasif durumda tutmak","Kullanıcıların kaynaklara erişimini kontrol etmek"],1,"Bu konu quizde iki kez, örnek sorularda bir kez geçiyor.",
+ ["Ters. Amaç CPU'nun boşta beklemesini azaltmaktır.","Bir iş I/O beklerken CPU başka işe geçer, böylece boş kalmaz.","Tersine, birden fazla iş bellekte tutulduğu için bellek kullanımı artar.","Ters. Amaç işlemciyi sürekli meşgul tutmaktır.","Bu protection'ın tanımıdır, multiprogramming'in değil."]],
+[1,"ck",["Quiz 1 · S10"],"SMP mimarisinin temel özelliği aşağıdakilerden hangisidir?",["Her CPU'nun yalnızca tek bir görevi yapması","İşlemcilerin hafızayı paylaşmaması","Tüm işlemcilerin işletim sistemindeki tüm işleri yapabilmesi","Yalnızca bir CPU kullanılması"],2,"",
+ ["Bu AMP'nin (asimetrik çok işlemcili) tanımıdır: her işlemci bir işe atanır, biri diğerlerini yönetir.","Yanlış. SMP'de her CPU'nun kendi register'ı ve cache'i vardır ama bellek paylaşılır.","SMP'de tüm işlemciler eş düzey (peer) çalışır ve İS'deki tüm işleri yapabilir. Windows, Mac OS X ve Linux destekler.","SMP çok işlemcili bir mimaridir; tek CPU, tek işlemcili sistemdir."]],
+[1,"ck",["Örnek-14 · S10"],"Thread'lerin birden fazla işlemci üzerinde paralel çalışabilmesi hangi özelliktir?",["CPU Scheduling","Symmetric Multiprocessing","Round Robin","FIFO","Multithreading"],1,"",
+ ["CPU scheduling hangi işin önce çalışacağına karar vermektir, işlemci mimarisi değildir.","SMP'de işlemciler eş düzeydir, thread'ler farklı işlemcilerde paralel çalışabilir.","Round Robin bir CPU zamanlama algoritmasıdır (bu dersin kapsamı dışında).","FIFO bir kuyruk yapısıdır: ilk gelen ilk çıkar.","Multithreading bir process'te birden fazla thread olmasıdır; birden fazla işlemciyi sağlayan mimari değildir. Kaynakta cevap SMP."]],
+[1,"ck",["Quiz 1 · S8"],"Program Counter (PC) hangi bilgiyi tutar?",["Diskin boş alanını","Kullanıcı kimliğini","RAM kapasitesini","Sonraki çalıştırılacak komutun adresini"],3,"Single-threaded process'te bir PC, multithreaded process'te her thread için ayrı PC vardır.",
+ ["Disk boş alan bilgisi information maintenance sistem çağrılarıyla alınır, PC'de tutulmaz.","PC bir CPU register'ıdır; kullanıcı kimliği tutmaz.","RAM kapasitesi donanım bilgisidir, PC'nin işi değil.","PC, CPU içinde sonraki çalıştırılacak komutun adresini tutan register'dır. PCB'de de saklanır."]],
+[1,"ck",["Quiz 1 · S2"],"Bir sistem çağrısı (system call) işletim sistemi açısından nasıl değerlendirilebilir?",["Bellek üzerinde yapılan kopyalama","Disk üzerinde yapılan biçimlendirme","Donanım tarafından oluşturulan DMA","Yazılım tarafından oluşturulan interrupt"],3,"",
+ ["Kopyalama bir işlemdir; sistem çağrısının İS açısından karşılığı değildir.","Biçimlendirme bir disk işlemidir; sistem çağrısının tanımı değildir.","DMA, donanımın yaptığı blok veri aktarımıdır; sistem çağrısı ise yazılımdan gelir.","Slayt: donanım CPU'ya sinyal ile, yazılım system call çalıştırarak interrupt başlatır. Yazılım kaynaklı kesmeye trap da denir."]],
+[1,"ck",["Örnek-50 · S14"],"İşletim sistemi ile uygulama programları arasındaki iletişim hangi katmanda gerçekleşir?",["Kullanıcı katmanı","Çekirdek katmanı","Sistem çağrıları (System Calls)","Fiziksel katman"],2,"",
+ ["Kullanıcı katmanı en üstteki arayüzdür; iletişimi sağlayan arayüz değildir.","Kernel hizmeti sunar ama uygulama ile kernel arasındaki köprü sistem çağrılarıdır.","Sistem çağrıları, uygulamaların İS servislerini kullanabilmesi için arayüz sağlar. Programcı bunlara API (Windows API, POSIX) üzerinden ulaşır.","Fiziksel katman donanımdır."]],
+[1,"ck",["Quiz 1 · S3"],"İşletim sistemi açılış sırasında hangi çalışma modunda başlar?",["Boot mode","Kernel mode","Network mode","User mode"],1,"Mode bit: user = 1, kernel = 0.",
+ ["Slaytta “boot mode” diye bir çalışma modu yok; modlar user ve kernel.","Sistem boot edildiğinde kernel moddadır, uygulama başlayınca user moda geçer.","Böyle bir çalışma modu yok.","User mode uygulamalar çalışırken kullanılır, açılışta değil."]],
+[1,"ck",["Örnek-50 · S20"],"Çekirdek modu (kernel mode) hangi işlemleri içerir?",["Kullanıcı uygulamalarının çalıştırılması","Dosya yazma işlemleri","Donanım seviyesindeki işlemlerin kontrolü","Grafik arayüz işlemleri"],2,"",
+ ["Kullanıcı uygulamaları user mode'da çalışır.","Dosya yazma isteği uygulamadan gelir; kernel mode'a özgü bir tanım değil.","Kernel mode'da donanıma erişen ayrıcalıklı (privileged) işlemler yapılır.","Grafik arayüz kullanıcı tarafındaki bir programdır."]],
+[1,"y",["Quiz 1 · S1"],"Bilgisayar açılışında bootstrap programının temel görevi nedir?",["Çekirdeği belleğe yüklemek","Dosya sistemini biçimlendirmek","Kullanıcı hesaplarını oluşturmak","Uygulamaları otomatik güncellemek"],0,"",
+ ["Bootstrap (firmware) ROM/EEPROM'da saklanır; kernel'in yerini bilip belleğe yükler.","Bootstrap disk biçimlendirmez.","Kullanıcı hesapları boot sürecinin işi değil.","Güncelleme bootstrap'ın görevi değil."]],
+[1,"y",["Quiz 2 · S8"],"Bilgisayar açılırken çekirdek neden belleğe yüklenir?",["Donanımı devre dışı bırakmak için","Dosyaları silmek için","İşletim sistemini çalıştırmak için","Tüm uygulamaları başlatmak için"],2,"",
+ ["Kernel donanımı yönetir, devre dışı bırakmaz.","İlgisiz.","CPU yalnızca bellekteki komutları çalıştırır; kernel belleğe yüklenince sisteme servis vermeye başlar.","Uygulamaları kullanıcı başlatır; kernel'in yüklenme nedeni bu değil."]],
+[1,"ck",["Quiz 1 · S7"],"İşletim sisteminin process yönetimi görevlerinden biri aşağıdakilerden hangisidir?",["Ağ yapılandırmak","Monitör parlaklığını ayarlamak","Process oluşturmak ve sonlandırmak","Sabit diski kontrol etmek"],2,"",
+ ["Ağ yapılandırması process yönetimi değil.","Donanım ayarıdır, process yönetimi değil.","Slayt: process'lerin zamanlaması, oluşturulması/silinmesi, askıya alınıp devam ettirilmesi, senkronizasyonu ve haberleşmesi.","Disk yönetimi storage yönetiminin işidir."]],
+[1,"ck",["Örnek-20 · S1"],"İşletim sistemi aşağıdaki hangi görevi yerine getirmez?",["Bellek yönetimi","Donanım ile kullanıcı arasında köprü olmak","Uygulamaların hata ayıklama kodlarını yazmak","İşlem zamanlaması","Dosya yönetimi"],2,"Bu sorunun iki kopyasında şık harfi farklı (C/D). Cevap: hata ayıklama kodlarını yazmak.",
+ ["İS'in görevidir (memory yönetimi).","İS'in temel tanımıdır: kullanıcı ile donanım arasında aracı.","İS uygulamaların kodunu yazmaz; hata ayıklama programcının işidir.","İS'in görevidir (CPU scheduling).","İS'in görevidir (dosya yönetimi)."]],
+[1,"y",["Quiz 1 · S6"],"Protection kavramının temel amacı aşağıdakilerden hangisidir?",["CPU sıcaklığını düşürmek","Disk kapasitesini artırmak","İnternet hızını artırmak","Kaynaklara erişimi denetlemek"],3,"Security ise sistemi iç ve dış saldırılara (virüs, worm, DoS) karşı korur.",
+ ["İlgisiz.","İlgisiz.","İlgisiz.","Protection, kaynaklara kullanıcı veya process erişiminin denetlenmesidir."]],
+[1,"ck",["Örnek-20 · S5"],"İşletim sistemi çekirdeği (kernel) aşağıdakilerden hangi işlevi yerine getirir?",["Kullanıcı arayüzü sağlar","Donanımla doğrudan etkileşim kurar","Yalnızca dosya sistemini yönetir","Donanım güncellemelerini kontrol eder","Virüsleri tespit eder"],1,"",
+ ["Arayüz (shell, GUI) çoğunlukla kernel dışında bir programdır.","Kernel donanıma en yakın, sürekli çalışan kısımdır ve kaynakları yönetir.","“Yalnızca” kelimesi yanlış; kernel process, bellek, I/O gibi birçok şeyi yönetir.","Kernel'in tanımı değil.","Antivirüs ayrı bir yazılımdır."]],
+[1,"ck",["Örnek-50 · S2"],"Çekirdek (Kernel) nedir?",["İşletim sisteminin merkezi bileşenidir","Sadece dosya işlemlerinden sorumludur","Kullanıcı arayüzüdür","Sadece giriş/çıkış cihazlarını kontrol eder"],0,"",
+ ["Slayt: bilgisayarda sürekli çalışan programa kernel denir; İS'in merkezidir.","“Sadece” kelimesi yanlış.","Arayüz kernel değildir.","“Sadece” kelimesi yanlış."]],
+[1,"o",["Örnek-50 · S1"],"İşletim sisteminin temel görevi nedir?",["Sadece donanımı çalıştırmak","Kullanıcı ile donanım arasında bir köprü görevi görmek","İşletim sistemini kullanıcılardan gizlemek","Sadece dosya sistemlerini yönetmek"],1,"",
+ ["“Sadece” kelimesi yanlış; İS kullanıcıya hizmet de verir.","İS, kullanıcı ile donanım arasında aracı olarak görev yapar.","Anlamsız şık.","“Sadece” kelimesi yanlış."]],
+[1,"o",["Örnek-20 · S2"],"Aşağıdakilerden hangisi bir işletim sistemi türüdür?",["Tek kullanıcı, tek görevli","Çoklu kullanıcı, çok görevli","Gerçek zamanlı","Dağıtık sistemler","Hepsi"],4,"",
+ ["Bir türdür (ör. MS-DOS) ama tek başına cevap değil.","Bir türdür ama tek başına cevap değil.","Bir türdür (gömülü sistemler) ama tek başına cevap değil.","Bir türdür (Hafta 1: dağıtık sistemler) ama tek başına cevap değil.","Hepsi işletim sistemi türüdür."]],
+[1,"o",["Örnek-50 · S4"],"Aşağıdakilerden hangisi bir işletim sistemi türü değildir?",["Tek kullanıcılı işletim sistemleri","Çok kullanıcılı işletim sistemleri","Bellek yönetim sistemleri","Gerçek zamanlı işletim sistemleri"],2,"",
+ ["Bir İS türüdür.","Bir İS türüdür.","Bellek yönetimi İS'in bir görevidir, tür değildir.","Bir İS türüdür."]],
+[1,"o",["Örnek-20 · S3"],"İşletim sisteminin temel hedeflerinden biri olan “verimlilik” aşağıdaki hangi durumla ilgilidir?",["Kullanıcıların kolay bir arayüz kullanması","Donanım kaynaklarının optimal şekilde kullanılması","Kullanıcı taleplerine hızlı yanıt verilmesi","Yedekleme işlemlerinin yapılması","Uygulama yazılımlarının çalıştırılması"],1,"",
+ ["Bu kullanılabilirlik hedefidir.","Verimlilik (etkinlik), donanım kaynaklarının en iyi şekilde kullanılmasıdır; özellikle sunucularda önemlidir.","Bu tepki süresi (responsiveness) ile ilgilidir.","Verimlilik hedefiyle ilgisi yok.","İS'in genel görevidir, verimliliğin tanımı değil."]],
+[1,"o",["Örnek-20 · S8"],"Aşağıdakilerden hangisi işletim sistemi ile donanım arasındaki iletişimi sağlar?",["API","Kullanıcı arayüzü","Sürücü yazılımları","Bellek ayırma birimi","İşlem planlayıcı"],2,"",
+ ["API, uygulama ile İS arasındadır.","Arayüz, kullanıcı ile İS arasındadır.","İS her cihaz denetleyicisi için bir device driver'a sahiptir; cihazın özelliklerini sadece driver bilir.","Bellek yönetiminin parçasıdır.","CPU scheduling'in parçasıdır."]],
+[1,"o",["Örnek-50 · S11"],"Hangisi işletim sisteminin birincil bileşenlerinden biri değildir?",["Dosya sistemi","Bellek yönetimi","CPU","Proses yönetimi"],2,"",
+ ["İS bileşenidir.","İS bileşenidir.","CPU donanımdır, İS bileşeni değildir.","İS bileşenidir."]],
+[1,"o",["Örnek-50 · S38"],"Prosesin sonlandırılması sırasında hangi kaynaklar serbest bırakılır?",["Yalnızca CPU","Bellek ve giriş/çıkış kaynakları","Yalnızca dosya sistemleri","Yalnızca bellekteki veri"],1,"",
+ ["“Yalnızca” kelimesi yanlış.","Process sonlanınca İS ona ayrılmış bellek, dosya ve I/O kaynaklarını serbest bırakır.","“Yalnızca” kelimesi yanlış.","“Yalnızca” kelimesi yanlış."]],
+[1,"o",["Örnek-50 · S50"],"Aşağıdakilerden hangisi “zaman paylaşımı” sistemlerinin bir avantajıdır?",["CPU'yu birden fazla işlem arasında eş zamanlı paylaştırmak","Bellek yönetimini kolaylaştırmak","Çok kullanıcılı sistemlerde işlem süresini azaltmak","İşlemleri sırayla yürütmek"],0,"",
+ ["Time sharing'de CPU işler arasında çok hızlı geçiş yapar; kullanıcılar aynı anda çalışıyormuş gibi olur.","Zaman paylaşımı bellek yönetimini kolaylaştırmaz.","Toplam süreyi azaltmak değil, tepki süresini kısaltmak hedeflenir.","Sırayla yürütmek batch sistemin özelliğidir."]],
+[1,"o",["Örnek-50 · S34"],"Hangisi işletim sistemlerinde giriş/çıkış sisteminin bir parçasıdır?",["Semaphore","Buffering (Tamponlama)","Page Fault","Çekirdek Modu"],1,"",
+ ["Senkronizasyon aracıdır.","Slayt: I/O sisteminin bellek bileşeni buffering, caching ve spooling yapar.","Sanal bellek kavramıdır.","Bir çalışma modudur."]],
+// ---------- HAFTA 2 ----------
+[2,"ck",["Quiz 2 · S1"],"MS-DOS'un sunumda belirtilen temel özelliği hangisidir?",["Çok kullanıcılı yapı","Mesaj tabanlı kernel","Mikrokernel mimarisi","Single-tasking yapı"],3,"MS-DOS 8088 assembly ile yazıldı ve basit yapıdadır.",
+ ["MS-DOS tek kullanıcılı ve tek görevlidir.","Mesaj tabanlı iletişim mikrokernel'in özelliğidir.","MS-DOS basit yapıdadır; mikrokernel örneği Mach'tır.","MS-DOS'ta bir process çalışırken yeni process başlatılamaz."]],
+[2,"ck",["Örnek-20 · S14"],"Aşağıdaki işletim sistemlerinden hangisi thread desteği sağlamaz?",["Linux","Windows","MS-DOS","macOS","Unix"],2,"",
+ ["Linux thread destekler (one-to-one, clone()).","Windows thread destekler (one-to-one).","MS-DOS single-tasking'dir, thread desteği yoktur.","macOS thread destekler (Pthreads, GCD).","Unix thread destekler (Pthreads)."]],
+[2,"y",["Quiz 2 · S2"],"Bir işletim sisteminde uygulamalar donanıma doğrudan erişebilseydi en önemli risk ne olurdu?",["Dosyaların daha yavaş açılması","İşlemcinin daha az komut çalıştırması","Uygulamaların birbirini veya sistemi bozabilmesi","Uygulamaların daha fazla bellek kullanması"],2,"",
+ ["Sorun hız değil, güvenlik ve kararlılıktır.","İlgisiz.","MS-DOS örneği: uygulamalar donanıma doğrudan erişebildiği için kötücül programlar sistemi tümüyle çalışmaz hale getirebilir.","Bellek miktarıyla ilgili değil."]],
+[2,"ck",["Quiz 2 · S3"],"Bir işletim sisteminde katmanlı mimari kullanmanın temel avantajı nedir?",["Bütün katmanların donanıma doğrudan erişmesi","Her katmanın tüm diğer katmanları yönetmesi","Sistem çağrılarının tamamen ortadan kalkması","Sistemin daha düzenli ve yönetilebilir parçalara ayrılması"],3,"Dezavantajı: her katman alt katmanı çağırdığı için performans düşebilir.",
+ ["Yanlış. Donanıma sadece en alt katman erişir.","Yanlış. Her katman yalnızca alt katmanın sunduğu işlemleri kullanır.","Sistem çağrıları ortadan kalkmaz.","Sistem modüler katmanlara ayrılır; her katman ayrı debug edilip doğrulanabilir."]],
+[2,"ck",["Örnek-20 · S7"],"Katmanlı mimaride her katman aşağıdakilerden hangisi ile iletişim kurar?",["Kullanıcı arayüzüyle","Doğrudan donanımla","Yalnızca bitişik katmanlarla","Tüm diğer katmanlarla","Bellekle"],2,"",
+ ["Sadece en üst katman kullanıcı arayüzüdür.","Sadece en alt katman donanımdır.","Her katman alt katmanın sağladığı işlemlerle oluşturulur, yani yalnızca komşu katmanlarla konuşur.","Bu, katmanlı yapının mantığına aykırıdır.","İlgisiz."]],
+[2,"ck",["Örnek-20 · S6"],"Aşağıdakilerden hangisi işletim sistemi mimarilerinden biri değildir?",["Tekli programlama","Katmanlı yapı","Mikroçekirdek","Monolitik çekirdek","Sanal makine"],0,"",
+ ["“Tekli programlama” bir mimari değil, bir çalışma şeklidir.","Bir mimaridir.","Bir mimaridir (örnek: Mach).","Bir mimaridir (Linux, Windows XP sonrası).","Sanallaştırma da bir yapı olarak kabul edilir."]],
+[2,"ck",["Örnek-50 · S9"],"Hangi işletim sistemi tasarım yaklaşımı modülerliği sağlar?",["Monolitik yapı","Mikro çekirdek","Katmanlı yapı","Turlu planlama"],2,"Slaytta ayrıca “modül” yapısı (yüklenebilir kernel modülleri) var. Şıklarda geçerse onu da düşün.",
+ ["Monolitik tek parça yapıdır, modüler değildir.","Mikrokernel de bileşenleri ayırır ama kaynakta cevap katmanlı yapı.","Kaynağa göre doğru. Katmanlı yapı sistemi modüllere böler ve debug'ı kolaylaştırır.","Turlu planlama (Round Robin) bir zamanlama algoritmasıdır."]],
+[2,"ck",["Quiz 2 · S4"],"İşletim sisteminin küçük bir çekirdek üzerine kurulması hangi tasarım düşüncesine dayanır?",["Bütün hizmetleri çekirdek içine yerleştirmek","Çekirdekte yalnızca temel işlevleri tutmak","Donanım yönetimini uygulamalara dağıtmak","Uygulamaların çekirdeği devre dışı bırakması"],1,"Mikrokernel'de iletişim mesajla yapılır; çoğu servis user modda çalıştığı için güvenlik daha iyidir.",
+ ["Bu monolitik yaklaşımdır.","Mikrokernel: gereksiz bileşenler sistem programlarına aktarılır; kernel'de iletişim, bellek yönetimi ve küçük process'ler kalır.","Donanım yönetimi uygulamalara verilmez.","Anlamsız."]],
+[2,"ck",["Quiz 2 · S7"],"Çekirdeğe gerektiğinde yeni bileşen eklemek hangi yapının avantajıdır?",["Donanımsız yapı","Modüler yapı","Sabit yapı","Tek görevli yapı"],1,"",
+ ["Böyle bir yapı yok.","Yüklenebilir kernel modülleri boot sırasında veya sistem çalışırken eklenebilir. Linux bunu sürücüler ve dosya sistemleri için kullanır.","Sabit yapıda yeni bileşen eklenemez.","Tek görevlilik bir çalışma şeklidir (MS-DOS), yapı değil."]],
+[2,"y",["Quiz 2 · S5"],"Dosya erişimini işletim sisteminin yönetmesi neden önemlidir?",["Dosya sistemini kaldırmak için","Dosyaları sürekli bellekte tutmak için","Erişimi denetlemek ve güvenliği sağlamak için","Uygulamaları donanımdan bağımsız yapmak için"],2,"",
+ ["Anlamsız.","Dosyalar kalıcı depolamada tutulur, bellekte değil.","Birden fazla kullanıcı aynı dosyaya erişebilir; okuma, yazma ve ekleme yetkileri denetlenmelidir.","İS soyutlama sağlar ama bu sorunun cevabı erişim denetimi ve güvenlik."]],
+[2,"y",["Quiz 2 · S6"],"Birden fazla uygulama aynı kaynağı isterse işletim sistemi ne yapmalıdır?",["İlk uygulamaya sürekli vermelidir","Kaynağı denetimsiz bırakmalıdır","Kaynak erişimini düzenlemelidir","Uygulamaları kalıcı olarak silmelidir"],2,"",
+ ["Diğer uygulamalar hiç çalışamaz; adil değil.","Çakışma ve veri bozulması olur.","Kaynak tahsisi İS'in temel servislerinden biridir.","Anlamsız."]],
+[2,"y",["Quiz 2 · S9"],"İşletim sistemi mimarisi değerlendirilirken neden birden fazla ölçüt kullanılmalıdır?",["Güvenlik yalnızca donanıma bağlı olduğu için","Performans mimariden etkilenmediği için","Tasarım tercihleri farklı ödünleşimler oluşturduğu için","Tüm mimariler aynı sonucu verdiği için"],2,"",
+ ["Güvenlik mimariden de etkilenir (ör. mikrokernel daha güvenli).","Yanlış; örneğin katmanlı yapı performansı düşürür.","Her yapının artısı ve eksisi var; hibrit yapılar bu yüzden ortaya çıktı.","Yanlış; mimariler farklı sonuçlar verir."]],
+[2,"y",["Quiz 2 · S10"],"Kernel hatası hangi terimle adlandırılır?",["Batch","Boot disk","Crash","Shell"],2,"Process hatasında log dosyası ve memory dump kaydedilir.",
+ ["Batch bir arayüz türüdür (komutlar dosyada verilir).","Boot bölümünü içeren disktir.","Kernel'da ortaya çıkan hataya crash denir.","Shell komut yorumlayıcısıdır."]],
+// ---------- HAFTA 3 ----------
+[3,"ck",["Quiz 3 · S3"],"Bir process, bir olayın gerçekleşmesini bekliyorsa hangi durumdadır?",["Ready","Running","Terminated","Waiting"],3,"",
+ ["Ready: CPU'ya atanmayı bekler.","Running: komutlar çalıştırılıyor.","Terminated: process bitti.","Waiting: bir olayı (I/O, cihazdan geri bildirim) bekler."]],
+[3,"ck",["Quiz 3 · S4"],"CPU'ya atanmayı bekleyen process hangi durumdadır?",["New","Ready","Running","Waiting"],1,"",
+ ["New: process oluşturuluyor.","Ready: belleğe alınmış, CPU'ya atanmayı bekliyor.","Running: zaten CPU'da çalışıyor.","Waiting: CPU'yu değil bir olayı bekliyor."]],
+[3,"ck",["Örnek-20 · S9"],"Aşağıdakilerden hangisi bir işlemin (process) durumlarından biri değildir?",["Yeni","Çalışan","Kilitli","Bekleyen","Hazır"],2,"",
+ ["New bir durumdur.","Running bir durumdur.","5 durum var: New, Ready, Running, Waiting, Terminated. “Kilitli” diye bir durum yok.","Waiting bir durumdur.","Ready bir durumdur."]],
+[3,"ck",["Örnek-50 · S3"],"Proses hangi durumda “bekleme” (waiting) durumundadır?",["CPU kullanıyor","Bir olayın tamamlanmasını bekliyor","Çalıştırılmaya hazır","İşlem sonlandırılmış"],1,"",
+ ["Bu Running.","Waiting, bir olayın (ör. I/O) tamamlanmasını beklemektir.","Bu Ready.","Bu Terminated."]],
+[3,"ck",["Örnek-50 · S16"],"Bir prosesin diske veri yazarken geçtiği durum nedir?",["Hazır (Ready)","Çalışıyor (Running)","Bekleme (Waiting)","Sonlandırılmış (Terminated)"],2,"",
+ ["Ready CPU'yu bekler, I/O'yu değil.","Diske yazma isteğini verdikten sonra CPU'yu bırakır.","I/O işleminin bitmesini beklediği için Waiting'dir.","Process bitmedi."]],
+[3,"ck",["Örnek-50 · S36","Örnek-50 · S21"],"Bir proses “Hazır” (Ready) durumundayken aşağıdakilerden hangisi olur?",["CPU çalıştırır","Kaynak bekler","Çalıştırılmak üzere CPU'ya atanmayı bekler","Proses tamamlanır"],2,"Aynı soru S21'de de var.",
+ ["Bu Running.","Bir olayı veya kaynağı beklemek Waiting'dir.","Ready durumundaki process CPU'ya atanmayı bekler.","Bu Terminated."]],
+[3,"ck",["Örnek-20 · S10"],"İşlem kontrol bloğu (PCB) aşağıdakilerden hangisini içermez?",["İşlem kimliği (ID)","İşlem durumu","Register içeriği","Kullanıcı adı","Bellek ayırma bilgisi"],3,"Bu sorunun iki kopyasında şık harfi farklı (C/D). Cevap: kullanıcı adı.",
+ ["PCB'de var (accounting: process numarası).","PCB'de var (process state).","PCB'de var (CPU register'ları).","PCB'de kullanıcı adı bulunmaz.","PCB'de var (memory-management: base/limit, sayfa tabloları)."]],
+[3,"ck",["Örnek-14 · S11"],"Process Control Block (PCB) aşağıdakilerden hangisini içerir?",["Bellek adresleri","İletişim bilgileri","Çekirdek kodları","Process ID ve durumu","CPU hızı"],3,"PCB alanları: state, PC, register'lar, scheduling (öncelik), memory, accounting (pid), I/O durumu.",
+ ["Base/limit gibi bellek bilgisi var ama kaynakta beklenen cevap PID ve durum.","PCB'de iletişim bilgisi diye bir alan yok.","Kernel kodu PCB'de tutulmaz.","PCB, process'in kimlik ve durum bilgisini tutar.","CPU hızı donanım bilgisidir."]],
+[3,"y",["Quiz 3 · S1"],"Bir process'in yerel değişkenleri genellikle nerede tutulur?",["Data section","Heap","PCB","Stack"],3,"",
+ ["Data section global değişkenleri tutar.","Heap, çalışma anında dinamik ayrılan bellektir.","PCB process'in yönetim bilgisini tutar, değişkenleri değil.","Stack fonksiyon parametrelerini, dönüş adreslerini ve yerel değişkenleri tutar."]],
+[3,"y",["Quiz 3 · S2"],"Birden fazla process aynı programı çalıştırırsa ne olur?",["Her process kendi çalışma alanına sahip olur","PCB kullanılmaz","Program silinir","Tek process oluşur"],0,"",
+ ["Her process'in stack, data ve heap'i ayrıdır (örnek: birden fazla açık web tarayıcı).","Her process'in kendi PCB'si vardır.","Program (diskteki dosya) silinmez.","Her çalıştırma ayrı bir process'tir."]],
+[3,"y",["Quiz 3 · S6"],"Hafızaya alınmayı bekleyen işler hangi kuyrukta bulunur?",["Device queue","Job queue","Ready queue","Waiting queue"],1,"",
+ ["Device queue I/O cihazını bekleyenler içindir.","Sisteme giren tüm işler job queue'dadır; long-term scheduler buradan seçip belleğe alır.","Ready queue'dakiler zaten bellektedir, CPU'yu bekler.","Wait queue bir olayı bekleyenler içindir."]],
+[3,"y",["Quiz 3 · S7"],"Sürekli yoğun hesaplama yapan bir uygulama hangi türdür?",["CPU-bound","Device-bound","Event-bound","I/O-bound"],0,"",
+ ["Ağır hesaplama yapar, zamanının çoğunu CPU'da geçirir (ör. makine öğrenmesi, şifreleme).","Slaytta böyle bir tür yok.","Slaytta böyle bir tür yok.","I/O-bound zamanının çoğunu disk veya ağı beklerken geçirir."]],
+[3,"y",["Quiz 3 · S8"],"Çok sık context switch yapılması neye yol açabilir?",["Disk kapasitesi artar","Performans kaybı oluşur","Process'ler silinir","RAM iki katına çıkar"],1,"",
+ ["İlgisiz.","Geçiş sırasında faydalı iş yapılmaz; çok sık olursa overhead artar.","Process'ler silinmez, bağlamları PCB'ye kaydedilir.","İlgisiz."]],
+[3,"y",["Quiz 3 · S9"],"Diğer process'lerden etkilenmeyen process türü hangisidir?",["Child","Cooperating","Independent","Parent"],2,"",
+ ["Child, başka bir process tarafından oluşturulan process'tir.","Cooperating diğerlerini etkiler ve onlardan etkilenir (veri paylaşır).","Independent process diğerlerini etkilemez ve onlardan etkilenmez.","Parent, child oluşturan process'tir."]],
+[3,"y",["Quiz 3 · S10"],"Producer-consumer modelinde producer ne yapar?",["CPU'yu planlar","Port numarası atar","Process'i sonlandırır","Veriyi üretip buffer'a yazar"],3,"in değişkeni sonraki boş yeri, out ilk dolu yeri gösterir.",
+ ["Bu scheduler'ın işidir.","Port, soketler konusudur.","İlgisiz.","Producer veriyi üretip paylaşılan buffer'a yazar, consumer okur."]],
+[3,"o",["Örnek-50 · S7"],"İşletim sisteminde “takas” (swapping) işlemi ne amaçla yapılır?",["Dosyaları yedeklemek","Bellek yetersiz kaldığında bazı işlemleri diske aktarmak","Proseslerin önceliklerini değiştirmek","CPU kullanımını optimize etmek"],1,"",
+ ["Swapping yedekleme değildir.","Process bellekten diske atılıp sonra geri alınır; bunu medium-term scheduler yönetir.","Öncelikle ilgisi yok.","Doğrudan CPU optimizasyonu değil, bellek yönetimidir."]],
+[3,"o",["Örnek-50 · S8"],"Proses yaratma sırasında hangi sistem çağrısı kullanılır?",["exec()","fork()","kill()","wait()"],1,"",
+ ["exec() process'in belleğine yeni bir program yükler.","fork() yeni bir child process oluşturur.","kill() sinyal göndererek sonlandırır.","wait() child'ın bitmesini bekler."]],
+[3,"o",["Örnek-50 · S18"],"Aşağıdaki sistem çağrılarından hangisi bir işlemin sonlandırılmasını sağlar?",["exec()","fork()","exit()","wait()"],2,"",
+ ["Yeni program yükler.","Yeni process oluşturur.","Process son deyimi çalıştırınca exit() ile sonlanır ve parent'a durum değeri döndürebilir.","Bekler, sonlandırmaz."]],
+[3,"o",["Örnek-50 · S28"],"Bir işlem yaratıldıktan sonra wait() sistem çağrısı hangi durumu bekler?",["İşlem (child) sonlandırılmasını","Dosya sisteminin çalışmasını","Bellek tahsisini","Çıkış sistemini"],0,"",
+ ["Parent, child exit() ile sonlanana kadar bekler.","İlgisiz.","İlgisiz.","İlgisiz."]],
+// ---------- HAFTA 4 ----------
+[4,"ck",["Quiz 4 · S1"],"Bir process içerisinde birden fazla thread bulunmasının temel amacı nedir?",["Birden fazla görevi eşzamanlı yürütebilmek","Dosya sistemini bağımsız çalıştırmak","Her görev için ayrı hafıza oluşturmak","İşletim sistemi ihtiyacını ortadan kaldırmak"],0,"",
+ ["Örnek: kelime işlemcide bir thread klavyeden giriş alır, biri spell check yapar, biri ekranı düzenler.","İlgisiz.","Yanlış; thread'ler process'in belleğini paylaşır.","Thread'ler İS'e ihtiyaç duyar."]],
+[4,"ck",["Quiz 4 · S2"],"Aynı process içerisindeki thread'lerin ortak kullandığı kaynak hangisidir?",["Program counter","Program kodu","Register kümesi","Stack alanı"],1,"",
+ ["Her thread'in kendi PC'si vardır.","Thread'ler program kodunu, data kısmını ve dosyaları paylaşır.","Her thread'in kendi register kümesi vardır.","Her thread'in kendi stack'i vardır."]],
+[4,"ck",["Quiz 4 · S11"],"Birden fazla thread'in aynı process kaynaklarını kullanması hangi avantajı sağlar?",["Daha az bellek adresi","Daha büyük işlemci önbelleği","Daha kolay kaynak paylaşımı","Daha yüksek disk hızı"],2,"",
+ ["İlgisiz.","Cache bir donanım özelliğidir.","Resource sharing: thread'ler ait oldukları process'in belleğini ve kaynaklarını paylaşır.","İlgisiz."]],
+[4,"ck",["Örnek-14 · S13"],"Thread ve process arasındaki fark hangisidir?",["Thread'ler bağımsızdır","Thread'ler kaynak paylaşır, process'ler paylaşmaz","Thread'ler daha fazla bellek ister","Thread'ler sadece CPU kullanır","Thread'ler tek işlemde çalışır"],1,"",
+ ["Thread'ler aynı process'in kaynaklarını paylaşır, tamamen bağımsız değildir.","Thread'ler aynı adres alanını paylaşır; process'lerin her birinin kendi alanı vardır.","Tersine, thread oluşturmak process oluşturmaktan ucuzdur (economy).","Yanlış.","Bu bir fark değil, thread'in tanımının parçası."]],
+[4,"ck",["Örnek-14 · S3"],"Thread'ler hakkında aşağıdakilerden hangisi doğrudur?",["Bir thread yalnızca bir işlemci çekirdeği kullanır","Thread'ler diğer thread'lerden bağımsızdır","Thread'ler yalnızca tek bir işlemde çalışabilir","Bir thread, bir işlemde çalışan bağımsız bir yürütme birimidir","Thread'ler yalnızca veri depolama birimlerinde çalışır"],3,"",
+ ["Genel bir doğru değil.","Aynı process'in thread'leri kaynak paylaşır.","Belirsiz ve yanlış bir ifade.","Thread, process içinde kendi PC, register ve stack'i olan bir yürütme birimidir.","Anlamsız."]],
+[4,"ck",["Örnek-20 · S11"],"Aşağıdakilerden hangisi “thread” kullanmanın avantajlarından biridir?",["Daha yüksek bellek kullanımı","Daha fazla CPU gereksinimi","Paralel çalışabilme","İşlem zamanını artırma","Daha karmaşık yapı"],2,"",
+ ["Avantaj değil; ayrıca thread'ler belleği paylaştığı için ekonomiktir.","Avantaj değil.","Çok çekirdekli sistemlerde thread'ler paralel çalışır (scalability).","Avantaj değil.","Avantaj değil."]],
+[4,"ck",["Örnek-50 · S19","Örnek-50 · S46"],"Çoklu iş parçacığı (multithreading) kullanmanın avantajı nedir?",["Her işlem için ayrı bir bellek alanı tahsis edilir","Daha hızlı dosya erişimi sağlar","Proses içindeki görevlerin paralel çalışmasını mümkün kılar","Bellek kullanımını azaltır"],2,"Aynı soru S46'da da var, cevap: daha fazla işlem paralelliği sağlamak.",
+ ["Yanlış; thread'ler belleği paylaşır.","İlgisiz.","Aynı process içindeki görevler paralel çalışabilir.","Paylaşım sayesinde ekonomiktir ama kaynakta beklenen cevap paralellik."]],
+[4,"ck",["Örnek-20 · S15"],"Multithreading aşağıdaki hangi problemi çözmeye yardımcı olur?",["Ölü kilitlenme","Giriş/çıkış bekleme sürelerini azaltma","Bellek yetersizliği","İşlem önceliği belirleme","CPU yük dengelemesi"],1,"",
+ ["Multithreading deadlock'u çözmez, hatta neden olabilir.","Bir thread I/O beklerken diğerleri çalışmaya devam eder (responsiveness).","İlgisiz.","Öncelik scheduling konusudur.","Kaynakta beklenen cevap değil."]],
+[4,"ck",["Örnek-50 · S30"],"Aşağıdaki durumlardan hangisi bir thread için geçerli değildir?",["Bir proses içinde çalışır","Paylaşılan bellek alanını kullanır","İş parçacıklarının CPU zamanlaması yapılmaz","Paralel işlemleri destekler"],2,"",
+ ["Geçerli.","Geçerli.","Geçerli değil, çünkü thread'ler de CPU'da zamanlanır.","Geçerli."]],
+[4,"ck",["Quiz 4 · S6"],"Many-to-one modelinde bir thread'in bloklanması neden tüm process'i etkiler?",["Her thread ayrı process'tir","Kernel thread desteği yoktur","Tek kernel thread kullanılır","Tüm thread'ler aynı stack'i kullanır"],2,"Many-to-one'da multicore'da paralel çalışma da yapılamaz.",
+ ["Thread'ler aynı process'e aittir.","Kernel thread vardır ama sadece bir tane.","Tüm user thread'ler tek bir kernel thread'e eşlenir; o bloklanınca hepsi durur.","Her thread'in kendi stack'i vardır."]],
+[4,"ck",["Örnek-20 · S12"],"Kullanıcı düzeyinde çalışan thread'lerin dezavantajı nedir?",["CPU'yu daha etkin kullanırlar","Hızlı geçiş sağlarlar","Çoklu çekirdeklerle uyumludurlar","Diğer thread'lere bağımlı olmaları"],3,"Bu sorunun PDF kopyasında cevap “sistem çağrılarından faydalanamamaları”. Fikir aynı.",
+ ["Bu bir avantaj gibi, dezavantaj değil.","User thread'ler arası geçiş gerçekten hızlıdır; bu avantajdır.","Yanlış; many-to-one'da çoklu çekirdekten yararlanılamaz.","Kaynağa göre doğru. Bir user thread sistem çağrısında bloklanırsa aynı kernel thread'e bağlı diğerleri de durur."]],
+[4,"ck",["Örnek-50 · S48"],"Kullanıcı seviyesinde çalışan thread'lerin bir dezavantajı nedir?",["İşletim sistemi tarafından zamanlanamaması","Daha fazla bellek kullanımı","Daha yavaş çalışması","Kaynaklara erişim eksikliği"],0,"",
+ ["Kernel user thread'leri görmez, onları tek tek zamanlayamaz.","Yanlış.","User thread'ler hızlıdır.","Kaynakta beklenen cevap değil."]],
+[4,"ck",["Quiz 4 · S10"],"One-to-one modelinde 8 kullanıcı thread'i oluşturulursa kaç kernel thread'i gerekir?",["1","4","7","8"],3,"",
+ ["1 kernel thread many-to-one modelidir.","Many-to-many'de daha az olabilir ama one-to-one'da sayılar eşit olmalı.","Yanlış.","Her user thread için bir kernel thread oluşturulur (Linux, Windows)."]],
+[4,"ck",["Örnek-20 · S13"],"Çok çekirdekli bir işlemcide kernel tabanlı thread kullanmanın avantajı nedir?",["İşlemciyi devre dışı bırakma","İşlemci yükünü azaltma","İşlemleri sıraya koyma","Paralel çalışmayı optimize etme","Giriş/çıkış işlemlerini kısıtlama"],3,"",
+ ["Anlamsız.","Kaynakta beklenen cevap değil.","Tersine, işleri paralel çalıştırır.","Kernel thread'ler farklı çekirdeklerde aynı anda çalışabilir.","Anlamsız."]],
+[4,"ck",["Örnek-50 · S33"],"Çekirdek seviyesi iş parçacıklarının (kernel-level threads) bir avantajı nedir?",["İş parçacıklarının bağımsız olarak zamanlanabilmesi","Daha az bellek kullanımı","Kullanıcı seviyesinde daha fazla kontrol sağlanması","Daha az sistem çağrısı gerektirmesi"],0,"",
+ ["Kernel her thread'i görür ve ayrı zamanlar; biri bloklanırsa diğerleri devam eder.","Kernel thread'ler daha fazla kaynak ister.","Bu user-level thread'in özelliğidir.","Tersine, kernel thread'ler sistem çağrısı gerektirir."]],
+[4,"y",["Quiz 4 · S3"],"Bir Web sunucusunun her istemci isteği için thread oluşturması hangi avantajı sağlar?",["Hafıza kullanımını sıfırlar","İstekleri eşzamanlı işleyebilir","İşlemci sayısını artırır","Kernel işlemlerini kaldırır"],1,"",
+ ["Anlamsız.","Process portu dinlemeye devam eder, her istek ayrı thread'de işlenir.","İşlemci sayısı donanımdır.","Anlamsız."]],
+[4,"y",["Quiz 4 · S4"],"Tek core üzerinde dört thread'in dönüşümlü çalışması hangi çalışma biçimine örnektir?",["Concurrency","Çok işlemcili çalışma","Data parallelism","Gerçek paralel çalışma"],0,"",
+ ["Tek core'da thread'ler belirli aralıklarla dönüşümlü çalışır; buna concurrency denir.","Tek core var.","Data parallelism verinin core'lara dağıtılmasıdır.","Gerçek paralellik için birden fazla core gerekir."]],
+[4,"y",["Quiz 4 · S5"],"Amdahl kuralında seri çalışan kod oranı arttığında ne olur?",["Core sayısı artar","Hızlanma sınırı yükselir","Maksimum hızlanma düşer","Thread sayısı azalır"],2,"",
+ ["Core sayısı donanımdır, değişmez.","Ters. S büyüdükçe 1/S küçülür.","N sonsuza giderken hızlanma 1/S'ye yaklaşır; S artarsa bu sınır düşer.","İlgisiz."]],
+[4,"y",["Quiz 4 · S7"],"Implicit threading yaklaşımında thread oluşturma işini kim üstlenir?",["BIOS","Compiler","Dosya sistemi","Kullanıcı"],1,"Örnekler: thread pool, OpenMP, Grand Central Dispatch.",
+ ["İlgisiz.","Thread oluşturma programcı yerine compiler'a (ve runtime kütüphanelerine) bırakılır.","İlgisiz.","Explicit threading'de thread'leri programcı oluşturur."]],
+[4,"y",["Quiz 4 · S8"],"Multicore programlamada verilerin farklı görevler için ayrıştırılması hangi zorlukla ilgilidir?",["Balance","Data splitting","Scheduling","Testing"],1,"5 zorluk: identifying tasks, balance, data splitting, data dependency, testing/debugging.",
+ ["Balance, iş yükünün eşit dağıtılmasıdır.","Veriler farklı core'lardaki görevlerin işleyebileceği şekilde ayrıştırılır.","5 zorluk arasında yok.","Testing/debugging: multithread programları test etmek zordur."]],
+[4,"y",["Quiz 4 · S9"],"Birden fazla core üzerinde çalışan thread'lerin aynı verilere erişmesi hangi problemi ortaya çıkarabilir?",["Dosya kaybını","İşlemci eksikliğini","Kod tekrarını","Veri bağımlılığını"],3,"",
+ ["İlgisiz.","İlgisiz.","İlgisiz.","Data dependency: bir görevin eriştiği verinin diğer görevlerle bağımlılığı incelenmelidir."]],
+[4,"y",["Quiz 4 · S12"],"Bir programın görevlerini birbirinden bağımsız parçalara ayırmak neden önemlidir?",["Dosya boyutunu azaltmak için","İşlemci sıcaklığını düşürmek için","Kod satırlarını azaltmak için","Paralel çalışmayı kolaylaştırmak için"],3,"",
+ ["İlgisiz.","İlgisiz.","İlgisiz.","Identifying tasks: eşzamanlı çalışabilecek ayrı alanlar bulunursa farklı core'larda paralel çalışabilir."]],
+[4,"o",["Örnek-50 · S35"],"Çoklu işlemcili bir sistemde iş yükünün işlemciler arasında dağıtılmasına ne denir?",["İşlem tablosu yönetimi","Yük dengeleme (Load Balancing)","Ölümcül kilitlenme önleme","Kaynak paylaşımı"],1,"",
+ ["İlgisiz.","Slayttaki karşılığı Balance zorluğu.","Deadlock bu dersin kapsamı dışında.","Kaynakta beklenen cevap değil."]],
+// ---------- TAHMİN ----------
+[1,"t",["Slayt H1"],"DMA (Direct Memory Access) kullanıldığında ne olur?",["Her bayt için CPU'ya interrupt gönderilir","Blok veri cihaz ile bellek arasında doğrudan aktarılır, CPU başka işler yapar","Veri önce diske sonra belleğe yazılır","CPU, I/O cihazını doğrudan sürer"],1,"",
+ ["DMA'sız aktarımın sorunu budur: overhead fazla, aktarım yavaş.","Aktarım bitince driver'a tek bir interrupt gelir.","Yanlış.","Tersine, CPU serbest kalır."]],
+[1,"t",["Slayt H1"],"Dual mode çalışmada mode bit değerleri hangisidir?",["User = 0, Kernel = 1","User = 1, Kernel = 0","User = 1, Kernel = 1","Mode bit kullanılmaz"],1,"",
+ ["Ters.","User mode = 1, kernel (supervisor, privileged) mode = 0.","Yanlış.","Dual mode için mode bit kullanılır."]],
+[1,"t",["Slayt H1"],"Bir kullanıcı programı sonsuz döngüye girerse kontrolün işletim sistemine dönmesini ne sağlar?",["Cache","DMA","Timer","Bootstrap"],2,"",
+ ["Cache hızlı bir bellektir.","DMA bir veri aktarım yöntemidir.","Timer her programa geçişte kurulur, 0'a inince kontrol İS'e geçer.","Bootstrap sadece açılışta çalışır."]],
+[1,"t",["Slayt H1"],"RAM'e erişim süresinin işlemciler arasında farklı olduğu model hangisidir?",["UMA","NUMA","SMP","AMP"],1,"",
+ ["UMA'da erişim süresi tüm işlemcilerde aynıdır.","NUMA: nonuniform memory access.","SMP işlemcilerin eş düzey çalışmasıdır.","AMP her işlemcinin ayrı bir işe atanmasıdır."]],
+[1,"t",["Slayt H1"],"Bir işlemcide hata olduğunda sistemin performansı düşerek çalışmaya devam etmesine ne denir?",["Throughput","Graceful degradation","Hot-standby","Context switch"],1,"",
+ ["Throughput, daha kısa sürede daha çok iş yapmaktır.","Çok işlemcili sistemlerin “yüksek güvenilirlik” avantajıdır.","Hot-standby, asimetrik clustering'de bekleyen sistemdir.","İlgisiz."]],
+[1,"t",["Slayt H1"],"Asymmetric clustering yapısında bekleyen sistemin çalışma modu hangisidir?",["Hot-standby mode","Kernel mode","Batch mode","Peer mode"],0,"",
+ ["Bir sistem aktif çalışır, diğeri onu izler ve hata olursa devreye girer.","İlgisiz.","İlgisiz.","Symmetric clustering'de tüm sistemler aktiftir."]],
+[1,"t",["Slayt H1"],"Word, Excel gibi uygulamaların İnternet üzerinden sunulması hangi bulut türüdür?",["IaaS","PaaS","SaaS","Private cloud"],2,"",
+ ["IaaS: sunucu ve depolama birimleri.","PaaS: yazılım yığını (ör. veritabanı sunucusu).","SaaS: uygulamalar İnternet üzerinden kullanıma açılır.","Private cloud bir firmanın kendi bulutudur, hizmet modeli değil."]],
+[1,"t",["Slayt H1"],"Aşağıdaki veri yapılarından hangisi LIFO çalışır ve iç içe fonksiyon çağrılarında kullanılır?",["Queue","Stack","Hash map","Bitmap"],1,"",
+ ["Queue FIFO'dur (ör. yazıcı kuyruğu).","Push/pop ile çalışır; parametreler, yerel değişkenler ve dönüş adresi saklanır.","Hash map anahtar-değer eşler, erişim O(1).","Bitmap kaynak durumlarını bitlerle tutar."]],
+[2,"t",["Slayt H2"],"“CPU'yu korumak için timer kullanmak” ve “bir kullanıcıya ne kadar süre verileceğine karar vermek” sırasıyla nedir?",["Kural, mekanizma","Mekanizma, kural","İkisi de mekanizma","İkisi de kural"],1,"",
+ ["Ters.","Timer kullanmak “nasıl” (mekanizma), süre kararı “ne” (kural).","Yanlış.","Yanlış."]],
+[2,"t",["Slayt H2"],"Sistem çağrılarına parametre geçirme yöntemlerinden biri değildir?",["Register kullanmak","Bellekte blok veya tablo kullanmak","Stack kullanmak","Disk dosyasına yazmak"],3,"",
+ ["Bir yöntemdir.","Bir yöntemdir.","Bir yöntemdir.","Slayttaki 3 yöntem: register, bellekte blok/tablo, stack."]],
+[2,"t",["Slayt H2"],"Aşağıdakilerden hangisi 6 sistem çağrı türünden biri değildir?",["Process control","Device management","Information maintenance","Compiler optimization"],3,"",
+ ["Bir türdür (end(), abort(), load()).","Bir türdür (request(), release()).","Bir türdür (time(), date()).","Diğer türler: file management, communications, protection."]],
+[2,"t",["Slayt H2"],"Mikrokernel yaklaşımıyla geliştirilen ve Carnegie Mellon Üniversitesi'nde ortaya çıkan işletim sistemi hangisidir?",["MS-DOS","Mach","Solaris","Android"],1,"",
+ ["Basit yapıdadır.","Mac OS X kernel'i kısmen Mach kullanır.","Monolitik, dinamik modüllüdür.","Linux kernel üzerine kuruludur."]],
+[2,"t",["Slayt H2"],"Android'de Java executable dosyalarını çalıştıran bileşen hangisidir?",["Cocoa Touch","Dalvik virtual machine","Surface manager","Aqua"],1,"",
+ ["iOS'ta Objective-C API'sidir.","Android'in en alt katmanında Linux kernel, üstünde Dalvik VM vardır.","Ekran erişimini yönetir.","Mac OS X'in kullanıcı arayüzüdür."]],
+[3,"t",["Slayt H3"],"Short-term (CPU) scheduler ile ilgili hangisi doğrudur?",["Dakikalar mertebesinde çalışır","İşleri diskten belleğe yükler","Çok sık (yaklaşık 100 ms'den kısa aralıklarla) çalışır","Windows'ta bulunmaz"],2,"",
+ ["Bu long-term scheduler.","Bu long-term scheduler (job scheduler).","Short-term scheduler hazır işlerden birini seçip CPU'ya verir.","Windows ve Unix'te olmayan long-term scheduler'dır."]],
+[3,"t",["Slayt H3"],"Process'ler arası iletişimde hangi model daha hızlıdır?",["Message passing","Shared memory","Socket","RPC"],1,"",
+ ["Daha yavaştır ama dağıtık ortamda (ör. chat) kullanışlıdır.","Slayt: shared memory modeli daha hızlıdır.","Soket, ağ üzerinden iletişimdir.","Slaytta yok."]],
+[3,"t",["Slayt H3"],"Bir soket hangi bilgilerle tanımlanır?",["MAC adresi ve pid","IP adresi ve port numarası","Dosya adı ve dizin","PCB ve PC"],1,"",
+ ["Yanlış.","Örnek soket çifti: 146.86.5.20:1625 ile 161.25.19.8:80. HTTP 80, FTP 21.","Yanlış.","Yanlış."]],
+[3,"t",["Slayt H3"],"Güvenilir (connection-oriented) iletişim hangi protokolle sağlanır?",["UDP","TCP","FTP","IP"],1,"",
+ ["UDP bağlantısızdır (unreliable); Java'da DatagramSocket.","TCP güvenilirdir; Java'da Socket sınıfı.","FTP bir uygulama protokolüdür (port 21).","IP bir adresleme protokolüdür."]],
+[3,"t",["Slayt H3"],"Cooperating process'lerin kullanılma nedenlerinden biri değildir?",["Information sharing","Computation speedup","Modularity","Deadlock"],3,"",
+ ["Bir nedendir.","Bir nedendir.","Bir nedendir.","Deadlock bir neden değil, bir sorundur. Dördüncü neden convenience'dır."]],
+[4,"t",["Slayt H4"],"Bir uygulamanın %25'i seri çalışıyorsa (S = 0,25) 2 core'lu sistemde hızlanma yaklaşık kaç olur?",["1,25","1,6","2","4"],1,"",
+ ["Yanlış hesap.","1 / (0,25 + 0,75/2) = 1 / 0,625 = 1,6. 4 core'da 2,28 olur.","Bu ancak tamamen paralel kod için olurdu (S = 0).","Bu sonsuz core'daki sınırdır (1/S)."]],
+[4,"t",["Slayt H4"],"N elemanlı bir dizinin toplamının yarısını 1. core, yarısını 2. core'da hesaplamak hangi paralellik türüdür?",["Task parallelism","Data parallelism","Concurrency","Fork-join"],1,"",
+ ["Task parallelism'de farklı görevler core'lara dağıtılır.","Aynı işlem verinin farklı parçalarında yapılır.","Concurrency tek core'da dönüşümlü çalışmadır.","Fork-join bir senkron threading stratejisidir."]],
+[4,"t",["Slayt H4"],"Slayta göre hangi thread kütüphanesi yalnızca kernel-level kütüphane sağlar?",["POSIX Pthreads","Windows threads","Java threads","OpenMP"],1,"",
+ ["Pthreads hem user hem kernel seviyesinde olabilir.","Windows threads kernel-level kütüphanedir.","Slayta göre Java user-level kütüphanedir.","OpenMP bir compiler direktifleri grubudur."]],
+[4,"t",["Slayt H4"],"Parent'ın child thread'lerin hepsi bitene kadar beklemesi hangi stratejidir?",["Asenkron threading","Senkron threading (fork-join)","Deferred cancellation","Thread pool"],1,"",
+ ["Asenkron threading'de parent çalışmaya devam eder.","Veri paylaşımı çok olduğunda kullanılır.","Bu bir thread iptal türüdür.","Hazır thread havuzudur."]],
+[4,"t",["Slayt H4"],"Sıfıra bölme sonucu oluşan sinyal ne tür sinyaldir?",["Asenkron","Senkron","Deferred","Broadcast"],1,"",
+ ["Asenkron sinyal örneği Ctrl+C'dir.","Senkron sinyal, sinyale neden olan process'e iletilir (0'a bölme, illegal bellek erişimi).","Bu bir iptal türüdür.","Slaytta yok."]],
+[4,"t",["Slayt H4"],"Bir thread'in, başka bir thread'in kendi kendini sonlandırmasını sağlaması hangi iptal türüdür?",["Asenkron cancellation","Deferred cancellation","Signal handling","Forced exit"],1,"",
+ ["Asenkron: başka bir thread'i aniden sonlandırmak.","Deferred: hedef thread uygun noktada kendini sonlandırır.","Sinyal işleme ayrı bir konu.","Slaytta yok."]],
+[4,"t",["Slayt H4"],"Linux'ta thread oluşturmak için kullanılan ve paylaşım miktarını bayraklarla belirleyen sistem çağrısı hangisidir?",["exec()","clone()","CreateThread()","spawn()"],1,"Windows thread veri yapıları: ETHREAD, KTHREAD, TEB.",
+ ["exec() yeni bir program yükler.","clone() ile parent ve child arasında dosya sistemi, bellek, sinyaller veya açık dosyalar paylaştırılabilir.","Windows API fonksiyonudur.","Slaytta yok."]],
+[4,"t",["Slayt H4"],"Thread pool kullanmanın temel faydası nedir?",["Sınırsız thread oluşturmak","Var olan thread'i kullanmak yeni thread oluşturmaktan hızlıdır ve kaynaklar tükenmez","Thread'leri kernel'den bağımsız yapmak","Context switch'i kaldırmak"],1,"",
+ ["Tersine, thread sayısı sınırlanır.","Boşta thread yoksa yeni istek, bir thread serbest kalana kadar bekler.","Yanlış.","Yanlış."]],
+[4,"t",["Slayt H4"],"Many-to-many modelini kullanan işletim sistemi slaytta hangisi olarak verilmiştir?",["Windows","Linux","Solaris 9","MS-DOS"],2,"",
+ ["Windows one-to-one kullanır.","Linux one-to-one kullanır.","Many-to-many: Solaris 9 ve Unix.","MS-DOS'ta thread desteği yok."]]
+];
+
+const LV = {ck:{t:"ÇOK YÜKSEK",c:"b-ck"},y:{t:"YÜKSEK",c:"b-y"},o:{t:"ORTA",c:"b-o"},t:{t:"TAHMİN",c:"b-t"}};
+const WK = {1:"H1 Giriş",2:"H2 Yapılar",3:"H3 Process",4:"H4 Thread"};
+const L = "ABCDE";
+const state = {lvl:"all", wk:"all", exam:false, picks:{}, view:{}};
+try{ const s=JSON.parse(localStorage.getItem("os-sinav")||"{}"); if(s.exam) state.exam=true; if(s.picks) state.picks=s.picks; }catch(e){}
+function save(){ try{localStorage.setItem("os-sinav",JSON.stringify({exam:state.exam,picks:state.picks}))}catch(e){} }
+
+// dağılım
+(function(){
+  const d=[["Hafta 1 · Giriş",27],["Hafta 2 · Yapılar",22],["Hafta 3 · Process",25],["Hafta 4 · Thread",26]];
+  document.getElementById("dist").innerHTML=d.map(([n,p])=>`<div class="drow"><span>${n}</span><span class="bar"><i style="width:${p*3}%"></i></span><span class="mono">~%${p}</span></div>`).join("");
+})();
+
+function chip(group,val,label){
+  const b=document.createElement("button"); b.type="button"; b.className="chip"; b.textContent=label; b.dataset.v=val;
+  b.setAttribute("aria-pressed", state[group]===val ? "true":"false");
+  b.onclick=()=>{state[group]=val; document.querySelectorAll(`#${group}Chips .chip`).forEach(x=>x.setAttribute("aria-pressed",x.dataset.v===val?"true":"false")); render();};
+  document.getElementById(group+"Chips").appendChild(b);
+}
+const cnt=k=>Q.filter(q=>q[1]===k).length;
+chip("lvl","all",`Tümü (${Q.length})`);
+chip("lvl","ck",`Çok yüksek (${cnt("ck")})`);
+chip("lvl","y",`Yüksek (${cnt("y")})`);
+chip("lvl","o",`Orta (${cnt("o")})`);
+chip("lvl","t",`Tahmin (${cnt("t")})`);
+chip("wk","all","Hepsi"); [1,2,3,4].forEach(w=>chip("wk",String(w),WK[w]));
+
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const examBox=document.getElementById("examMode");
+examBox.checked=state.exam;
+examBox.onchange=()=>{state.exam=examBox.checked; state.view={}; save(); render();};
+document.getElementById("reset").onclick=()=>{state.picks={}; state.view={}; save(); render();};
+
+function card(i,n){
+  const [w,l,src,txt,opts,ans,note,exps]=Q[i];
+  const p=state.picks[i]; const answered=p!=null;
+  // hangi şıkkın açıklaması gösterilecek: tıklanan > sınavda verilen cevap > doğru şık
+  let v=state.view[i]; if(v==null) v = state.exam && answered ? p : ans;
+  const ok=v===ans;
+  return `<article class="q ${l==="ck"?"ck":""} ${answered?"answered":""}" data-i="${i}" data-n="${n}">
+    <div class="qhead"><span class="qnum">${String(n+1).padStart(2,"0")}</span><span class="badge ${LV[l].c}"><span class="dot"></span>${LV[l].t}</span><span class="src">${WK[w]}</span>${src.map(s=>`<span class="src">${esc(s)}</span>`).join("")}</div>
+    <div class="qt">${esc(txt)}</div>
+    <ol class="opts">${opts.map((o,k)=>`<li class="opt ${k===ans?"right":"wrong"} ${p===k?"picked":""} ${state.view[i]===k?"viewed":""}" data-k="${k}" tabindex="0" role="button"><span class="L">${L[k]})</span><span>${esc(o)}</span></li>`).join("")}</ol>
+    <div class="why">
+      <div><b>Cevap: ${L[ans]}</b>${state.exam&&answered?(p===ans?" · Doğru bildin.":` · Senin cevabın: ${L[p]}`):""}</div>
+      <div class="exp ${ok?"good":"bad"}"><b>${L[v]}) ${ok?"Doğru":"Yanlış"}:</b> ${esc(exps[v])}</div>
+      ${note?`<div>${esc(note)}</div>`:""}
+      <div class="tip">Diğer şıklara dokunarak açıklamalarını görebilirsin.</div>
+    </div>
+  </article>`;
+}
+function score(items){
+  let a=0,c=0; items.forEach(i=>{ if(state.picks[i]!=null){a++; if(state.picks[i]===Q[i][5]) c++;} });
+  document.getElementById("score").textContent = state.exam ? `· ${c}/${a} doğru` : "";
+}
+let visible=[];
+function render(){
+  const list=document.getElementById("list");
+  list.className=state.exam?"exam":"show";
+  visible=Q.map((q,i)=>i).filter(i=>(state.lvl==="all"||Q[i][1]===state.lvl)&&(state.wk==="all"||String(Q[i][0])===state.wk));
+  document.getElementById("count").textContent=`${visible.length} soru`;
+  document.getElementById("reset").hidden=!state.exam;
+  score(visible);
+  list.innerHTML = visible.length ? visible.map((i,n)=>card(i,n)).join("") : '<p class="empty">Bu filtrede soru yok.</p>';
+}
+function pick(el){
+  const c=el.closest(".q"); if(!c) return;
+  const i=+c.dataset.i, k=+el.dataset.k;
+  if(state.exam && state.picks[i]==null){ state.picks[i]=k; save(); score(visible); }
+  state.view[i]=k;
+  c.outerHTML=card(i,+c.dataset.n);
+  const nc=document.querySelector(`.q[data-i="${i}"] .opt[data-k="${k}"]`); if(nc) nc.focus({preventScroll:true});
+}
+document.getElementById("list").addEventListener("click",e=>{const o=e.target.closest(".opt"); if(o) pick(o);});
+document.getElementById("list").addEventListener("keydown",e=>{ if((e.key==="Enter"||e.key===" ")&&e.target.classList.contains("opt")){e.preventDefault(); pick(e.target);} });
+render();
+</script>
+
+</body>
+</html>

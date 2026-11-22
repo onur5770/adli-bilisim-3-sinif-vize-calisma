@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sözel Sorular</title>
+<script src="../ortak/tema.js?v=20261115115621"></script>
+<link rel="stylesheet" href="../ortak/soru.css?v=20261115115621">
+<style>
+.ust2{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between;margin:8px 0 14px}
+.ilerleme{flex:1 1 240px;max-width:420px}
+.ilerleme b{font-size:15px}
+.ilerleme .ilerle{height:6px;margin-top:6px}
+.ilerleme .ilerle i{background:var(--olumlu)}
+.arac2{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 10px}
+.arac2 input[type=search]{flex:1 1 220px;width:auto;font:inherit;padding:9px 12px;border:1px solid var(--cizgi);border-radius:8px;background:var(--yuzey);color:var(--yazi)}
+.cip{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.cip button{font:500 14px system-ui;display:inline-flex;gap:6px;align-items:center;border:1px solid var(--cizgi);background:transparent;color:var(--yazi);border-radius:8px;padding:6px 11px;cursor:pointer}
+.cip button:hover{border-color:var(--soluk)}
+.cip button[aria-pressed=true]{background:var(--yazi);color:var(--zemin);border-color:var(--yazi)}
+.cip button .sy{font-size:13px;opacity:.7;font-variant-numeric:tabular-nums}
+.say{color:var(--soluk);font-size:14px;margin:0 0 12px}
+.izg{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;perspective:1400px}
+/* Kart: .k sarmalayıcı; ön yüz (.on) gerçek bir <button>, arka yüz (.arka) cevap + düğmeler.
+   Renk yalnızca anlam taşır: yeşil = "bildim". Kategori küçük bir yazıdır, renk değildir. */
+.k{position:relative;display:grid;min-height:176px;-webkit-tap-highlight-color:transparent}
+.k .yuz{grid-area:1/1;position:relative;min-width:0;margin:0;border-radius:10px;border:1px solid var(--cizgi);overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden;cursor:pointer;overflow-wrap:break-word}
+.k .on{-webkit-appearance:none;appearance:none;font:inherit;color:var(--yazi);text-align:left;width:100%;background:var(--yuzey);padding:14px 16px;display:flex;flex-direction:column;align-items:stretch;gap:8px}
+@media (hover:hover){.k:hover .on{border-color:var(--soluk)}}
+.k .rozet2{display:block;font-size:13px;color:var(--soluk);padding-right:34px}
+.k .no{position:absolute;right:16px;top:14px;font:600 13px/1.5 system-ui;font-variant-numeric:tabular-nums;color:var(--soluk);pointer-events:none}
+.k .q{display:block;font-size:18px;font-weight:650;line-height:1.35}
+.k .ipucu2{display:block;margin-top:auto;padding-top:14px;font-size:13.5px;color:var(--soluk)}
+.k .arka{background:var(--kod);color:var(--yazi);padding:14px 16px;display:flex;flex-direction:column;gap:8px;transform:rotateY(180deg)}
+.k .arka .qs{font-size:13px;color:var(--soluk)}
+.k .arka .a{font-size:16.5px;line-height:1.5}
+.k .arka .alt2{margin-top:auto;padding-top:6px;display:flex;gap:8px;flex-wrap:wrap}
+.k .arka button{font:600 14px system-ui;border:1px solid var(--cizgi);border-radius:8px;padding:6px 12px;cursor:pointer;background:var(--yuzey);color:var(--yazi)}
+.k .arka button:hover{border-color:var(--soluk)}
+.k .arka button.bil2[aria-pressed=true]{background:var(--olumlu-z);color:var(--olumlu);border-color:var(--olumlu)}
+.k.cev .on{transform:rotateY(-180deg)}
+.k.cev .arka{transform:rotateY(0)}
+/* Görünen yüz hemen görünür olur (odak verilebilsin); gizlenen yüz dönüş bitince gizlenir (Tab ile gidilmesin). */
+.k .yuz{transition:transform .45s cubic-bezier(.2,.8,.2,1),border-color .15s,visibility 0s 0s}
+.k:not(.cev) .arka,.k.cev .on{visibility:hidden;transition:transform .45s cubic-bezier(.2,.8,.2,1),border-color .15s,visibility 0s .45s}
+.k .on:focus-visible,.k .arka:focus-visible{outline:3px solid var(--mavi);outline-offset:2px}
+.k .arka button:focus-visible{outline:3px solid var(--mavi);outline-offset:2px}
+.k.bilindi .on{border-color:var(--olumlu)}
+.k.bilindi .ipucu2::after{content:" · bildim";color:var(--olumlu);font-weight:600}
+.bos{color:var(--soluk);padding:30px 0;text-align:center;grid-column:1/-1}
+.not{margin-top:24px;border:1px solid var(--cizgi);border-left:6px solid #e08a00;background:var(--uyari-z);color:var(--uyari);border-radius:10px;padding:12px 16px}
+.not h2{margin:0 0 4px;font-size:17px}
+.not p{margin:0}
+@media (prefers-reduced-motion:reduce){.k .yuz{transition:none!important}}
+@media (max-width:560px){.izg{grid-template-columns:1fr}.k{min-height:150px}}
+</style>
+</head>
+<body>
+<div class="sar">
+<nav class="gezin" aria-label="Site"><a href="../index.html">← Ana sayfa</a><span class="yer">Sözel Sorular</span></nav>
+<header class="kahraman">
+  <span class="etiket">Sözel sorular</span>
+  <h1>Sözel Sorular</h1>
+  <p>30 kısa soru ve cevap. Karta dokun, cevap arkasında; bildiklerini işaretle.</p>
+  <div class="serit" aria-hidden="true"><i></i><i></i><i></i></div>
+</header>
+
+<div class="ust2">
+  <div class="ilerleme"><b id="ilerYazi">0 / 30 bildim</b><div class="ilerle" aria-hidden="true"><i id="ilerBar"></i></div></div>
+  <div class="arac2"><button type="button" class="d" id="karistir">Karıştır</button><button type="button" class="d ikinci" id="sirala">Sıraya diz</button><button type="button" class="d ikinci" id="kapat">Hepsini çevir</button></div>
+</div>
+<div class="arac2"><input type="search" id="ara" placeholder="Soru veya cevapta ara…" aria-label="Ara"></div>
+<div class="cip" id="cip" role="group" aria-label="Filtre"></div>
+<p class="say" id="say" aria-live="polite"></p>
+<div class="izg" id="liste"></div>
+
+<div class="not">
+  <h2>Sınavlık ayrıntı: Sobel ve Prewitt</h2>
+  <p>Kenar çıkarma örneği "Sobel" başlığı altında verilmiş. Koddaki Gx ve Gy çekirdekleri <strong>Prewitt</strong> biçiminde. Matris verilirse türev yönüne dik eksendeki orta katsayıya bak: Prewitt'te <strong>1</strong>, Sobel'de <strong>2</strong>.</p>
+</div>
+<footer>Kaynak: ders notları (çoklu.pdf, çoklu 2.pdf) ve hocanın örnekleri</footer>
+</div>
+<script src="sorular.js?v=20261115115621"></script>
+<script>
+(function () {
+  var L = window.SOZEL || [], liste = document.getElementById('liste'), ara = document.getElementById('ara'), say = document.getElementById('say'), cip = document.getElementById('cip');
+  var KATLAR = { ai: 'Yapay zekâ ve LLM', cnn: 'CNN ve konvolüsyon', filtre: 'Filtre ve kenar', kamera: 'Görüntü ve kamera' };
+  var KMAP = { ai: [1, 2, 3, 4, 6, 13, 14, 15, 24, 25, 26], cnn: [7, 8, 9, 10, 16], filtre: [11, 12, 17, 18, 19], kamera: [5, 20, 21, 22, 23, 27, 28, 29, 30] };
+  L.forEach(function (s) { for (var k in KMAP) if (KMAP[k].indexOf(s.no) >= 0) s.kat = k; });
+  var KEY = 'sozel-sorular-v1', bil = {}, cevir = {}, sira = L.map(function (x) { return x.no; }), filtre = 'hepsi';
+  var kartlar = {}; /* ekrandaki kartlar: no -> { k, ayarla(acik), odak() } */
+  try { var kayit = JSON.parse(localStorage.getItem(KEY) || '{}'); if (kayit && typeof kayit === 'object' && !Array.isArray(kayit)) bil = kayit; } catch (e) { bil = {}; }
+  function kaydet() { try { localStorage.setItem(KEY, JSON.stringify(bil)); } catch (e) { } }
+  /* Arama için sadeleştirme: Türkçe küçük harf; I/ı/İ/i ve şapkalı harfler aynı sayılır ("PIKSEL", "zeka" da bulur). */
+  function tr(s) { return String(s).toLocaleLowerCase('tr').replace(/ı/g, 'i').replace(/â/g, 'a').replace(/î/g, 'i').replace(/û/g, 'u'); }
+  function el(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
+  function say_(f) { return L.filter(function (s) { return uygun(s, f); }).length; }
+  function uygun(s, f) {
+    if (f === 'hepsi') return true; if (f === 'once') return s.grup === 1; if (f === 'bilmedik') return !bil[s.no];
+    return s.kat === f;
+  }
+  /* Filtre çipleri bir kez kurulur; sonra yalnızca basılı durumu ve sayıları güncellenir (odak kaybolmasın). */
+  var CIPLER = [['hepsi', 'Hepsi'], ['once', 'Önce çalış']].concat(Object.keys(KATLAR).map(function (k) { return [k, KATLAR[k]]; })).concat([['bilmedik', 'Bilmediklerim']]);
+  function cipler() {
+    if (!cip.firstChild) CIPLER.forEach(function (x) {
+      var b = el('button', null, x[1] + ' '); b.type = 'button'; b.setAttribute('data-f', x[0]);
+      b.appendChild(el('span', 'sy'));
+      b.addEventListener('click', function () { filtre = x[0]; cipler(); ciz(); });
+      cip.appendChild(b);
+    });
+    Array.prototype.forEach.call(cip.children, function (b) {
+      var f = b.getAttribute('data-f');
+      b.setAttribute('aria-pressed', filtre === f ? 'true' : 'false');
+      b.querySelector('.sy').textContent = say_(f);
+    });
+  }
+  function ilerleme() {
+    var sb = L.filter(function (s) { return bil[s.no]; }).length;
+    document.getElementById('ilerYazi').textContent = sb + ' / ' + L.length + ' bildim';
+    document.getElementById('ilerBar').style.width = (L.length ? sb / L.length * 100 : 0) + '%';
+  }
+  function kart(s) {
+    var kt = KATLAR[s.kat] || '';
+    var k = el('div', 'k kat-' + s.kat + (bil[s.no] ? ' bilindi' : '') + (cevir[s.no] ? ' cev' : ''));
+    k.setAttribute('data-no', s.no);
+    /* Ön yüz gerçek bir düğme: Enter/Boşluk ve ekran okuyucu kendiliğinden çalışır. */
+    var on = el('button', 'yuz on'); on.type = 'button';
+    on.appendChild(el('span', 'rozet2', kt));
+    on.appendChild(el('span', 'q', s.soru));
+    on.appendChild(el('span', 'ipucu2', 'Cevabı gör'));
+    var no = el('span', 'no', String(s.no).padStart(2, '0')); no.setAttribute('aria-hidden', 'true'); on.appendChild(no);
+    /* Arka yüz düğme değil, bir grup: içindeki "Bildim" ve "Geri çevir" gerçek düğmeler. */
+    var ar = el('div', 'yuz arka'); ar.tabIndex = -1; ar.setAttribute('role', 'group'); ar.setAttribute('aria-label', 'Soru ' + s.no + ' cevabı');
+    ar.appendChild(el('div', 'qs', s.no + '. ' + s.soru));
+    ar.appendChild(el('div', 'a', s.cevap));
+    var al = el('div', 'alt2');
+    var b1 = el('button', 'bil2'); b1.type = 'button';
+    var b2 = el('button', 'geri', 'Geri çevir'); b2.type = 'button';
+    al.appendChild(b1); al.appendChild(b2); ar.appendChild(al);
+    function bilYaz() { b1.textContent = bil[s.no] ? '✓ Bildim' : 'Bildim'; b1.setAttribute('aria-pressed', bil[s.no] ? 'true' : 'false'); k.classList.toggle('bilindi', !!bil[s.no]); }
+    function ayarla(acik) { if (acik) cevir[s.no] = true; else delete cevir[s.no]; k.classList.toggle('cev', !!acik); }
+    function odak() { (cevir[s.no] ? ar : on).focus({ preventScroll: true }); }
+    function don() { ayarla(!cevir[s.no]); odak(); }
+    bilYaz();
+    on.addEventListener('click', don);
+    ar.addEventListener('click', function (e) { if (!e.target.closest('button')) don(); }); /* fare/dokunma kolaylığı; klavye için "Geri çevir" var */
+    b2.addEventListener('click', don);
+    b1.addEventListener('click', function () {
+      if (bil[s.no]) delete bil[s.no]; else bil[s.no] = true;
+      kaydet(); cipler(); ilerleme();
+      if (filtre !== 'bilmedik') { bilYaz(); return; }
+      /* "Bilmediklerim" süzgecinde kart listeden çıkar: odağı yerine gelen karta (yoksa aramaya) taşı. */
+      var sirada = Array.prototype.indexOf.call(liste.children, k);
+      ciz();
+      var ks = liste.querySelectorAll('.k'), hedef = ks[Math.min(sirada, ks.length - 1)];
+      if (hedef && kartlar[hedef.getAttribute('data-no')]) kartlar[hedef.getAttribute('data-no')].odak(); else ara.focus();
+    });
+    k.appendChild(on); k.appendChild(ar);
+    kartlar[s.no] = { k: k, ayarla: ayarla, odak: odak };
+    return k;
+  }
+  function ciz() {
+    var q = tr(ara.value.trim()), n = 0; liste.textContent = ''; kartlar = {};
+    sira.forEach(function (no) {
+      var s = L.filter(function (x) { return x.no === no; })[0];
+      if (!s || !uygun(s, filtre)) return;
+      if (q && tr(s.soru + ' ' + s.cevap).indexOf(q) < 0) return;
+      n++; liste.appendChild(kart(s));
+    });
+    if (!n) liste.appendChild(el('p', 'bos', 'Eşleşen soru yok.'));
+    say.textContent = n + ' kart gösteriliyor';
+    ilerleme();
+  }
+  ara.addEventListener('input', ciz);
+  document.getElementById('sirala').addEventListener('click', function () { sira = L.map(function (x) { return x.no; }); ciz(); });
+  document.getElementById('karistir').addEventListener('click', function () {
+    for (var i = sira.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = sira[i]; sira[i] = sira[j]; sira[j] = t; }
+    cevir = {}; ciz();
+  });
+  /* Hepsini çevir: ekranda açık (cevabı görünen) kart varsa hepsini kapatır, yoksa görünen kartların hepsini açar. */
+  document.getElementById('kapat').addEventListener('click', function () {
+    var nolar = Object.keys(kartlar), acikVar = nolar.some(function (no) { return cevir[no]; });
+    if (acikVar) cevir = {};
+    nolar.forEach(function (no) { kartlar[no].ayarla(!acikVar); });
+  });
+  cipler(); ciz();
+})();
+</script>
+</body>
+</html>

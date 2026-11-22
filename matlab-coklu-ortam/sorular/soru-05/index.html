@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Soru 5 – LBP Kodu</title>
+<script src="../../ortak/tema.js?v=20261115115621"></script>
+<link rel="stylesheet" href="../../ortak/soru.css?v=20261115115621">
+<style>
+.adimlar{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;padding:0;list-style:none}
+.adimlar li{background:var(--kod);border:1px solid var(--cizgi);border-radius:99px;padding:3px 12px;font-weight:600;font-size:15px}
+.adimlar li+li::before{content:"→ ";color:var(--soluk);font-weight:400}
+.mgrid{display:inline-grid;gap:3px;vertical-align:top}
+.mgrid input,.mgrid span{width:46px;height:38px;text-align:center;font:15px ui-monospace,Menlo,Consolas,monospace;border:1px solid var(--cizgi);border-radius:7px;background:var(--yuzey);color:var(--yazi);padding:0;display:grid;place-items:center}
+.mgrid span.bos{color:var(--soluk)}
+.mgrid .sec{outline:3px solid #e0701d;outline-offset:-2px;background:var(--uyari-z)}
+.mgrid .simdi{background:var(--dugme);color:#fff;border-color:var(--dugme);font-weight:700}
+.mgrid .bir{background:var(--olumlu-z);color:var(--olumlu);font-weight:700}
+.yan{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start}
+.yan>div{min-width:0}
+.et{font-size:13.5px;color:var(--soluk);margin:0 0 4px;font-weight:600}
+.hesap{font:15px/1.7 ui-monospace,Menlo,Consolas,monospace;background:var(--yuzey);border:1px solid var(--cizgi);border-radius:10px;padding:10px 14px;margin:10px 0;overflow-x:auto;white-space:pre}
+.dugmeler{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+</style>
+</head>
+<body>
+<div class="sar">
+<nav class="gezin" aria-label="Site"><a href="../../index.html">← Ana sayfa</a></nav>
+
+<header class="kahraman">
+  <h1>LBP Kodu</h1>
+  <p>"LBP'nin kodunu yazınız." Kod yazma sorusu: kodun her satırı, neden orada olduğu ve bir blokta elle hesap.</p>
+</header>
+
+<nav class="ic" aria-label="Sayfa içi bağlantılar">
+  <a href="#ozet">1 Özet</a><a href="#nedir">2 LBP nedir</a><a href="#bit">3 Karşılaştırma</a><a href="#sira">4 Bit sırası</a><a href="#onluk">5 Onluğa çevirme</a><a href="#histo">6 Histogram</a><a href="#dongu">7 Neden w-2</a><a href="#kod">8 Kod satır satır</a><a href="#hesap">9 Elle hesap</a><a href="#cevap">10 Sınav cevabı</a>
+</nav>
+
+<section id="ozet">
+  <h2><span class="no">1</span>Soru ne istiyor?</h2>
+  <p class="alt">Hocanın LBP fonksiyonunu kağıda yazacaksın.</p>
+  <div class="kutu sinav"><b class="bas">Sınav sorusu</b>LBP'nin kodunu yazınız.</div>
+  <p>Kod beş iş yapar. Sırayı bilirsen kodu unutsan da yeniden kurarsın:</p>
+  <ol class="adimlar">
+    <li>Hazırlık</li><li>3×3 blok al</li><li>8 komşuyu karşılaştır</li><li>Onluğa çevir</li><li>Histogramı artır</li>
+  </ol>
+  <ol>
+    <li><strong>Hazırlık:</strong> boyutu al (<code>size</code>), 256 elemanlı sıfır histogram aç.</li>
+    <li><strong>Gezinme:</strong> iki <code>for</code> ile <code>1:w-2</code> ve <code>1:h-2</code>; her adımda 3×3 blok.</li>
+    <li><strong>Karşılaştırma:</strong> merkez <code>blok(2,2)</code>. 8 komşu için <code>&gt;=merkez</code>, 8 bit çıkar.</li>
+    <li><strong>Onluğa çevirme:</strong> <code>bit(k)*2^(8-k)</code> toplamı, 0–255 arası LBP değeri.</li>
+    <li><strong>Histogram:</strong> <code>histo(değer+1)</code> bir artar.</li>
+  </ol>
+</section>
+
+<section id="nedir">
+  <h2><span class="no">2</span>LBP nedir?</h2>
+  <p class="alt">Local Binary Pattern: yerel ikili örüntü.</p>
+  <p>LBP, görüntünün <strong>dokusunu</strong> sayıya çeviren bir öznitelik çıkarma yöntemidir. Her pikselin 3×3 komşuluğunda 8 komşu, merkez pikselle karşılaştırılır. Komşu merkeze eşit ya da ondan büyükse 1, küçükse 0 yazılır.</p>
+  <p>Çıkan 8 bit yan yana okununca 0–255 arası bir sayı olur; bu o pikselin <strong>LBP değeridir</strong>. Bütün piksellerin LBP değerlerinden yapılan 256'lık histogram, görüntünün dokusunu temsil eden <strong>öznitelik vektörüdür</strong>.</p>
+  <div class="kutu ipucu"><b class="bas">Sözel soru gelirse</b>Üç cümle yeter: doku özniteliği çıkarır; 8 komşu merkezle karşılaştırılıp 8 bitlik sayı elde edilir; bu sayıların 256'lık histogramı öznitelik vektörüdür.</div>
+</section>
+
+<section id="bit">
+  <h2><span class="no">3</span>Karşılaştırma: komşu &gt;= merkez</h2>
+  <p class="alt">Her komşu için tek soru: merkezden küçük mü, değil mi?</p>
+  <div class="yan">
+    <div><p class="et">blok (merkez mavi)</p><div class="mgrid" id="oBlok" style="grid-template-columns:repeat(3,46px)"></div></div>
+    <div><p class="et">komşu &gt;= 6 ?</p><div class="mgrid" id="oBit" style="grid-template-columns:repeat(3,46px)"></div></div>
+  </div>
+  <p>Merkez 6. 9 ≥ 6 olduğu için 1; 5 &lt; 6 olduğu için 0. Alt ortadaki 6 merkeze <strong>eşit</strong>, o da 1 (işaret <code>&gt;=</code>, sadece <code>&gt;</code> değil).</p>
+<pre class="kod">
+merkez=blok(2,2);
+bit(1)=blok(1,1)>=merkez;     % sonuç 1 (doğru) ya da 0 (yanlış)
+</pre>
+  <p>MATLAB'da karşılaştırmanın sonucu <strong>logical</strong> türündedir (1 ya da 0). Bu yüzden toplarken <code>double(bit(k))</code> yazılır.</p>
+  <div class="kutu ipucu"><b class="bas">Üç uç durum</b>Kod <code>&gt;=</code> kullandığı için:
+    <div class="hesap">düz bölge (hepsi eşit):   <span id="esitDuz"></span>
+merkez en büyük (tepe):   <span id="esitTepe"></span>
+merkez en küçük (çukur):  <span id="esitCukur"></span></div>
+    Düz bölgede bütün bitler 1 olur ve değer 255 çıkar, 0 değil.</div>
+</section>
+
+<section id="sira">
+  <h2><span class="no">4</span>Bit sırası</h2>
+  <p class="alt">Kitap okur gibi: soldan sağa, yukarıdan aşağıya. Merkez atlanır.</p>
+<pre class="kod">
+ bit(1)  bit(2)  bit(3)          blok(1,1)  blok(1,2)  blok(1,3)
+ bit(4)  merkez  bit(5)          blok(2,1)  blok(2,2)  blok(2,3)
+ bit(6)  bit(7)  bit(8)          blok(3,1)  blok(3,2)  blok(3,3)
+</pre>
+  <div class="kaydir"><table class="t"><tbody>
+    <tr><th>Satır</th><th>Bitler</th><th>İndisler</th></tr>
+    <tr><td>Üst satır (3 tane)</td><td>bit(1), bit(2), bit(3)</td><td><code>(1,1) (1,2) (1,3)</code></td></tr>
+    <tr><td>Orta satır (2 tane)</td><td>bit(4), bit(5)</td><td><code>(2,1) (2,3)</code>; <code>(2,2)</code> merkez, yok</td></tr>
+    <tr><td>Alt satır (3 tane)</td><td>bit(6), bit(7), bit(8)</td><td><code>(3,1) (3,2) (3,3)</code></td></tr>
+  </tbody></table></div>
+  <div class="kutu dikkat"><b class="bas">Ezber: 3 + 2 + 3</b>Dokuz indisi sırayla yaz, ortadaki <code>(2,2)</code>'yi atla. bit(4)'ten bit(5)'e geçerken sütun 1'den 3'e atlar; en çok karıştırılan yer burası.</div>
+</section>
+
+<section id="onluk">
+  <h2><span class="no">5</span>Onluğa çevirme: <code>2^(8-k)</code></h2>
+  <p class="alt">8 bit yan yana bir ikili sayıdır; bit(1) en büyük basamak.</p>
+  <div class="kaydir"><table class="t"><tbody>
+    <tr><th>k</th><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td></tr>
+    <tr><th>2^(8-k)</th><td>2⁷ = 128</td><td>2⁶ = 64</td><td>2⁵ = 32</td><td>2⁴ = 16</td><td>2³ = 8</td><td>2² = 4</td><td>2¹ = 2</td><td>2⁰ = 1</td></tr>
+  </tbody></table></div>
+<pre class="kod">
+harita(i,j)=0;                                        % toplamı sıfırla
+for k=1:8
+    harita(i,j)=harita(i,j)+double(bit(k))*2^(8-k);   % bit 1 ise ağırlığı ekle
+end
+</pre>
+  <p>Örnek blokta döngü adım adım:</p>
+  <div class="kaydir"><table class="t" id="oDongu"></table></div>
+  <ul>
+    <li>Bit 0 ise 0 eklenir, yani sadece <strong>1 olan bitlerin ağırlıkları</strong> toplanır.</li>
+    <li>En küçük değer 0 (hepsi 0), en büyük 128+64+32+16+8+4+2+1 = <strong>255</strong> (hepsi 1). Toplam 256 farklı değer.</li>
+    <li><code>harita</code>, her pikselin LBP değerini tutan resimdir (LBP görüntüsü).</li>
+  </ul>
+</section>
+
+<section id="histo">
+  <h2><span class="no">6</span>Histogram ve <code>+1</code></h2>
+  <p class="alt">Hangi LBP değerinden kaç tane var?</p>
+<pre class="kod">
+histo=zeros(1,256);                                % başta: 256 tane sıfır
+histo(harita(i,j)+1)=histo(harita(i,j)+1)+1;       % o değerin sayacını 1 artır
+</pre>
+  <p>LBP değeri 0 ile 255 arasındadır, ama MATLAB'da indis <strong>1'den başlar</strong>; <code>histo(0)</code> hata verir. Bu yüzden değer bir kaydırılır:</p>
+  <div class="kaydir"><table class="t"><tbody>
+    <tr><th>LBP değeri</th><td>0</td><td>1</td><td>74</td><td>255</td></tr>
+    <tr><th>Sayacı</th><td><code>histo(1)</code></td><td><code>histo(2)</code></td><td><code>histo(75)</code></td><td><code>histo(256)</code></td></tr>
+  </tbody></table></div>
+  <p>256 değer olduğu için histogram 256 elemanlı: <code>zeros(1,256)</code> (1 satır, 256 sütun). Fonksiyonun çıktısı bu vektördür.</p>
+  <div class="kutu ipucu"><b class="bas">Kontrol</b>Histogramın toplamı, hesaplanan piksel sayısına eşittir: <code>(w-2) × (h-2)</code>.</div>
+</section>
+
+<section id="dongu">
+  <h2><span class="no">7</span>Döngü neden <code>w-2</code> ve <code>h-2</code>'ye kadar?</h2>
+  <p class="alt">3×3 blok resmin dışına taşmasın diye.</p>
+  <p>Blok <code>res(i:i+2, j:j+2)</code>: (i,j) bloğun <strong>sol üst köşesi</strong>, blok i+2. satıra kadar uzanır. En son satır w olduğuna göre i+2 ≤ w, yani <strong>i ≤ w−2</strong>. Sütunlar için de j ≤ h−2.</p>
+  <div class="kaydir"><table class="t"><tbody>
+    <tr><th>Resim</th><th>i ve j</th><th>harita boyutu</th><th>Histogram toplamı</th></tr>
+    <tr><td>5 × 5</td><td>1:3, 1:3</td><td>3 × 3</td><td>9</td></tr>
+    <tr><td>256 × 256</td><td>1:254, 1:254</td><td>254 × 254</td><td>64516</td></tr>
+  </tbody></table></div>
+  <p><code>i:i+2</code> üç eleman demektir: i, i+1, i+2. <code>[w,h]=size(res)</code>: w satır sayısı, h sütun sayısı. Sobel ve medyan filtresindeki döngüyle birebir aynı.</p>
+  <div class="kutu dikkat"><b class="bas">Resim gri olmalı</b><code>[w,h]=size(res)</code> iki boyutlu (gri) resim bekler. Renkli resimde önce tek katman alınır: <code>res(:,:,1)</code> ya da <code>rgb2gray(res)</code>.</div>
+</section>
+
+<section id="kod">
+  <h2><span class="no">8</span>Hocanın kodu, satır satır</h2>
+  <p class="alt">Fonksiyon: gri resmi alır, 256'lık histogramı verir.</p>
+  <div class="kod-sar"><pre class="kod" data-kopya>
+function histo=LBP_ABM(res)
+[w,h]=size(res);
+histo=zeros(1,256);
+for i=1:w-2
+for j=1:h-2
+blok=double(res(i:i+2,j:j+2));
+merkez=blok(2,2);
+bit(1)=blok(1,1)>=merkez; bit(2)=blok(1,2)>=merkez;
+bit(3)=blok(1,3)>=merkez; bit(4)=blok(2,1)>=merkez;
+bit(5)=blok(2,3)>=merkez; bit(6)=blok(3,1)>=merkez;
+bit(7)=blok(3,2)>=merkez; bit(8)=blok(3,3)>=merkez;
+harita(i,j)=0;
+for k=1:8
+harita(i,j)=harita(i,j)+double(bit(k))*2^(8-k);
+end
+histo(harita(i,j)+1)=histo(harita(i,j)+1)+1;
+end
+end
+</pre></div>
+
+  <div class="satir">
+    <pre class="kod">function histo=LBP_ABM(res)</pre>
+    <p class="ne"><strong>Fonksiyon başlığı.</strong> <code>function çıktı=ad(girdi)</code>. Girdi <code>res</code> (gri resim), çıktı <code>histo</code>. Çıktının adı ile içeride doldurulan değişkenin adı aynı olmalı.</p>
+  </div>
+  <div class="satir">
+    <pre class="kod">[w,h]=size(res);
+histo=zeros(1,256);</pre>
+    <p class="ne"><strong>Hazırlık.</strong> w satır, h sütun sayısı. Histogram 256 sıfırla başlar (0–255 değerlerinin sayaçları).</p>
+  </div>
+  <div class="satir">
+    <pre class="kod">for i=1:w-2
+for j=1:h-2</pre>
+    <p class="ne"><strong>Resmi gez.</strong> i satırlarda, j sütunlarda ilerler. Blok taşmasın diye −2.</p>
+  </div>
+  <div class="satir">
+    <pre class="kod">blok=double(res(i:i+2,j:j+2));
+merkez=blok(2,2);</pre>
+    <p class="ne"><strong>3×3 bloğu kes, ortasını al.</strong> Resim <code>uint8</code> gelir; <code>double</code> ile sıradan sayıya çevrilir. Merkez bloğun 2. satır 2. sütunu.</p>
+  </div>
+  <div class="satir">
+    <pre class="kod">bit(1)=blok(1,1)>=merkez; bit(2)=blok(1,2)>=merkez;
+bit(3)=blok(1,3)>=merkez; bit(4)=blok(2,1)>=merkez;
+bit(5)=blok(2,3)>=merkez; bit(6)=blok(3,1)>=merkez;
+bit(7)=blok(3,2)>=merkez; bit(8)=blok(3,3)>=merkez;</pre>
+    <p class="ne"><strong>8 karşılaştırma.</strong> Hepsi aynı kalıp: <code>bit(n)=blok(satır,sütun)&gt;=merkez;</code>. Değişen sadece numara ve indis. Sıra: üst satır, orta sol, orta sağ, alt satır.</p>
+  </div>
+  <div class="satir">
+    <pre class="kod">harita(i,j)=0;
+for k=1:8
+harita(i,j)=harita(i,j)+double(bit(k))*2^(8-k);
+end</pre>
+    <p class="ne"><strong>İkiliden onluğa.</strong> Toplam sıfırdan başlar; her bit kendi ağırlığıyla (128, 64, …, 1) çarpılıp eklenir. Bu iç <code>for</code>'un kendi <code>end</code>'i var.</p>
+  </div>
+  <div class="satir">
+    <pre class="kod">histo(harita(i,j)+1)=histo(harita(i,j)+1)+1;</pre>
+    <p class="ne"><strong>Sayacı artır.</strong> "x = x + 1" kalıbı; x burada <code>histo(harita(i,j)+1)</code>. Aynı ifade eşittirin iki yanında da var, sağda sonuna <code>+1</code> eklenir.</p>
+  </div>
+  <div class="satir">
+    <pre class="kod">end
+end</pre>
+    <p class="ne"><strong>İki dış döngüyü kapat.</strong> Toplam üç <code>for</code>, üç <code>end</code>: biri k döngüsü için (yukarıda), ikisi burada.</p>
+  </div>
+  <div class="kutu ipucu"><b class="bas">Nasıl çağrılır?</b>Dosya <code>LBP_ABM.m</code> adıyla kaydedilir, sonra: <code>res=imread("cameraman.tif"); h=LBP_ABM(res); bar(h)</code></div>
+</section>
+
+<section id="hesap">
+  <h2><span class="no">9</span>Kağıt üzerinde elle hesap</h2>
+  <p class="alt">"Verilen blok için LBP değerini bulunuz" gelirse.</p>
+  <p><strong>Yöntem:</strong> merkezi yaz, 8 komşuyu sırayla diz, altlarına 0/1 yaz, ağırlıklarla çarpıp topla.</p>
+  <div class="hesap" id="oHesap"></div>
+
+  <div class="arac" id="aracA">
+    <h3>Uygulama: 3×3 blok hesaplayıcı</h3>
+    <p class="alt">Sayıları değiştir; bitler ve LBP değeri anında güncellenir. Turuncu çerçeveli kutu merkezdir.</p>
+    <div class="dugmeler">
+      <button type="button" class="d ikinci" data-ornek="sinav">Örnek blok</button>
+      <button type="button" class="d ikinci" data-ornek="duz">Düz bölge</button>
+      <button type="button" class="d ikinci" data-ornek="yatay">Yatay kenar</button>
+      <button type="button" class="d ikinci" data-ornek="dikey">Dikey kenar</button>
+      <button type="button" class="d ikinci" data-ornek="tepe">Parlak nokta</button>
+    </div>
+    <div class="yan">
+      <div><p class="et">blok</p><div class="mgrid" id="aBlok" style="grid-template-columns:repeat(3,46px)"></div></div>
+      <div><p class="et">bitler (ortada merkez)</p><div class="mgrid" id="aBit" style="grid-template-columns:repeat(3,46px)"></div></div>
+    </div>
+    <div class="hesap" id="aHesap" aria-live="polite"></div>
+  </div>
+
+  <div class="arac" id="aracB">
+    <h3>Uygulama: 5×5 resimde bloğu kaydır</h3>
+    <p class="alt">Kodun yaptığı iş: her konumda LBP değeri bulunur, haritaya yazılır, histogramda sayacı artar.</p>
+    <div class="yan">
+      <div><p class="et">res (5×5)</p><div class="mgrid" id="bR" style="grid-template-columns:repeat(5,46px)"></div></div>
+      <div><p class="et">harita (3×3)</p><div class="mgrid" id="bH" style="grid-template-columns:repeat(3,56px)"></div></div>
+    </div>
+    <div class="dugmeler">
+      <button type="button" class="d" id="bSonraki">Sonraki adım</button>
+      <button type="button" class="d ikinci" id="bHepsi">Hepsini doldur</button>
+      <button type="button" class="d ikinci" id="bBasa">Başa dön</button>
+      <button type="button" class="d ikinci" id="bYeni">Yeni resim</button>
+    </div>
+    <div class="hesap" id="bHesap" aria-live="polite"></div>
+    <p class="et">histogram (sıfır olmayanlar)</p>
+    <div class="hesap" id="bHisto"></div>
+  </div>
+
+  <div class="arac" id="aracQ">
+    <h3>Alıştırma: rastgele blok</h3>
+    <p class="alt">Verilen blok için isteneni hesapla. İki deneme hakkın var.</p>
+    <div class="ilerle" aria-hidden="true"><i id="qBar"></i></div>
+    <p id="qSkor" class="alt">Doğru: 0 / 0</p>
+    <div class="yan"><div><p class="et">blok (merkez mavi)</p><div class="mgrid" id="qBlok" style="grid-template-columns:repeat(3,46px)"></div></div></div>
+    <p id="qSoru" style="font-weight:600"></p>
+    <p><input type="text" id="qCevap" style="width:140px" autocomplete="off" inputmode="numeric" aria-label="Cevap"> <button type="button" class="d" id="qKontrol">Kontrol et</button> <button type="button" class="d ikinci" id="qYeni">Yeni soru</button></p>
+    <p class="sonuc" id="qSonuc" aria-live="polite"></p>
+  </div>
+</section>
+
+<section id="cevap">
+  <h2><span class="no">10</span>Sınav cevabı (kağıda yazılacak hali)</h2>
+  <p class="alt">Kod + her satırın açıklaması. Açıklamaları yazmak şart değil ama puanı sağlamlaştırır.</p>
+  <div class="kod-sar"><pre class="kod" data-kopya>
+function histo=LBP_ABM(res)                            % res: gri resim, histo: çıktı
+[w,h]=size(res);                                       % satır ve sütun sayısı
+histo=zeros(1,256);                                    % 256'lık boş histogram
+for i=1:w-2                                            % satırları gez (taşmasın diye -2)
+for j=1:h-2                                            % sütunları gez
+blok=double(res(i:i+2,j:j+2));                         % 3x3 bloğu al
+merkez=blok(2,2);                                      % ortadaki piksel
+bit(1)=blok(1,1)>=merkez; bit(2)=blok(1,2)>=merkez;    % üst sol, üst orta
+bit(3)=blok(1,3)>=merkez; bit(4)=blok(2,1)>=merkez;    % üst sağ, orta sol
+bit(5)=blok(2,3)>=merkez; bit(6)=blok(3,1)>=merkez;    % orta sağ, alt sol
+bit(7)=blok(3,2)>=merkez; bit(8)=blok(3,3)>=merkez;    % alt orta, alt sağ
+harita(i,j)=0;                                         % LBP değerini sıfırla
+for k=1:8                                              % 8 biti dolaş
+harita(i,j)=harita(i,j)+double(bit(k))*2^(8-k);        % ikiliden onluğa (128,64,...,1)
+end
+histo(harita(i,j)+1)=histo(harita(i,j)+1)+1;           % o değerin sayacını artır
+end
+end
+</pre></div>
+  <h3>Puan kaybettiren şeyler</h3>
+  <div class="kaydir"><table class="t"><tbody>
+    <tr><th>Hata</th><th>Doğrusu</th></tr>
+    <tr><td><code>histo(harita(i,j))</code></td><td><code>histo(harita(i,j)+1)</code>; değer 0 olabilir, indis 0 olmaz</td></tr>
+    <tr><td><code>zeros(1,255)</code> ya da <code>zeros(256)</code></td><td><code>zeros(1,256)</code>; 0–255 arası 256 değer, tek satır</td></tr>
+    <tr><td><code>2^k</code> ya da <code>2^(k-1)</code></td><td><code>2^(8-k)</code>; bit(1) 128, bit(8) 1</td></tr>
+    <tr><td><code>&gt;merkez</code></td><td><code>&gt;=merkez</code> (eşitlik de 1)</td></tr>
+    <tr><td><code>blok(2,2)</code>'yi de bit yapmak (9 bit)</td><td>Merkez atlanır: 8 komşu, 8 bit</td></tr>
+    <tr><td>bit(4) ve bit(5)'i karıştırmak</td><td>bit(4)=<code>blok(2,1)</code>, bit(5)=<code>blok(2,3)</code></td></tr>
+    <tr><td><code>i:i+3</code></td><td><code>i:i+2</code> (3 eleman)</td></tr>
+    <tr><td><code>for i=1:w</code></td><td><code>for i=1:w-2</code></td></tr>
+    <tr><td><code>harita(i,j)=0;</code> unutmak</td><td>Toplam her pikselde sıfırdan başlamalı</td></tr>
+    <tr><td>İki <code>end</code></td><td>Üç <code>for</code>, üç <code>end</code></td></tr>
+    <tr><td>Başlıkta <code>histo</code>, içeride başka ad</td><td>Çıktı adı aynı olmalı: <code>function histo=...</code></td></tr>
+  </tbody></table></div>
+  <div class="kutu sinav"><b class="bas">Kodu unutursan</b>Beş adımı hatırla: hazırlık, 3×3 blok, 8 karşılaştırma, onluğa çevirme, histogram. Blok alma ve döngü Sobel koduyla aynı; LBP'ye özgü olan sadece sekiz <code>bit</code> satırı, <code>2^(8-k)</code> ve <code>+1</code>.</div>
+</section>
+
+<footer>Soru 5 · kaynak: kullanıcının kendi ders sohbeti</footer>
+</div>
+
+<script src="../../ortak/soru.js?v=20261115115621"></script>
+<script src="soru.js?v=20261115115621"></script>
+</body>
+</html>

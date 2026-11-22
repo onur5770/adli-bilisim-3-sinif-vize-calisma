@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Soru 2 – Sobel Kenar Çıkarma</title>
+<script src="../../ortak/tema.js?v=20261115115621"></script>
+<link rel="stylesheet" href="../../ortak/soru.css?v=20261115115621">
+<style>
+.adimlar{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;padding:0;list-style:none}
+.adimlar li{background:var(--kod);border:1px solid var(--cizgi);border-radius:99px;padding:3px 12px;font-weight:600;font-size:15px}
+.adimlar li+li::before{content:"→ ";color:var(--soluk);font-weight:400}
+.mgrid{display:inline-grid;gap:3px;vertical-align:top}
+.mgrid input,.mgrid span{width:46px;height:38px;text-align:center;font:15px ui-monospace,Menlo,Consolas,monospace;border:1px solid var(--cizgi);border-radius:7px;background:var(--yuzey);color:var(--yazi);padding:0;display:grid;place-items:center}
+.mgrid span.bos{color:var(--soluk)}
+.mgrid .sec{outline:3px solid #e0701d;outline-offset:-2px;background:var(--uyari-z)}
+.mgrid .simdi{background:var(--dugme);color:#fff;border-color:var(--dugme);font-weight:700}
+.mgrid .bir{background:var(--olumlu-z);color:var(--olumlu);font-weight:700}
+.yan{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start}
+.yan>div{min-width:0}
+.et{font-size:13.5px;color:var(--soluk);margin:0 0 4px;font-weight:600}
+.hesap{font:15px/1.7 ui-monospace,Menlo,Consolas,monospace;background:var(--yuzey);border:1px solid var(--cizgi);border-radius:10px;padding:10px 14px;margin:10px 0;overflow-x:auto;white-space:pre}
+.dugmeler{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+input[type=range]{width:min(100%,280px);vertical-align:middle}
+</style>
+</head>
+<body>
+<div class="sar">
+<nav class="gezin" aria-label="Site"><a href="../../index.html">← Ana sayfa</a></nav>
+
+<header class="kahraman sobel">
+  <span class="etiket">Soru 2</span>
+  <h1>Sobel Kenar Çıkarma</h1>
+  <p>"Sobel kenar çıkarma" kodunu yazınız / verilen matrise Sobel uygulayınız. Kodun her satırı, neden orada olduğu ve elle hesap.</p>
+  <div class="serit" aria-hidden="true"><i></i><i></i><i></i></div>
+</header>
+
+<nav class="ic" aria-label="Sayfa içi bağlantılar">
+  <a href="#ozet">1 Özet</a><a href="#kenar">2 Kenar nedir</a><a href="#blok">3 Blok alma</a><a href="#carp">4 Çarp ve topla</a><a href="#gxgy">5 Gx ve Gy</a><a href="#esik">6 G ve eşik</a><a href="#dongu">7 Neden w-2</a><a href="#kod">8 Kod satır satır</a><a href="#hesap">9 Elle hesap</a><a href="#cevap">10 Sınav cevabı</a>
+</nav>
+
+<section id="ozet">
+  <h2><span class="no">1</span>Soru ne istiyor?</h2>
+  <p class="alt">Resimde piksel değerinin aniden değiştiği yerleri (kenarları) bulup siyah-beyaz göstermek.</p>
+  <p>Kodu ezberleme, hikâyeyi hatırla. Bir şeyi kullanmadan önce onu hazırlamış olman gerekir:</p>
+  <ul class="adimlar"><li>hazırla</li><li>boyut al</li><li>gez</li><li>kes</li><li>double</li><li>çarp</li><li>topla</li><li>karar ver</li><li>göster</li></ul>
+  <div class="kaydir"><table class="t"><tbody>
+    <tr><th>Adım</th><th>Ne yapılır</th><th>Kodda</th></tr>
+    <tr><td>hazırla</td><td>İki filtreyi yaz</td><td><code>Gx=[1 2 1;0 0 0;-1 -2 -1]; Gy=Gx';</code></td></tr>
+    <tr><td>boyut al</td><td>Resmin satır ve sütun sayısı</td><td><code>[w,h]=size(R(:,:,1));</code></td></tr>
+    <tr><td>gez</td><td>3×3 kareyi resmin üstünde kaydır</td><td><code>for i=1:w-2</code>, <code>for j=1:h-2</code></td></tr>
+    <tr><td>kes</td><td>3×3 parçayı al</td><td><code>blok=R(i:i+2,j:j+2);</code></td></tr>
+    <tr><td>double</td><td>Eksi sayılar bozulmasın</td><td><code>blok=double(blok);</code></td></tr>
+    <tr><td>çarp</td><td>Denk gelenleri çarp</td><td><code>blok.*Gx</code>, <code>blok.*Gy</code></td></tr>
+    <tr><td>topla</td><td>Dokuzunu topla, tek sayı</td><td><code>sum(deger_x(:))</code></td></tr>
+    <tr><td>karar ver</td><td>Birleştir, eşikle</td><td><code>sqrt(X^2+Y^2)&gt;255</code></td></tr>
+    <tr><td>göster</td><td>X, Y ve kenar resmi</td><td><code>subplot</code>, <code>imshow(..,[])</code></td></tr>
+  </tbody></table></div>
+</section>
+
+<section id="kenar">
+  <h2><span class="no">2</span>Kenar nedir?</h2>
+  <p class="alt">Parlaklık değil, değişim.</p>
+  <p>Kenar, komşu pikseller arasında değerin <strong>aniden değiştiği</strong> yerdir. Kenarı bulmak için piksellerin kendisine değil, komşular arasındaki <strong>farka</strong> bakarız.</p>
+<pre class="kod">
+piksel:  10  10  10  200  200  200
+fark:       0   0   190    0    0      % kenar 3. ve 4. sütun arasında
+</pre>
+  <p>200'lerin olduğu bölge çok parlak ama orada kenar yok, çünkü komşular eşit. Sobel de özünde bunu yapar: bir tarafın piksellerini toplayıp diğer tarafınkinden çıkarır. Fark büyükse kenar vardır.</p>
+  <div class="kutu ipucu"><b class="bas">Küçük farklar</b>50 → 52 gibi küçük oynamalar gürültüdür, kenar sayılmaz. Koddaki <code>&gt;255</code> eşiği bunları ayıklar.</div>
+</section>
+
+<section id="blok">
+  <h2><span class="no">3</span>Blok alma: <code>R(i:i+2, j:j+2)</code></h2>
+  <p class="alt">Resimden 3×3 parça kesmek.</p>
+  <p>Önce satır, sonra sütun yazılır. <code>i:i+2</code> demek i, i+1, i+2: <strong>3 satır</strong>. <code>j:j+2</code> aynı şekilde 3 sütun. Yani <strong>(i,j) bloğun sol üst köşesidir</strong>, blok oradan sağa ve aşağı 3×3 uzanır.</p>
+<pre class="kod">
+R =  1  2  3  4  5
+     6  7  8  9 10
+    11 12 13 14 15
+    16 17 18 19 20
+    21 22 23 24 25
+
+R(2:4, 3:5)     % i=2, j=3  ->   8  9 10
+                %               13 14 15
+                %               18 19 20
+</pre>
+  <div class="kutu hata"><b class="bas">Sık hata</b><code>i:i+3</code> yazmak. i'nin kendisi de sayıldığı için <code>i:i+2</code> zaten 3 eleman eder. <code>i:i+3</code> 4×4 blok alır ve 3×3 filtreyle çarpılamaz.</div>
+</section>
+
+<section id="carp">
+  <h2><span class="no">4</span>Çarp ve topla (convolution)</h2>
+  <p class="alt">3×3 bölgeye bakıp tek bir sayı üreten hesap.</p>
+  <p>Bilgisayar resme bakıp "burada kenar var" diyemez, sadece sayı görür. Ona 3×3 bölgeden <strong>tek sayı</strong> üreten bir hesap lazım: sayı büyükse kenar var, 0'a yakınsa yok. Yapılan iş: bloğu filtreyle üst üste koy, <strong>denk gelen sayıları çarp, hepsini topla</strong>.</p>
+<pre class="kod">
+Gx =  1  2  1     % üst satırı topla
+      0  0  0     % orta satırı yok say
+     -1 -2 -1     % alt satırı çıkar
+</pre>
+  <p>Yani Gx'in sorduğu soru: "Bloğun üstü ile altı farklı mı?" Hesap aslında <strong>(üst satır) − (alt satır)</strong>.</p>
+  <div class="kaydir"><table class="t"><tbody>
+    <tr><th>Blok</th><th>Üst</th><th>Alt</th><th>X</th><th>Anlamı</th></tr>
+    <tr><td>hepsi 20</td><td>20+40+20 = 80</td><td>−80</td><td>0</td><td>düz bölge, kenar yok</td></tr>
+    <tr><td>üst iki satır 20, alt satır 90</td><td>80</td><td>−90−180−90 = −360</td><td>−280</td><td>üst ile alt çok farklı</td></tr>
+    <tr><td>üst iki satır 10, alt satır 50</td><td>10+20+10 = 40</td><td>−200</td><td>−160</td><td>fark var</td></tr>
+  </tbody></table></div>
+  <p>Eksi çıkması sadece "alt taraf daha parlak" demektir. Önemli olan sayının büyüklüğü.</p>
+<pre class="kod">
+deger_x = blok .* Gx;         % denk gelenleri çarp (9 çarpım)
+X(i,j) = sum(deger_x(:));     % dokuzunu topla, tek sayı
+</pre>
+  <h3><code>.*</code> ile <code>*</code> farkı</h3>
+  <p><strong><code>.*</code> (noktalı):</strong> aynı konumdaki elemanları çarpar. <strong><code>*</code> (noktasız):</strong> matris çarpımıdır, bambaşka sonuç verir. Sobel'de hep <strong>noktalı</strong> yazılır.</p>
+<pre class="kod">
+A = [1 2; 3 4];   B = [5 6; 7 8];
+A .* B     % [ 5 12; 21 32]   eleman eleman
+A * B      % [19 22; 43 50]   matris çarpımı
+</pre>
+  <div class="kutu hata"><b class="bas">Noktayı unutursan</b>MATLAB hata vermez, sessizce yanlış sonuç üretir. Akılda tutmak için: nokta = "eleman eleman".</div>
+  <div class="kutu ipucu"><b class="bas"><code>sum(deger_x(:))</code> neden <code>(:)</code> ile?</b><code>sum</code> bir matrise verilirse her sütunu ayrı toplar ve 3 sayı döndürür. <code>(:)</code> matrisi 9 elemanlı tek sütuna çevirir, böylece tek sayı çıkar.</div>
+
+  <div class="arac" id="aracA">
+    <h3>Uygulama: 3×3 blok hesaplayıcı</h3>
+    <p class="alt">Bloktaki sayıları değiştir. X, Y, G ve kenar adım adım hesaplanır.</p>
+    <div class="yan">
+      <div><p class="et">blok</p><div class="mgrid" id="aBlok" style="grid-template-columns:repeat(3,46px)"></div></div>
+      <div><p class="et">Gx</p><div class="mgrid" id="aGx" style="grid-template-columns:repeat(3,46px)"></div></div>
+      <div><p class="et">Gy = Gx'</p><div class="mgrid" id="aGy" style="grid-template-columns:repeat(3,46px)"></div></div>
+    </div>
+    <div class="dugmeler">
+      <button type="button" class="d ikinci" data-ornek="duz">Düz bölge</button>
+      <button type="button" class="d ikinci" data-ornek="yatay">Yatay kenar</button>
+      <button type="button" class="d ikinci" data-ornek="dikey">Dikey kenar</button>
+      <button type="button" class="d ikinci" data-ornek="capraz">Çapraz kenar</button>
+    </div>
+    <div class="hesap" id="aHesap" aria-live="polite"></div>
+  </div>
+</section>
+
+<section id="gxgy">
+  <h2><span class="no">5</span>Gx, Gy ve transpoz</h2>
+  <p class="alt">Biri kaçırırsa diğeri yakalar.</p>
+  <p>Gx sadece "üst ile alt farklı mı?" diye sorar. Kenar yan yana duruyorsa (sol ile sağ farklıysa) onu göremez. Bunun için ikinci filtre: <code>Gy = Gx'</code>. <strong>Transpoz</strong> (<code>'</code>) satırları sütun yapar.</p>
+<pre class="kod">
+Gx =  1  2  1        Gy = Gx' =  1  0 -1
+      0  0  0                    2  0 -2
+     -1 -2 -1                    1  0 -1
+</pre>
+  <div class="kaydir"><table class="t"><tbody>
+    <tr><th>Filtre</th><th>Hesap</th><th>Yakaladığı kenar</th></tr>
+    <tr><td><code>Gx</code></td><td>üst satır − alt satır</td><td><strong>yatay</strong> kenar (üstü ile altı farklı)</td></tr>
+    <tr><td><code>Gy</code></td><td>sol sütun − sağ sütun</td><td><strong>dikey</strong> kenar (solu ile sağı farklı)</td></tr>
+  </tbody></table></div>
+  <p><strong>Örnek:</strong> solu 10, sağ sütunu 50 olan blok. Gx ile X = 80 − 80 = <strong>0</strong> (görmedi). Gy ile Y = 40 − 200 = <strong>−160</strong> (yakaladı).</p>
+  <div class="kutu ipucu"><b class="bas">Gy'yi ezberleme</b>Gx'i yaz, satırlarını sütun olarak diz. Kodda zaten tek satır: <code>Gy=Gx';</code></div>
+</section>
+
+<section id="esik">
+  <h2><span class="no">6</span>G = sqrt(X² + Y²) ve eşikleme</h2>
+  <p class="alt">İki sayıdan tek karara.</p>
+  <p>Her blok için iki sayı var: X ve Y. Tek cevap istiyoruz: kenar var mı, yok mu?</p>
+  <ul>
+    <li><strong>Kare alma</strong> eksiyi yok eder. −160 da +160 da aynı güçte kenardır.</li>
+    <li><strong>Toplama</strong> iki filtrenin bulduğunu birleştirir: yatay, dikey ya da çapraz, G büyür.</li>
+    <li><strong>Karekök</strong> sayıyı normal ölçeğe indirir (Pisagor'daki hipotenüs).</li>
+    <li><strong><code>&gt; 255</code></strong> bir karşılaştırmadır: doğruysa <strong>1</strong>, yanlışsa <strong>0</strong> üretir.</li>
+  </ul>
+  <div class="kaydir"><table class="t"><tbody>
+    <tr><th>X</th><th>Y</th><th>X² + Y²</th><th>G</th><th>G &gt; 255 ?</th><th>kenar</th></tr>
+    <tr><td>−160</td><td>0</td><td>25600</td><td>160</td><td>hayır</td><td>0</td></tr>
+    <tr><td>300</td><td>400</td><td>250000</td><td>500</td><td>evet</td><td>1</td></tr>
+    <tr><td>−200</td><td>150</td><td>62500</td><td>250</td><td>hayır</td><td>0</td></tr>
+  </tbody></table></div>
+  <p><code>kenar</code> matrisinde sadece 0 ve 1 bulunur: <strong>1 = kenar (beyaz)</strong>, 0 = kenar değil (siyah). "Fark var" ile "kenar sayılır" aynı şey değildir, kararı eşik verir.</p>
+<pre class="kod">
+kenar(i,j) = sqrt(X(i,j)^2 + Y(i,j)^2) > 255;
+</pre>
+  <div class="kutu hata"><b class="bas">Bu satırda puan kaybettirenler</b>
+    <ul style="margin:4px 0 0">
+      <li><code>'2</code> yazmak: <code>'</code> transpozdur, üs için <code>^</code> kullanılır.</li>
+      <li><code>x</code>, <code>y</code> yazmak: üstte <code>X(i,j)=...</code> diye büyük harfle kaydedildi. MATLAB büyük-küçük harf ayırır.</li>
+      <li><code>(i,j)</code> unutmak: <code>X^2</code> değil <code>X(i,j)^2</code>.</li>
+      <li><code>&gt;255</code>'i <code>sqrt</code>'un içine yazmak: karşılaştırma karekökten sonra, dışarıda.</li>
+      <li>Parantez sayısı: açtığın kadar kapat.</li>
+    </ul>
+  </div>
+  <div class="kutu ipucu"><b class="bas">Kağıtta kolaylık</b>255² = 65025. Karekök almadan da karar verebilirsin: X² + Y² &gt; 65025 ise kenar = 1.</div>
+</section>
+
+<section id="dongu">
+  <h2><span class="no">7</span>Döngü neden <code>w-2</code> ve <code>h-2</code>'ye kadar?</h2>
+  <p class="alt">Blok resimden taşmasın diye.</p>
+  <p>(i,j) bloğun sol üst köşesi ve blok 2 satır aşağı, 2 sütun sağa uzanıyor. Köşeyi resmin en sonuna götürürsek blok dışarı taşar.</p>
+  <div class="kaydir"><table class="t"><tbody>
+    <tr><th>5 satırlı resimde i</th><th>Bloğun satırları</th><th>Olur mu?</th></tr>
+    <tr><td>1</td><td>1, 2, 3</td><td>evet</td></tr>
+    <tr><td>2</td><td>2, 3, 4</td><td>evet</td></tr>
+    <tr><td>3</td><td>3, 4, 5</td><td>evet, son satıra tam oturdu</td></tr>
+    <tr><td>4</td><td>4, 5, 6</td><td>hayır, 6. satır yok → hata</td></tr>
+  </tbody></table></div>
+  <p>i en fazla 3 = 5 − 2 = <code>w-2</code>. Sütunlar için j en fazla <code>h-2</code>.</p>
+  <div class="kutu dogru"><b class="bas">Çıktı boyutu</b>Giriş w × h ise X, Y ve kenar <strong>(w−2) × (h−2)</strong> olur. 5×5 → 3×3, 6×8 → 4×6.</div>
+  <div class="kutu hata"><b class="bas"><code>for i=1:w</code> yazarsan</b>Resmin tamamını almaz, kodu çökertir: i=w iken blok olmayan satırları ister, MATLAB "index exceeds" hatası verir.</div>
+  <div class="kutu ipucu"><b class="bas">Unutursan</b>Küçük bir matris çiz, 3×3 kareyi en sağa ve en alta daya, sol üst köşesine bak.</div>
+</section>
+
+<section id="kod">
+  <h2><span class="no">8</span>Hocanın kodu, satır satır</h2>
+  <p class="alt">R katmanından kenar çıkarma.</p>
+  <div class="kod-sar"><pre class="kod" data-kopya>
+Gx=[1 2 1;0 0 0;-1 -2 -1];
+Gy=Gx';
+[w,h]=size(R(:,:,1));
+for i=1:w-2
+    for j=1:h-2
+        blok=R(i:i+2,j:j+2);
+        blok=double(blok);
+        deger_x=blok.*Gx;
+        deger_y=blok.*Gy;
+        X(i,j)=sum(deger_x(:));
+        Y(i,j)=sum(deger_y(:));
+        kenar(i,j)=(sqrt(X(i,j)^2+Y(i,j)^2))>255;
+    end
+end
+subplot(3,1,1),imshow(X,[])
+subplot(3,1,2),imshow(Y,[])
+subplot(3,1,3),imshow(kenar,[])
+</pre></div>
+  <div class="kutu ipucu"><b class="bas">R nereden geliyor?</b>Hocanın kodu R hazırmış gibi başlıyor. R, resmin kırmızı katmanıdır: <code>resim=imread("football.jpg"); R=resim(:,:,1);</code> (Soru 1'deki katman ayırma.)</div>
+
+  <div class="satir">
+    <pre class="kod">Gx=[1 2 1;0 0 0;-1 -2 -1];
+Gy=Gx';</pre>
+    <p class="ne"><strong>Filtreleri hazırla.</strong> Gx: üst − alt (yatay kenar). Gy: Gx'in transpozu, sol − sağ (dikey kenar).</p>
+  </div>
+  <div class="satir">
+    <pre class="kod">[w,h]=size(R(:,:,1));</pre>
+    <p class="ne"><strong>Boyutu öğren.</strong> w satır sayısı, h sütun sayısı. Döngünün nereye kadar gideceğini bilmeden yazamayız. <code>R(:,:,1)</code>: tüm satırlar, tüm sütunlar, 1. katman.</p>
+  </div>
+  <div class="satir">
+    <pre class="kod">for i=1:w-2
+    for j=1:h-2</pre>
+    <p class="ne"><strong>Kareyi gezdir.</strong> Dıştaki i sabit durur, içteki j baştan sona döner; sonra i bir artar. Filtre soldan sağa, sonra bir alt satıra geçerek kayar. −2: blok taşmasın.</p>
+  </div>
+  <div class="satir">
+    <pre class="kod">blok=R(i:i+2,j:j+2);
+blok=double(blok);</pre>
+    <p class="ne"><strong>Kes ve double yap.</strong> Resim <code>uint8</code>'dir, eksi sayı tutamaz. Filtrede −1 ve −2 var: 50·(−1) = −50 olması gerekirken uint8'de <strong>0</strong> olur. "Alt satırı çıkar" kısmı hiç çalışmaz, kod hata vermeden yanlış sonuç üretir.</p>
+  </div>
+  <div class="satir">
+    <pre class="kod">deger_x=blok.*Gx;
+deger_y=blok.*Gy;
+X(i,j)=sum(deger_x(:));
+Y(i,j)=sum(deger_y(:));</pre>
+    <p class="ne"><strong>Çarp ve topla.</strong> Denk gelenler çarpılır (9 çarpım), dokuzu toplanıp tek sayı olarak X(i,j) ve Y(i,j) kutusuna yazılır.</p>
+  </div>
+  <div class="satir">
+    <pre class="kod">kenar(i,j)=(sqrt(X(i,j)^2+Y(i,j)^2))>255;</pre>
+    <p class="ne"><strong>Karar ver.</strong> İçten dışa oku: kareler toplanır, karekök alınır, 255 ile karşılaştırılır, cevap (1 ya da 0) kenar(i,j)'ye yazılır.</p>
+  </div>
+  <div class="satir">
+    <pre class="kod">    end
+end</pre>
+    <p class="ne"><strong>Her <code>for</code> için bir <code>end</code>.</strong> İki for, iki end.</p>
+  </div>
+  <div class="satir">
+    <pre class="kod">subplot(3,1,1),imshow(X,[])
+subplot(3,1,2),imshow(Y,[])
+subplot(3,1,3),imshow(kenar,[])</pre>
+    <p class="ne"><strong>Göster.</strong> Üç sonuç alt alta. <code>imshow(X,[])</code>'deki <code>[]</code>: X'te eksi ve 255'ten büyük sayılar var, <code>[]</code> en küçük değeri siyah, en büyüğü beyaz yapacak şekilde ölçekler.</p>
+  </div>
+
+  <div class="arac" id="aracC">
+    <h3>Uygulama: football resminde Sobel</h3>
+    <p class="alt">Gerçek resmin R katmanına aynı kod uygulanır. Eşiği değiştir, kenar resminin nasıl değiştiğini gör.</p>
+    <p><label>Eşik: <input type="range" id="cEsik" min="20" max="800" step="5" value="255"> <strong id="cEsikYazi">255</strong></label> <button type="button" class="d ikinci" id="cSifirla">255'e dön</button></p>
+    <div class="izgara g4">
+      <div class="hucre"><b>R katmanı (giriş)</b><canvas class="res" id="cR" width="320" height="256"></canvas></div>
+      <div class="hucre"><b>X (Gx: yatay kenarlar)</b><canvas class="res" id="cX" width="318" height="254"></canvas></div>
+      <div class="hucre"><b>Y (Gy: dikey kenarlar)</b><canvas class="res" id="cY" width="318" height="254"></canvas></div>
+      <div class="hucre"><b>kenar (G &gt; eşik)</b><canvas class="res" id="cK" width="318" height="254"></canvas></div>
+    </div>
+    <p class="sonuc" id="cBilgi" aria-live="polite"></p>
+  </div>
+</section>
+
+<section id="hesap">
+  <h2><span class="no">9</span>Kağıt üzerinde elle hesap</h2>
+  <p class="alt">"Verilen matrise Sobel uygulayınız."</p>
+  <p><strong>Yöntem:</strong> 5×5 matris verilirse sonuç 3×3 olur, yani 9 kez aynı hesap. Her konum için:</p>
+  <ol>
+    <li>3×3 bloğu yaz (sol üst köşe (i,j)).</li>
+    <li><strong>X</strong> = (üst satır: a + 2b + c) − (alt satır: a + 2b + c). Orta satır 0, hesaplama.</li>
+    <li><strong>Y</strong> = (sol sütun: a + 2b + c) − (sağ sütun: a + 2b + c). Orta sütun 0.</li>
+    <li><strong>G</strong> = sqrt(X² + Y²), <strong>kenar</strong> = G &gt; 255 ise 1, değilse 0.</li>
+  </ol>
+  <div class="arac" id="aracB">
+    <h3>Uygulama: 5×5 matriste filtreyi kaydır</h3>
+    <p class="alt">Sayıları değiştirebilirsin. "Sonraki adım" ile kareyi kaydır; her adımda blok, X, Y, G ve kenar hesaplanıp sonuç matrislerine yazılır.</p>
+    <div class="yan">
+      <div><p class="et">R (5×5)</p><div class="mgrid" id="bR" style="grid-template-columns:repeat(5,46px)"></div></div>
+    </div>
+    <div class="dugmeler">
+      <button type="button" class="d" id="bSonraki">Sonraki adım</button>
+      <button type="button" class="d ikinci" id="bHepsi">Hepsini doldur</button>
+      <button type="button" class="d ikinci" id="bBasa">Başa dön</button>
+      <button type="button" class="d ikinci" id="bYeni">Yeni matris</button>
+    </div>
+    <div class="hesap" id="bHesap" aria-live="polite"></div>
+    <div class="yan">
+      <div><p class="et">X</p><div class="mgrid" id="bX" style="grid-template-columns:repeat(3,56px)"></div></div>
+      <div><p class="et">Y</p><div class="mgrid" id="bY" style="grid-template-columns:repeat(3,56px)"></div></div>
+      <div><p class="et">G (yuvarlanmış)</p><div class="mgrid" id="bG" style="grid-template-columns:repeat(3,56px)"></div></div>
+      <div><p class="et">kenar</p><div class="mgrid" id="bK" style="grid-template-columns:repeat(3,56px)"></div></div>
+    </div>
+  </div>
+
+  <div class="arac" id="aracQ">
+    <h3>Alıştırma: rastgele blok</h3>
+    <p class="alt">Verilen blok için istenen değeri hesapla.</p>
+    <div class="ilerle" aria-hidden="true"><i id="qBar"></i></div>
+    <p id="qSkor" class="alt">Doğru: 0 / 0</p>
+    <div class="yan"><div><p class="et">blok</p><div class="mgrid" id="qBlok" style="grid-template-columns:repeat(3,46px)"></div></div></div>
+    <p id="qSoru" style="font-weight:600"></p>
+    <p><input type="text" id="qCevap" style="width:140px" autocomplete="off" inputmode="text" aria-label="Cevap"> <button type="button" class="d" id="qKontrol">Kontrol et</button> <button type="button" class="d ikinci" id="qYeni">Yeni soru</button></p>
+    <p class="sonuc" id="qSonuc" aria-live="polite"></p>
+  </div>
+</section>
+
+<section id="cevap">
+  <h2><span class="no">10</span>Sınav cevabı (kağıda yazılacak hali)</h2>
+  <p class="alt">Kod + her satırın açıklaması.</p>
+  <div class="kod-sar"><pre class="kod" data-kopya>
+Gx=[1 2 1;0 0 0;-1 -2 -1];        % yatay kenar filtresi (üst - alt)
+Gy=Gx';                           % transpozu: dikey kenar filtresi (sol - sağ)
+[w,h]=size(R(:,:,1));             % satır ve sütun sayısını al
+for i=1:w-2                       % kareyi aşağı kaydır (taşmasın diye -2)
+    for j=1:h-2                   % kareyi sağa kaydır
+        blok=R(i:i+2,j:j+2);      % 3x3 parçayı kes
+        blok=double(blok);        % eksi sayılar için double yap
+        deger_x=blok.*Gx;         % denk gelenleri çarp
+        deger_y=blok.*Gy;
+        X(i,j)=sum(deger_x(:));   % dokuzunu topla, tek sayı
+        Y(i,j)=sum(deger_y(:));
+        kenar(i,j)=(sqrt(X(i,j)^2+Y(i,j)^2))>255;   % birleştir, 255'ten büyükse kenar=1
+    end
+end
+subplot(3,1,1),imshow(X,[])       % yatay kenarlar
+subplot(3,1,2),imshow(Y,[])       % dikey kenarlar
+subplot(3,1,3),imshow(kenar,[])   % sonuç: 1=kenar (beyaz), 0=değil (siyah)
+</pre></div>
+  <h3>Puan kaybettiren şeyler</h3>
+  <div class="kaydir"><table class="t"><tbody>
+    <tr><th>Hata</th><th>Doğrusu</th></tr>
+    <tr><td><code>blok*Gx</code> (noktasız)</td><td><code>blok.*Gx</code></td></tr>
+    <tr><td><code>i:i+3</code></td><td><code>i:i+2</code> (3 eleman)</td></tr>
+    <tr><td><code>for i=1:w</code></td><td><code>for i=1:w-2</code></td></tr>
+    <tr><td><code>double(blok)</code> unutmak</td><td>Eksi çarpımlar 0 olur, sonuç yanlış</td></tr>
+    <tr><td><code>sum(deger_x)</code></td><td><code>sum(deger_x(:))</code></td></tr>
+    <tr><td><code>y(i,j)'2</code>, küçük <code>x</code></td><td><code>Y(i,j)^2</code>, büyük <code>X</code></td></tr>
+    <tr><td><code>X^2</code></td><td><code>X(i,j)^2</code></td></tr>
+    <tr><td>Tek <code>end</code></td><td>İki <code>for</code>, iki <code>end</code></td></tr>
+    <tr><td><code>Gy=Gx</code></td><td><code>Gy=Gx'</code> (transpoz işareti)</td></tr>
+  </tbody></table></div>
+  <div class="kutu sinav"><b class="bas">Sobel mi, Prewitt mi?</b>Orta ağırlığa bak: bu koddaki <code>1 2 1</code> <strong>Sobel</strong>'dir. <code>1 1 1</code> olsaydı Prewitt olurdu.</div>
+</section>
+
+<footer>Soru 2 · kaynak: kullanıcının kendi ders sohbeti · football örnek resmi: Petey21, CC0 (Wikimedia Commons)</footer>
+</div>
+
+<script src="../soru-01/football.js?v=20261115115621"></script>
+<script src="../../ortak/soru.js?v=20261115115621"></script>
+<script src="soru.js?v=20261115115621"></script>
+</body>
+</html>

@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Soru 4 – Huffman Kodlama</title>
+<script src="../../ortak/tema.js?v=20261115115621"></script>
+<link rel="stylesheet" href="../../ortak/soru.css?v=20261115115621">
+<style>
+.hesap{font:15px/1.7 ui-monospace,Menlo,Consolas,monospace;background:var(--yuzey);border:1px solid var(--cizgi);border-radius:10px;padding:10px 14px;margin:10px 0;overflow-x:auto;white-space:pre}
+.dugmeler{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+.giris{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.giris label{display:inline-flex;align-items:center;gap:4px;font:600 15px ui-monospace,Menlo,Consolas,monospace}
+.giris input{width:64px;text-align:center;padding:6px 2px;font:15px ui-monospace,Menlo,Consolas,monospace}
+.agac{margin:10px 0;padding:0;list-style:none}
+.agac ul{list-style:none;margin:0;padding:0 0 0 18px;border-left:2px solid var(--cizgi)}
+.agac li{margin:6px 0}
+.dugum{display:inline-flex;gap:8px;align-items:baseline;font:15px ui-monospace,Menlo,Consolas,monospace;border:1px solid var(--cizgi);border-radius:8px;padding:4px 10px;background:var(--yuzey)}
+.dugum.yaprak{border-color:var(--olumlu);background:var(--olumlu-z);color:var(--olumlu);font-weight:700}
+.dal{display:inline-block;min-width:1.4em;font:700 15px ui-monospace,Menlo,Consolas,monospace;color:var(--mavi)}
+.dugum .kodu{font-weight:400}
+.sonuc3{display:flex;flex-wrap:wrap;gap:8px 28px;margin:10px 0;font-size:16px}
+.sonuc3 b{font-variant-numeric:tabular-nums}
+table.t td.s,table.t th.s{text-align:right;font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<div class="sar">
+<nav class="gezin" aria-label="Site"><a href="../../index.html">← Ana sayfa</a></nav>
+
+<header class="kahraman">
+  <h1>Huffman Kodlama</h1>
+  <p>"Her bir data 3 bit ile kodlanmaktadır. Huffman yaparak toplam bit sayısı kaça düşürülebilir?" Elle çözme sorusu: birleştirmeler, ağaç, tablo, toplam.</p>
+</header>
+
+<nav class="ic" aria-label="Sayfa içi bağlantılar">
+  <a href="#ozet">1 Özet</a><a href="#sabit">2 Sabit kodlama</a><a href="#fikir">3 Huffman fikri</a><a href="#agac">4 Ağaç kurma</a><a href="#kod">5 Kod çıkarma</a><a href="#toplam">6 Toplam bit</a><a href="#esit">7 Eşit frekans</a><a href="#alti">8 6 harfli örnek</a><a href="#uygulama">9 Uygulama</a><a href="#cevap">10 Sınav cevabı</a>
+</nav>
+
+<section id="ozet">
+  <h2><span class="no">1</span>Soru ne istiyor?</h2>
+  <p class="alt">8 harf ve frekansları veriliyor; Huffman ile toplam bit sayısını bulacaksın.</p>
+  <div class="kutu sinav"><b class="bas">Sınav sorusu</b>
+    <div class="kaydir"><table class="t"><tbody>
+      <tr><th>NO</th><th>DATA</th><th class="s">Frekans</th></tr>
+      <tr><td>1</td><td>A</td><td class="s">400</td></tr><tr><td>2</td><td>B</td><td class="s">1500</td></tr>
+      <tr><td>3</td><td>C</td><td class="s">700</td></tr><tr><td>4</td><td>D</td><td class="s">1600</td></tr>
+      <tr><td>5</td><td>E</td><td class="s">700</td></tr><tr><td>6</td><td>F</td><td class="s">900</td></tr>
+      <tr><td>7</td><td>G</td><td class="s">200</td></tr><tr><td>8</td><td>H</td><td class="s">2500</td></tr>
+    </tbody></table></div>
+    Her bir data 3 bit ile kodlanmaktadır. HUFFMAN yaparak toplam bit sayısı kaça düşürülebilir?
+  </div>
+  <p>Kağıtta cevabın dört parçası olur, bu sırayla yaz:</p>
+  <ol>
+    <li><strong>Birleştirmeler</strong> ve her adımda kalan liste (küçükten büyüğe sıralı)</li>
+    <li><strong>Ağaç</strong>, dallarda 0 ve 1</li>
+    <li><strong>Tablo:</strong> Harf, Frekans, Kod, Uzunluk, Frekans × Uzunluk; altta toplam</li>
+    <li><strong>Sabit toplam, Huffman toplam, tasarruf</strong></li>
+  </ol>
+</section>
+
+<section id="sabit">
+  <h2><span class="no">2</span>Sabit uzunluklu kodlama</h2>
+  <p class="alt">Her harfe aynı sayıda bit. Sorudaki "3 bit" buradan geliyor.</p>
+  <p>Bit, 0 ya da 1 yazabildiğin tek bir kutudur. <strong>n bit ile 2ⁿ farklı kod</strong> yazılır. Her harfin kodu farklı olmalı, yani kod sayısı ≥ harf sayısı. Yeten <strong>en küçük</strong> bit sayısı seçilir.</p>
+  <div class="kaydir"><table class="t"><tbody>
+    <tr><th>Harf sayısı</th><th>1 bit (2 kod)</th><th>2 bit (4 kod)</th><th>3 bit (8 kod)</th><th>Seçilen</th></tr>
+    <tr><td>2 harf</td><td>yeter</td><td>israf</td><td>israf</td><td>1 bit</td></tr>
+    <tr><td>4 harf</td><td>yetmez</td><td>yeter</td><td>israf</td><td>2 bit</td></tr>
+    <tr><td>6 harf</td><td>yetmez</td><td>yetmez</td><td>yeter (2 kod boşta)</td><td>3 bit</td></tr>
+    <tr><td>8 harf</td><td>yetmez</td><td>yetmez</td><td>yeter</td><td>3 bit</td></tr>
+  </tbody></table></div>
+  <p><strong>Frekans</strong> = harfin kaç kere geçtiği. Sabit kodlamada harfin sık ya da seyrek geçmesi fark etmez:</p>
+<pre class="kod">
+sabit toplam bit = toplam frekans x harf başına bit
+
+A=10, B=20, C=30, D=40   ->   100 harf x 2 bit = 200 bit
+</pre>
+</section>
+
+<section id="fikir">
+  <h2><span class="no">3</span>Huffman fikri</h2>
+  <p class="alt">Çok geçen harfe kısa kod, az geçen harfe uzun kod.</p>
+  <p>Aynı mesaj: A=10, B=20, C=30, D=40. En sık geçen D'ye en kısa kodu verelim:</p>
+  <div id="fikirTablo"></div>
+  <p>A ve B'nin kodu 3 bite uzadı (sabitte 2'ydi) ama az geçtikleri için zarar küçük. D çok geçiyor ve 1 bite indi, kazanç büyük.</p>
+  <div class="kutu ipucu"><b class="bas">Bu tablo sınav tablosudur</b>Cevabın sonunda yazacağın tablo tam olarak bu: Harf, Frekans, Kod, Uzunluk, Frekans × Uzunluk, en altta toplam.</div>
+</section>
+
+<section id="agac">
+  <h2><span class="no">4</span>Ağaç kurma</h2>
+  <p class="alt">Kodları bulmak için önce ağaç kurulur. Kural tek cümle.</p>
+  <div class="kutu dogru"><b class="bas">Kural</b>Listedeki <strong>en küçük iki</strong> frekansı birleştir (topla), toplamı listeye geri yaz. Tek sayı kalana kadar tekrarla.</div>
+  <p>A=10, B=20, C=30, D=40 için. Her adımda kalan listeyi küçükten büyüğe sıralı yaz:</p>
+  <div class="hesap" id="agacAdim1"></div>
+  <p><strong>Kontrol:</strong> en son kalan sayı frekansların toplamına eşit olmalı (10+20+30+40 = 100). Değilse toplama hatası var. Harf sayısı n ise <strong>n − 1 birleştirme</strong> yapılır.</p>
+  <p>Her birleştirme ağaçta bir düğümdür. İlk birleştirilenler en altta, son birleştirme en tepede:</p>
+<pre class="kod">
+        (100)
+        /   \
+     D:40   (60)
+            /  \
+         C:30  (30)
+               /  \
+            A:10  B:20
+</pre>
+  <div class="kutu hata"><b class="bas">En sık yapılan hata</b>Yeni toplamı hemen bir sonraki adımda kullanmak. Kuralın yeni toplamla özel bir ilgisi yok; listeye girdikten sonra sıradan bir sayıdır ve bazen <strong>bekler</strong>. Her adımda listenin tamamına bakıp en küçük ikiyi seç.</div>
+  <p>A=10, B=12, C=15, D=20 örneğinde 22 bekler, önce 15 ile 20 birleşir:</p>
+  <div class="hesap" id="agacAdim2"></div>
+<pre class="kod">
+          (57)
+         /    \
+      (22)    (35)
+      /  \    /  \
+   A:10 B:12 C:15 D:20
+</pre>
+  <p>Her ağaç zincir şeklinde olmaz; şekli frekanslar belirler.</p>
+  <div class="kutu ipucu"><b class="bas">Kağıtta düzen</b>Önce birleştirmeleri liste halinde yaz, ağacı sonra çiz. Ağaca tepeden başla: en son birleştirmeyi en üste yaz, altına onu oluşturan iki sayıyı koy. Harfleri <code>A:10</code>, ara toplamları parantezle <code>(30)</code> yaz ki karışmasın.</div>
+</section>
+
+<section id="kod">
+  <h2><span class="no">5</span>Ağaçtan kod çıkarma</h2>
+  <p class="alt">Sol dala 0, sağ dala 1.</p>
+  <p>Tepeden harfe inerken geçtiğin rakamları sırayla oku; bu o harfin kodudur.</p>
+<pre class="kod">
+        (100)
+       0/   \1
+     D:40   (60)
+           0/  \1
+         C:30  (30)
+              0/  \1
+            A:10  B:20
+</pre>
+  <div class="kaydir"><table class="t"><tbody>
+    <tr><th>Harf</th><th>Yol</th><th>Kod</th><th>Uzunluk</th></tr>
+    <tr><td>D</td><td>sol</td><td><code>0</code></td><td>1 bit</td></tr>
+    <tr><td>C</td><td>sağ, sol</td><td><code>10</code></td><td>2 bit</td></tr>
+    <tr><td>A</td><td>sağ, sağ, sol</td><td><code>110</code></td><td>3 bit</td></tr>
+    <tr><td>B</td><td>sağ, sağ, sağ</td><td><code>111</code></td><td>3 bit</td></tr>
+  </tbody></table></div>
+  <ul>
+    <li><strong>Kod uzunluğu = harfin derinliği:</strong> tepeden o harfe kaç dal indiğin.</li>
+    <li>A ile B'den hangisini sola çizdiğine göre kodlar yer değiştirir (A=111, B=110 da olur). <strong>Uzunluk ve toplam bit değişmez</strong>; ikisi de doğrudur.</li>
+    <li>Hiçbir kod bir başkasının başlangıcı olmaz; bu yüzden okurken harfler karışmaz.</li>
+  </ul>
+</section>
+
+<section id="toplam">
+  <h2><span class="no">6</span>Toplam bit ve tasarruf</h2>
+  <p class="alt">Puanı getiren son sayı.</p>
+<pre class="kod">
+Huffman toplam bit = toplam (frekans x kod uzunluğu)
+Sabit toplam bit   = toplam frekans x sabit bit sayısı
+Tasarruf           = sabit - Huffman
+</pre>
+  <p>A=5, B=10, C=20, D=45 için baştan sona:</p>
+  <div class="hesap" id="toplamAdim"></div>
+  <div id="toplamTablo"></div>
+  <div class="kutu ipucu"><b class="bas">Kazanç ne zaman çıkar?</b>Huffman hiçbir zaman sabit kodlamadan kötü sonuç vermez. Ama frekanslar birbirine yakınsa (10, 12, 15, 20) herkese 2 bit verir ve tasarruf 0 olur. Kazanç, frekanslar arasında büyük fark olunca ortaya çıkar.</div>
+  <div class="kutu dikkat"><b class="bas">Hesabı tabloya yaz</b>Çarpımları kafadan toplamak kaymaya yol açar. Her satırın Frekans × Uzunluk değerini yaz, sonra alt alta topla.</div>
+</section>
+
+<section id="esit">
+  <h2><span class="no">7</span>Eşit frekans olursa</h2>
+  <p class="alt">İstediğini seç. Ağaç ve kodlar değişebilir, toplam bit değişmez.</p>
+  <p>A=10, B=10, C=20, D=20. İlk adım: A:10 + B:10 = 20. Kalan liste <code>(AB):20 C:20 D:20</code>, üçü de eşit.</p>
+  <div class="kaydir"><table class="t"><tbody>
+    <tr><th></th><th>1. yol: C ile D</th><th>2. yol: (AB) ile C</th></tr>
+    <tr><td>Birleştirmeler</td><td>20+20 = 40, sonra 20+40 = 60</td><td>20+20 = 40, sonra 20+40 = 60</td></tr>
+    <tr><td>Uzunluklar</td><td>hepsi 2 bit</td><td>D=1, C=2, A=3, B=3</td></tr>
+    <tr><td>Toplam</td><td>10×2 + 10×2 + 20×2 + 20×2 = <strong>120</strong></td><td>20×1 + 20×2 + 10×3 + 10×3 = <strong>120</strong></td></tr>
+  </tbody></table></div>
+  <div class="kutu sinav"><b class="bas">Sınav için</b>Eşitlik çıkınca takılma, birini seç ve devam et. Senin ağacın arkadaşınınkinden farklı görünebilir; toplam aynıysa ikisi de doğrudur. Sınav sorusunda da eşitlik var (C ile E 700; D ile ara toplam 1600).</div>
+</section>
+
+<section id="alti">
+  <h2><span class="no">8</span>6 harfli örnek</h2>
+  <p class="alt">Yeni kural yok, sadece adım sayısı artıyor: 6 harf, 5 birleştirme.</p>
+  <p>A=5, B=9, C=12, D=13, E=16, F=45</p>
+  <div class="hesap" id="altiAdim"></div>
+  <p>2. adıma dikkat: yeni oluşan 14 beklemiş, önce 12 ile 13 birleşmiş.</p>
+  <div id="altiAgac"></div>
+  <div id="altiTablo"></div>
+</section>
+
+<section id="uygulama">
+  <h2><span class="no">9</span>Uygulama ve alıştırma</h2>
+  <p class="alt">Frekansları değiştir, birleştirmeleri adım adım izle.</p>
+  <div class="arac" id="aracA">
+    <h3>Uygulama: Huffman adım adım</h3>
+    <div class="giris" id="aGiris"></div>
+    <div class="dugmeler">
+      <button type="button" class="d ikinci" data-f="A400 B1500 C700 D1600 E700 F900 G200 H2500">Sınav sorusu</button>
+      <button type="button" class="d ikinci" data-f="A300 B1200 C500 D1800 E600 F1000 G100 H2500">Farklı sayılar</button>
+      <button type="button" class="d ikinci" data-f="A5 B9 C12 D13 E16 F45">6 harf</button>
+      <button type="button" class="d ikinci" data-f="A10 B12 C15 D20">4 harf</button>
+      <button type="button" class="d ikinci" id="aRastgele">Rastgele</button>
+    </div>
+    <div class="dugmeler">
+      <button type="button" class="d" id="aSonraki">Sonraki birleştirme</button>
+      <button type="button" class="d ikinci" id="aHepsi">Hepsini yap</button>
+      <button type="button" class="d ikinci" id="aBasa">Başa dön</button>
+    </div>
+    <div class="hesap" id="aAdim" aria-live="polite"></div>
+    <div id="aSonuc"></div>
+  </div>
+
+  <div class="arac" id="aracQ">
+    <h3>Alıştırma: toplam bit kaç?</h3>
+    <p class="alt">Kağıtta çöz, Huffman toplam bit sayısını yaz.</p>
+    <div class="ilerle" aria-hidden="true"><i id="qBar"></i></div>
+    <p id="qSkor" class="alt">Doğru: 0 / 0</p>
+    <div class="hesap" id="qSoru"></div>
+    <p><input type="text" id="qCevap" style="width:140px" autocomplete="off" inputmode="numeric" aria-label="Huffman toplam bit"> <button type="button" class="d" id="qKontrol">Kontrol et</button> <button type="button" class="d ikinci" id="qYeni">Yeni soru</button></p>
+    <p class="sonuc" id="qSonuc" aria-live="polite"></p>
+    <div id="qCozum" hidden></div>
+  </div>
+</section>
+
+<section id="cevap">
+  <h2><span class="no">10</span>Sınav cevabı (kağıda yazılacak hali)</h2>
+  <p class="alt">Dört parça, sırayla.</p>
+  <h3>1) Birleştirmeler</h3>
+  <div class="hesap" id="cAdim"></div>
+  <h3>2) Ağaç</h3>
+  <p class="alt">Her satırın başındaki rakam o dalın biti: 0 = sol, 1 = sağ.</p>
+  <div id="cAgac"></div>
+  <h3>3) Tablo</h3>
+  <div id="cTablo"></div>
+  <h3>4) Sonuç</h3>
+  <div class="kutu dogru" id="cSonuc"></div>
+  <div class="kutu ipucu"><b class="bas">Senin ağacın farklı olabilir</b>Eşit frekanslarda başka seçim yaparsan kodlar değişir ama toplam yine 23300 çıkmalı. Birleştirme adımlarını yazarken her seferinde listeyi yeniden sırala; puan oradan da gelir.</div>
+
+  <h3>Puan kaybettiren şeyler</h3>
+  <div class="kaydir"><table class="t"><tbody>
+    <tr><th>Hata</th><th>Doğrusu</th></tr>
+    <tr><td>Yeni toplamı hemen kullanmak (600+700=1300'den sonra 1300'ü E:700 ile birleştirmek)</td><td>Listede en küçük iki: E:700 ve F:900</td></tr>
+    <tr><td>Listeyi yeniden sıralamamak</td><td>Her adımdan sonra kalan listeyi küçükten büyüğe yaz</td></tr>
+    <tr><td>Sadece kodları yazıp toplamı hesaplamamak</td><td>Soru sayı istiyor: tablo + toplam + cevap cümlesi</td></tr>
+    <tr><td>Sabit toplamı harf sayısıyla çarpmak (8 × 3)</td><td>Toplam frekansla çarp: 8500 × 3</td></tr>
+    <tr><td>Uzunluk yerine kodu çarpmak</td><td>Frekans × <strong>kodun kaç bit olduğu</strong></td></tr>
+    <tr><td>Son toplamın frekans toplamına eşitliğini kontrol etmemek</td><td>Tepedeki sayı = 8500 olmalı</td></tr>
+  </tbody></table></div>
+</section>
+
+<footer>Soru 4 · kaynak: kullanıcının kendi ders sohbeti</footer>
+</div>
+
+<script src="../../ortak/soru.js?v=20261115115621"></script>
+<script src="soru.js?v=20261115115621"></script>
+</body>
+</html>

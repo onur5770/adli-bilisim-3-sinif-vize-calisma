@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>MATLAB Çalışma Defteri</title>
+<script>
+/* Tema, ilk boyamadan önce uygulanır (yanıp sönme olmasın). */
+(function () {
+  try {
+    var v = JSON.parse(localStorage.getItem('matlab-calisma-v1') || '{}');
+    if (v && (v.tema === 'koyu' || v.tema === 'acik')) document.documentElement.setAttribute('data-theme', v.tema === 'koyu' ? 'dark' : 'light');
+  } catch (e) {}
+})();
+</script>
+<link rel="stylesheet" href="css/style.css?v=20261115115621">
+</head>
+<body>
+<a class="atla" href="#icerik">İçeriğe geç</a>
+<div id="app">
+  <noscript><p style="padding:24px">Bu site JavaScript ile çalışır. Lütfen tarayıcında JavaScript'i aç.</p></noscript>
+</div>
+
+<script src="js/matlab.js?v=20261115115621"></script>
+<script src="data/resimler.js?v=20261115115621"></script>
+<script src="js/highlight.js?v=20261115115621"></script>
+<script src="js/kontrol.js?v=20261115115621"></script>
+<script src="data/konular-a.js?v=20261115115621"></script>
+<script src="data/konular-b.js?v=20261115115621"></script>
+<script src="data/kart.js?v=20261115115621"></script>
+<script src="data/alistirmalar-a.js?v=20261115115621"></script>
+<script src="data/alistirmalar-b.js?v=20261115115621"></script>
+<script src="js/app.js?v=20261115115621"></script>
+</body>
+</html>

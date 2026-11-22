@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Soru 3 – Haar Dalgacık Dönüşümü</title>
+<script src="../../ortak/tema.js?v=20261115115621"></script>
+<link rel="stylesheet" href="../../ortak/soru.css?v=20261115115621">
+<style>
+.formul{font:600 17px/1.7 ui-monospace,Menlo,Consolas,monospace;background:var(--kod);border:1px solid var(--cizgi);border-radius:10px;padding:10px 14px;margin:10px 0;overflow-x:auto;white-space:pre-wrap}
+.hesap{font:15px/1.7 ui-monospace,Menlo,Consolas,monospace;background:var(--yuzey);border:1px solid var(--cizgi);border-radius:10px;padding:10px 14px;margin:10px 0;overflow-x:auto;white-space:pre}
+.dugmeler{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+.giris{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0}
+.giris input{width:52px;text-align:center;padding:6px 2px;font:15px ui-monospace,Menlo,Consolas,monospace}
+.giris .ayrac{width:8px}
+.agac{margin:10px 0;padding:0;list-style:none}
+.agac ul{list-style:none;margin:0;padding:0 0 0 18px;border-left:2px solid var(--cizgi)}
+.agac li{margin:6px 0}
+.dugum{display:inline-flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;font:15px ui-monospace,Menlo,Consolas,monospace;border:1px solid var(--cizgi);border-radius:9px;padding:5px 12px;background:var(--yuzey);color:var(--yazi);cursor:pointer;text-align:left;max-width:100%}
+.dugum b{font-weight:700}
+.dugum.l b{color:var(--b-y)}
+.dugum.h b{color:var(--r-y)}
+.dugum.sec{outline:3px solid var(--mavi);outline-offset:1px}
+.dugum.yok{opacity:.38}
+.dugum.hedef{border-color:var(--olumlu);background:var(--olumlu-z)}
+.ac{display:inline-block;font-size:13px;color:var(--soluk);margin-left:4px}
+</style>
+</head>
+<body>
+<div class="sar">
+<nav class="gezin" aria-label="Site"><a href="../../index.html">← Ana sayfa</a></nav>
+
+<header class="kahraman dalga">
+  <span class="etiket">Soru 3</span>
+  <h1>Haar Dalgacık Dönüşümü</h1>
+  <p>"Verilen sinyale göre low ve high pass filter değerlerini hesaplayınız." Elle hesap sorusu: ortalama, fark, seviyeler ve isimlendirme.</p>
+  <div class="serit" aria-hidden="true"><i></i><i></i><i></i></div>
+</header>
+
+<nav class="ic" aria-label="Sayfa içi bağlantılar">
+  <a href="#ozet">1 Özet</a><a href="#lh">2 Ortalama ve fark</a><a href="#dort">3 4 elemanlı dizi</a><a href="#seviye">4 Seviyeler</a><a href="#paket">5 Normal ve paket</a><a href="#isim">6 İsimlendirme</a><a href="#agac">7 8 elemanlı ağaç</a><a href="#kod">8 Kod</a><a href="#alistirma">9 Alıştırma</a><a href="#cevap">10 Sınav cevabı</a>
+</nav>
+
+<section id="ozet">
+  <h2><span class="no">1</span>Soru ne istiyor?</h2>
+  <p class="alt">8 sayılık bir sinyal veriliyor; istenen dizileri elle hesaplayacaksın.</p>
+  <div class="kutu sinav"><b class="bas">Sınav sorusu</b>Sinyal: <code>8 10 16 28 32 10 16 2</code><br>Yukarıdaki sinyale göre low ve high pass filter değerlerini hesaplayınız.<br>L1: , L2: , LH: , HL: , HHL:</div>
+  <p>Bütün konu iki formül:</p>
+<div class="formul">L = (x_i + x_(i+1)) / 2     low pass  = ortalama
+H = (x_i - x_(i+1)) / 2     high pass = fark (ilk eksi ikinci)</div>
+  <p>Üç kural yeter:</p>
+  <ul>
+    <li>Sayılar <strong>ikişer ikişer, örtüşmeden</strong> alınır: (1. ve 2.), (3. ve 4.) ... 2. ile 3. sayı asla birlikte işleme girmez.</li>
+    <li>İsmin <strong>son harfi</strong> işlemi söyler: L ise topla, H ise çıkar. İkisinde de 2'ye böl.</li>
+    <li>İsmin <strong>öncesi</strong> hangi diziye uygulanacağını söyler: HHL = HH dizisinin L'si.</li>
+  </ul>
+</section>
+
+<section id="lh">
+  <h2><span class="no">2</span>Ortalama ve fark ne işe yarar?</h2>
+  <p class="alt">L kaba bilgi, H detay.</p>
+  <p>Elimizde iki sayı olsun: 10 ve 6.</p>
+<pre class="kod">
+L = (10 + 6) / 2 = 8      % ortası neresi?
+H = (10 - 6) / 2 = 2      % ortadan ne kadar sapıyor?
+</pre>
+  <p><strong>L kaba bilgidir:</strong> "bu iki sayı aşağı yukarı 8 civarında" der, ayrıntıyı siler. <strong>H detaydır:</strong> ilk sayı ortalamanın 2 üstünde, ikincisi 2 altında.</p>
+  <p>L ve H'yi bilen biri orijinal sayıları geri bulur, yani bilgi kaybolmaz:</p>
+<pre class="kod">
+ilk sayı    = L + H = 8 + 2 = 10
+ikinci sayı = L - H = 8 - 2 = 6
+</pre>
+  <div class="kutu ipucu"><b class="bas">H = 0 ne demek?</b>(5, 5) çiftinde H = 0 çıkar: "bu çiftte detay yok, iki sayı aynı". Sinyal ne kadar düzse H'ler o kadar sıfıra yakın olur.</div>
+  <div class="kutu hata"><b class="bas">İşaret</b>H'de her zaman <strong>ilk sayıdan ikinci</strong> çıkarılır. İkinci sayı büyükse H negatif çıkar, bu normaldir. Sınavda en sık kaybedilen şey bu eksidir.</div>
+</section>
+
+<section id="dort">
+  <h2><span class="no">3</span>4 elemanlı dizide L ve H</h2>
+  <p class="alt">Önce çiftlere ayır, sonra her çiftin L ve H'sini yaz.</p>
+  <p>Dizi: <code>4 8 10 2</code>. Çiftler: (4, 8) ve (10, 2).</p>
+  <div class="kaydir"><table class="t"><tbody>
+    <tr><th>Çift</th><th>L = toplam / 2</th><th>H = fark / 2</th></tr>
+    <tr><td>(4, 8)</td><td>(4 + 8) / 2 = 6</td><td>(4 − 8) / 2 = −2</td></tr>
+    <tr><td>(10, 2)</td><td>(10 + 2) / 2 = 6</td><td>(10 − 2) / 2 = 4</td></tr>
+  </tbody></table></div>
+  <p>Sonuç: <code>L = 6, 6</code> ve <code>H = −2, 4</code>.</p>
+  <p>Her çift <strong>tek bir L ve tek bir H</strong> üretir. Yani L ve H dizileri orijinalin <strong>yarı uzunluğundadır</strong>: 4 sayı girdi, 2 L ve 2 H çıktı. 8 elemanlı dizide L 4 sayı olur.</p>
+</section>
+
+<section id="seviye">
+  <h2><span class="no">4</span>Seviyeler: L'yi tekrar bölmek</h2>
+  <p class="alt">L de bir sayı dizisi; aynı işlem ona da uygulanır.</p>
+  <p>Dizi: <code>2 6 12 4</code>. 1. seviye: <code>L = 4, 8</code> ve <code>H = −2, 4</code>.</p>
+  <p>2. seviyede L = (4, 8) dizisini yeni bir sinyal gibi düşün:</p>
+<pre class="kod">
+LL = (4 + 8) / 2 = 6      % L'nin L'si: önce ortalama, sonra yine ortalama
+LH = (4 - 8) / 2 = -2     % L'nin H'si: önce ortalama, sonra fark
+</pre>
+<pre class="kod">
+        2 6 12 4
+        /      \
+   L = 4, 8    H = -2, 4
+    /    \
+LL = 6   LH = -2
+</pre>
+  <p>Her seviyede dizi yarıya iner: 4 sayı → 2 sayı → 1 sayı.</p>
+  <div class="kutu dogru"><b class="bas">Bedava sağlama</b>En sondaki "hepsi L" değeri (4 sayıda LL, 8 sayıda LLL) <strong>bütün sayıların ortalamasına</strong> eşittir. Burada (2 + 6 + 12 + 4) / 4 = 6 = LL. Tutmuyorsa bir yerde hata var.</div>
+</section>
+
+<section id="paket">
+  <h2><span class="no">5</span>Normal dalgacık ve paket dalgacık</h2>
+  <p class="alt">Fark tek: H de bölünüyor mu?</p>
+  <ul>
+    <li><strong>Normal dalgacık:</strong> sadece L bölünür, H olduğu gibi kalır.</li>
+    <li><strong>Paket dalgacık:</strong> H de bölünür. Yeni formül yok, kural aynı.</li>
+  </ul>
+  <p>Yine <code>2 6 12 4</code>: H = (−2, 4) dizisini böl.</p>
+<pre class="kod">
+HL = (-2 + 4) / 2 = 1      % H'nin L'si
+HH = (-2 - 4) / 2 = -3     % H'nin H'si
+</pre>
+<pre class="kod">
+Normal:           2 6 12 4
+                  /      \
+             L = 4, 8    H = -2, 4
+              /    \
+          LL = 6   LH = -2
+
+Paket:            2 6 12 4
+                /          \
+          L = 4, 8        H = -2, 4
+           /    \          /    \
+       LL = 6  LH = -2  HL = 1  HH = -3
+</pre>
+  <div class="kutu hata"><b class="bas">Negatif sayıyla fark</b>"İlk eksi ikinci" kuralı değişmez. İkinci sayı negatifse eksi ile eksi artıya döner: 3 − (−5) = 8.</div>
+  <div class="kutu sinav"><b class="bas">Sınav sorusu hangisi?</b>Soruda HL ve HHL isteniyor, yani H tarafı da bölünüyor: <strong>paket dalgacık</strong>. Sadece L, H, LL, LH istenseydi normal dalgacık yeterdi.</div>
+</section>
+
+<section id="isim">
+  <h2><span class="no">6</span>İsimlendirme</h2>
+  <p class="alt">İsmi soldan sağa oku; her harf bir işlem.</p>
+  <p>Son harf en son yapılan işlemdir, ondan önceki kısım hangi diziye uygulandığını söyler. Harf sayısı seviyeyi verir.</p>
+  <div class="kaydir"><table class="t"><tbody>
+    <tr><th>İsim</th><th>Okunuşu</th><th>Nasıl bulunur</th></tr>
+    <tr><td>LH</td><td>L'nin H'si</td><td>L dizisinin farkı</td></tr>
+    <tr><td>HL</td><td>H'nin L'si</td><td>H dizisinin ortalaması</td></tr>
+    <tr><td>HHL</td><td>HH'nin L'si</td><td>HH dizisinin ortalaması</td></tr>
+    <tr><td>LHH</td><td>LH'nin H'si</td><td>LH dizisinin farkı</td></tr>
+  </tbody></table></div>
+  <div class="kutu hata"><b class="bas">LH ile HL aynı şey değil</b>LH için önce ortalama alıp sonra fark alırsın; HL için önce fark alıp sonra ortalama. En kolay karıştırılan yer burası.</div>
+  <p><strong>Yol haritası:</strong> HHL'ye ulaşmak için sırayla <code>H → HH → HHL</code> hesaplanır. HLH için <code>H → HL → HLH</code>. Aradaki dizileri atlayamazsın, çünkü her biri bir öncekinden üretilir.</p>
+  <div class="kutu ipucu"><b class="bas">Hocanın yazımı</b>L1 = 1. seviyedeki L dizisi. L2 = 2. seviyedeki L, yani buradaki <strong>LL</strong>.</div>
+</section>
+
+<section id="agac">
+  <h2><span class="no">7</span>8 elemanlı dizide tam ağaç</h2>
+  <p class="alt">Yeni kural yok: 8 → 4 → 2 → 1, üç seviye.</p>
+  <p>Çalışma düzeni: önce 1. seviyeyi bitir, sonra 2. seviyenin dört dizisini, en son 3. seviyeyi yaz. İstenen diziye giden yoldaki her ara diziyi kağıda yaz, kafadan atlama.</p>
+  <div class="kutu dikkat"><b class="bas">Hata aşağı taşınır</b>Üst seviyede bir hata varsa altındaki her şey yanlış çıkar. Farklı bir sonuç görürsen ağaçta en üstteki yanlışı bul, sorun oradadır.</div>
+
+  <div class="arac" id="aracA">
+    <h3>Uygulama: dalgacık ağacı</h3>
+    <p class="alt">8 sayıyı değiştir. Bir kutuya tıklayınca o dizinin nasıl hesaplandığı yazılır.</p>
+    <div class="giris" id="aGiris"></div>
+    <div class="dugmeler">
+      <button type="button" class="d ikinci" data-dizi="8 10 16 28 32 10 16 2">Sınav sinyali</button>
+      <button type="button" class="d ikinci" data-dizi="24 26 16 5 6 8 23 8">Hocanın dizisi</button>
+      <button type="button" class="d ikinci" data-dizi="4 8 6 2 10 14 0 4">Dersteki örnek</button>
+      <button type="button" class="d ikinci" id="aRastgele">Rastgele</button>
+    </div>
+    <div class="dugmeler">
+      <label><input type="radio" name="aTur" value="paket" checked> Paket (H de bölünür)</label>
+      <label><input type="radio" name="aTur" value="normal"> Normal (sadece L bölünür)</label>
+    </div>
+    <div id="aAgac"></div>
+    <div class="hesap" id="aHesap" aria-live="polite"></div>
+    <p class="alt" id="aSaglama"></p>
+  </div>
+</section>
+
+<section id="kod">
+  <h2><span class="no">8</span>Kod: <code>dalgacik</code> fonksiyonu</h2>
+  <p class="alt">Sınav sorusu elle hesap; bu bölüm hocanın kodunu okuyabilmek için.</p>
+  <p>Elle ne yapıyorsak kod da onu yapar: diziyi ikişer ikişer gez, her çiftten bir L ve bir H üret.</p>
+  <div class="kod-sar"><pre class="kod" data-kopya>
+function [L,H] = dalgacik(x)
+k = 1;
+for i = 1:2:length(x)                 % 1, 3, 5, 7: ikişer atla
+    L(k) = (x(i) + x(i+1)) / 2;       % ortalama
+    H(k) = (x(i) - x(i+1)) / 2;       % fark
+    k = k + 1;                        % her çiftten tek L, tek H
+end
+end
+</pre></div>
+  <ul>
+    <li><code>1:2:length(x)</code> = başlangıç : adım : bitiş. Adımın 2 olması "örtüşmeden ikişer al" kuralının koddaki karşılığı.</li>
+    <li><code>k</code>, L ve H dizisinde sıradaki boş yeri tutan sayaç. <code>i</code> ikişer atlarken <code>k</code> birer artar.</li>
+    <li>İlk satır: <code>function [çıktılar] = ad(girdiler)</code>. <code>return</code> yazılmaz; fonksiyon bitince L ve H'nin içinde ne varsa dışarı o çıkar.</li>
+    <li>Dosya adı fonksiyon adıyla aynı olmalı: <code>dalgacik.m</code>.</li>
+  </ul>
+  <h3>C karşılığı</h3>
+<pre class="kod">
+k = 0;
+for (i = 0; i &lt; n; i += 2) {
+    L[k] = (x[i] + x[i+1]) / 2.0;
+    H[k] = (x[i] - x[i+1]) / 2.0;
+    k++;
+}
+</pre>
+  <div class="kaydir"><table class="t"><tbody>
+    <tr><th></th><th>C</th><th>MATLAB</th></tr>
+    <tr><td>İlk indis</td><td>0</td><td>1</td></tr>
+    <tr><td>Eleman erişimi</td><td><code>x[i]</code></td><td><code>x(i)</code></td></tr>
+    <tr><td>Döngü</td><td><code>for (i=0; i&lt;n; i+=2)</code></td><td><code>for i = 1:2:length(x)</code></td></tr>
+    <tr><td>Blok sonu</td><td><code>}</code></td><td><code>end</code></td></tr>
+    <tr><td>Bölme</td><td><code>/ 2.0</code> yazmazsan tam sayı böler</td><td><code>/ 2</code> her zaman ondalıklı böler</td></tr>
+    <tr><td>İki sonuç döndürme</td><td>pointer gerekir</td><td><code>[L,H] = ...</code></td></tr>
+  </tbody></table></div>
+  <h3>Hocanın kullanımı</h3>
+<pre class="kod">
+dizi=[24 26 16 5 6 8 23 8];
+[L H]=dalgacik(dizi);        % 1. seviye: L = 25 10.5 7 15.5    H = -1 5.5 -1 7.5
+[LL LH]=dalgacik(L);         % L'yi böl:  LL = 17.75 11.25      LH = 7.25 -4.25
+[LHL LHH]=dalgacik(LH);      % LH'yi böl: LHL = 1.5             LHH = 5.75
+</pre>
+  <p>Fonksiyon tek bir seviye hesaplar ve verilen dizinin orijinal sinyal mi, L mi, LH mi olduğunu bilmez. <strong>İsimleri fonksiyon koymaz, sen koyarsın:</strong> ilk çıktı her zaman verdiğin dizinin L'si, ikincisi H'si. "LH'yi verdim, o zaman çıkanlar LHL ve LHH."</p>
+  <p><code>[L H]</code> ile <code>[L, H]</code> aynıdır, virgül isteğe bağlı.</p>
+</section>
+
+<section id="alistirma">
+  <h2><span class="no">9</span>Alıştırma</h2>
+  <p class="alt">Rastgele sinyal, rastgele dizi. Kağıtta çöz, sonucu yaz.</p>
+  <div class="arac" id="aracQ">
+    <h3>Alıştırma: istenen diziyi bul</h3>
+    <div class="ilerle" aria-hidden="true"><i id="qBar"></i></div>
+    <p id="qSkor" class="alt">Doğru: 0 / 0</p>
+    <div class="formul" id="qSinyal"></div>
+    <p id="qSoru" style="font-weight:600"></p>
+    <p><input type="text" id="qCevap" style="width:min(100%,240px)" autocomplete="off" aria-label="Cevap"> <button type="button" class="d" id="qKontrol">Kontrol et</button> <button type="button" class="d ikinci" id="qYeni">Yeni soru</button></p>
+    <p class="alt">Sayıları boşlukla ayır. Ondalık ya da kesir yazabilirsin: <code>-6.5 6</code>, <code>-13/2 6</code>. İki deneme hakkın var.</p>
+    <p class="sonuc" id="qSonuc" aria-live="polite"></p>
+    <div class="hesap" id="qCozum" hidden></div>
+  </div>
+</section>
+
+<section id="cevap">
+  <h2><span class="no">10</span>Sınav cevabı (kağıda yazılacak hali)</h2>
+  <p class="alt">İstenen beş değere giden yoldaki ara dizilerle birlikte.</p>
+  <p>Sinyal: <code>8 10 16 28 32 10 16 2</code> · istenenler: L1, L2, LH, HL, HHL</p>
+  <div class="hesap" id="cSinav"></div>
+  <div class="kaydir"><table class="t"><tbody id="cTablo"></tbody></table></div>
+  <div class="kutu ipucu"><b class="bas">L2 belirsizliği</b>L2 burada 2. seviyedeki L (LL = 15.5, 15) olarak alındı. Hoca L2 ile 3. seviyeyi (LLL) kastettiyse LLL = 15.25; bu aynı zamanda sekiz sayının ortalamasıdır (122 / 8).</div>
+
+  <h3>İkinci örnek: hocanın dizisi</h3>
+  <p>Dizi: <code>24 26 16 5 6 8 23 8</code> · koddaki sırayla L, H, LL, LH, LHL, LHH</p>
+  <div class="hesap" id="cIki"></div>
+
+  <h3>Puan kaybettiren şeyler</h3>
+  <div class="kaydir"><table class="t"><tbody>
+    <tr><th>Hata</th><th>Doğrusu</th></tr>
+    <tr><td>Çiftleri kaydırarak almak: (8,10), (10,16) ...</td><td>Örtüşmeden: (8,10), (16,28), (32,10), (16,2)</td></tr>
+    <tr><td>H'de eksiyi kaybetmek</td><td>İlk eksi ikinci: (8 − 10) / 2 = −1</td></tr>
+    <tr><td>HL için çıkarma yapmak</td><td>Son harf L: H dizisinin <strong>ortalaması</strong></td></tr>
+    <tr><td>LH ile HL'yi karıştırmak</td><td>LH = L'nin farkı, HL = H'nin ortalaması</td></tr>
+    <tr><td>−1 − (−6) işlemini −7 bulmak</td><td>Eksi ile eksi artı: −1 + 6 = 5</td></tr>
+    <tr><td>2'ye bölmeyi unutmak</td><td>L de H de 2'ye bölünür</td></tr>
+    <tr><td>Ara diziyi atlamak (HHL'yi doğrudan yazmak)</td><td>H → HH → HHL sırayla yazılır</td></tr>
+  </tbody></table></div>
+</section>
+
+<footer>Soru 3 · kaynak: kullanıcının kendi ders sohbeti</footer>
+</div>
+
+<script src="../../ortak/soru.js?v=20261115115621"></script>
+<script src="soru.js?v=20261115115621"></script>
+</body>
+</html>

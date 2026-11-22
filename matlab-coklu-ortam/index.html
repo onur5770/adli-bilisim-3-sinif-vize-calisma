@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Çoklu Ortam – Çalışma Sayfası</title>
+<script src="ortak/tema.js?v=20261115115621"></script>
+<link rel="stylesheet" href="ortak/tema.css?v=20261115115621">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:var(--zemin);color:var(--yazi);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.sar{max-width:960px;margin:0 auto;padding:0 16px 48px}
+.ust{padding:40px 0 24px}
+.ust h1{margin:0 0 6px;font-size:clamp(26px,5vw,38px);line-height:1.15}
+.ust p{margin:0;color:var(--soluk)}
+.buyuk{display:block;text-decoration:none;color:#fff;background:linear-gradient(135deg,#1d5fe0,#0c7f89);border-radius:14px;padding:24px 24px 22px;margin:8px 0 28px}
+.buyuk:hover{filter:brightness(1.07)}
+.buyuk b{display:block;font-size:22px;margin-bottom:4px}
+.buyuk.ikinci{background:linear-gradient(135deg,#6a3fd0,#c0398a);margin-top:-12px}
+.buyuk code{font-family:ui-monospace,Menlo,Consolas,monospace;background:rgba(0,0,0,.22);padding:1px 6px;border-radius:5px}
+h2{font-size:18px;margin:0 0 12px}
+.izgara{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;padding:0;margin:0;list-style:none;grid-auto-rows:1fr}
+.izgara li{display:flex}
+.izgara a{display:flex;flex-direction:column;gap:2px;text-decoration:none;color:var(--yazi);background:var(--yuzey);border:1px solid var(--cizgi);border-radius:12px;padding:14px 16px;min-height:104px;width:100%}
+.izgara a:hover{border-color:var(--mavi)}
+.izgara .no{font:700 26px/1 ui-monospace,Menlo,Consolas,monospace;color:var(--mavi)}
+.izgara .ad{font-weight:600}
+.izgara .durum{font-size:13px;line-height:1.35;color:var(--soluk)}
+a:focus-visible{outline:3px solid var(--mavi);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="sar">
+  <header class="ust">
+    <h1>Çoklu Ortam – Çalışma Sayfası</h1>
+    <p>Birini seç, o çalışma açılsın.</p>
+  </header>
+
+  <a class="buyuk" href="sozdizimi/index.html">
+    <b>MATLAB Sözdizimi Çalışma Alanı</b>
+    <span>18 konu, 237 alıştırma, tekrar modu ve tarayıcıda çalışan <code>MATLAB</code> uygulama alanı.</span>
+  </a>
+
+  <a class="buyuk ikinci" href="sozel-sorular/index.html">
+    <b>Sözel Sorular</b>
+    <span>30 kısa soru ve cevap: self-attention, CNN, padding, Sobel/Prewitt… Karıştır, ara, bildiklerini işaretle.</span>
+  </a>
+
+  <h2>Sorular</h2>
+  <ul class="izgara" id="sorular"></ul>
+</div>
+<script src="sorular/liste.js?v=20261115115621"></script>
+<script>
+(function(){
+  var liste = window.SORULAR || [], ul = document.getElementById('sorular');
+  liste.forEach(function(s){
+    var li = document.createElement('li'), a = document.createElement('a');
+    a.href = 'sorular/' + s.klasor + '/index.html';
+    a.innerHTML = '<span class="no"></span><span class="ad"></span><span class="durum"></span>';
+    a.querySelector('.no').textContent = s.no;
+    a.querySelector('.ad').textContent = 'Soru ' + s.no;
+    a.querySelector('.durum').textContent = s.baslik || (s.hazir ? 'Hazır' : 'Henüz yüklenmedi');
+    li.appendChild(a); ul.appendChild(li);
+  });
+})();
+</script>
+</body>
+</html>
