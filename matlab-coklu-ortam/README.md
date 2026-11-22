@@ -12,3 +12,7 @@
 - `sozdizimi/`: MATLAB sözdizimi konu anlatımı ve alıştırmalar
 - `sozel-sorular/`: kısa soru-cevap
 - `sorular/`: Soru 1–10 çözüm sayfaları
+
+## MATLAB'ı tarayıcıda çalıştırma
+
+MATLAB kurmadan, `sozdizimi/index.html` dosyasını tarayıcıda açarak komutları ve örnekleri doğrudan tarayıcıda çalıştırabilirsin.
